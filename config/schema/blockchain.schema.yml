@@ -1,0 +1,10 @@
+blockchain.settings:
+  type: config_object
+  label: 'Blockchain settings'
+  mapping:
+    interval:
+      type: integer
+      label: 'Interval for syncing with other blockchain nodes'
+    limit:
+      type: integer
+      label: 'Limit of blockchain nodes to be processed at once'

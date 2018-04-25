@@ -1,0 +1,11 @@
+entity.blockchain_block.add_form:
+  route_name: entity.blockchain_block.add_form
+  title: 'Add Blockchain Block'
+  appears_on:
+    - entity.blockchain_block.collection
+entity.blockchain_node.add_form:
+  route_name: entity.blockchain_node.add_form
+  title: 'Add Blockchain Node'
+  appears_on:
+    - entity.blockchain_node.collection
+

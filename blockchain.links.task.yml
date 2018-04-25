@@ -1,0 +1,27 @@
+# Blockchain Block routing definition
+blockchain_block.settings_tab:
+  route_name: blockchain_block.settings
+  title: 'Settings'
+  base_route: blockchain_block.settings
+
+blockchain_block.blockchain_node:
+  route_name: entity.blockchain_node.collection
+  title: 'Blockchain nodes'
+  base_route: blockchain_block.settings
+  weight: 10
+
+entity.blockchain_block.canonical:
+  route_name: entity.blockchain_block.canonical
+  base_route: entity.blockchain_block.canonical
+  title: 'View'
+
+entity.blockchain_block.edit_form:
+  route_name: entity.blockchain_block.edit_form
+  base_route: entity.blockchain_block.canonical
+  title: 'Edit'
+
+entity.blockchain_block.delete_form:
+  route_name:  entity.blockchain_block.delete_form
+  base_route:  entity.blockchain_block.canonical
+  title: Delete
+  weight: 10

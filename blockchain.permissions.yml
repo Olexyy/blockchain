@@ -1,0 +1,19 @@
+add blockchain block entities:
+  title: 'Create new Blockchain Block entities'
+
+administer blockchain block entities:
+  title: 'Administer Blockchain Block entities'
+  description: 'Allow to access the administration form to configure Blockchain Block entities.'
+  restrict access: true
+
+delete blockchain block entities:
+  title: 'Delete Blockchain Block entities'
+
+edit blockchain block entities:
+  title: 'Edit Blockchain Block entities'
+
+view published blockchain block entities:
+  title: 'View published Blockchain Block entities'
+
+view unpublished blockchain block entities:
+  title: 'View unpublished Blockchain Block entities'
