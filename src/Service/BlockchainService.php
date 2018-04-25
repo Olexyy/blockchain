@@ -15,17 +15,17 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * BlockchainSettingsService.
    *
-   * @var BlockchainSettingsServiceInterface
+   * @var BlockchainConfigServiceInterface
    */
   protected $blockchainServiceSettings;
 
   /**
    * BlockchainService constructor.
    *
-   * @param BlockchainSettingsServiceInterface $blockchainSettingsService
+   * @param BlockchainConfigServiceInterface $blockchainSettingsService
    *   Given service.
    */
-  public function __construct(BlockchainSettingsServiceInterface $blockchainSettingsService) {
+  public function __construct(BlockchainConfigServiceInterface $blockchainSettingsService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
 
@@ -34,7 +34,7 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * Getter for settings service.
    *
-   * @return BlockchainSettingsServiceInterface
+   * @return BlockchainConfigServiceInterface
    */
   public function getSettings() {
     return $this->blockchainServiceSettings;

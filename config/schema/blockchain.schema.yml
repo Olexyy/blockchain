@@ -1,10 +1,16 @@
-blockchain.settings:
+blockchain.config:
   type: config_object
-  label: 'Blockchain settings'
+  label: 'Blockchain config'
   mapping:
+    type:
+      type: string
+      label: 'Type of blockchain'
+    pool_management:
+      type: string
+      label: 'Type of pool management'
+    announce_management:
+      type: string
+      label: 'Type of announce management'
     interval:
       type: integer
       label: 'Interval for syncing with other blockchain nodes'
-    limit:
-      type: integer
-      label: 'Limit of blockchain nodes to be processed at once'

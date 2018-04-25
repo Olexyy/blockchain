@@ -3,14 +3,15 @@
 namespace Drupal\blockchain\Service;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\workflows\StateInterface;
+use Drupal\Core\State\StateInterface;
+
 
 /**
- * Class BlockchainSettingsService.
+ * Class BlockchainConfigServiceInterface.
  *
  * @package Drupal\blockchain\Service
  */
-class BlockchainSettingsService implements BlockchainSettingsServiceInterface {
+class BlockchainConfigService implements BlockchainConfigServiceInterface {
 
   /**
    * Uuid service.
@@ -34,7 +35,7 @@ class BlockchainSettingsService implements BlockchainSettingsServiceInterface {
   protected $configFactory;
 
   /**
-   * BlockchainSettingsService constructor.
+   * BlockchainConfigServiceInterface constructor.
    *
    * {@inheritdoc}
    */
@@ -54,6 +55,21 @@ class BlockchainSettingsService implements BlockchainSettingsServiceInterface {
     return $this->uuid->generate();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getConfig($editable = FALSE) {
+    if ($editable) {
+      return $this->configFactory->getEditable('blockchain.config');
+    }
+    return $this->configFactory->get('blockchain.config');
+  }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getState() {
+    return $this->state->get('blockchain.state', []);
+  }
 
 }
