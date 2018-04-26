@@ -20,4 +20,12 @@ interface BlockchainServiceInterface {
    */
   function getGenericBlock();
 
+  /**
+   * Getter for settings service.
+   *
+   * @return BlockchainConfigServiceInterface
+   *   Config service.
+   */
+  public function getConfigService();
+
 }

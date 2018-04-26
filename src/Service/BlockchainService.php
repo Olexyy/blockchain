@@ -32,11 +32,9 @@ class BlockchainService implements BlockchainServiceInterface {
   }
 
   /**
-   * Getter for settings service.
-   *
-   * @return BlockchainConfigServiceInterface
+   * {@inheritdoc}
    */
-  public function getSettings() {
+  public function getConfigService() {
     return $this->blockchainServiceSettings;
   }
 

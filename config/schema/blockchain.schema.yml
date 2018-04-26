@@ -14,3 +14,9 @@ blockchain.config:
     interval:
       type: integer
       label: 'Interval for syncing with other blockchain nodes'
+    pof_position:
+      type: string
+      label: 'Proof of work position'
+    pof_expression:
+      type: string
+      label: 'Proof of work expression'

@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\blockchain\Service;
+
 use Drupal\Core\Config\Config;
 
 /**

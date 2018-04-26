@@ -1,0 +1,7 @@
+services:
+  blockchain.config:
+    class: Drupal\blockchain\Service\BlockchainConfigService
+    arguments: ['@uuid','@state','@config.factory']
+  blockchain.service:
+    class: Drupal\blockchain\Service\BlockchainService
+    arguments: ['@blockchain.config']
