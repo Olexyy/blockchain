@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Form;
 
+use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -84,10 +85,32 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#type' => 'select',
       '#title' => $this->t('Blockchain type'),
       '#options' => [
-        'single' => $this->t('Single'),
-        'distributed' => $this->t('Distributed'),
+        BlockchainConfigServiceInterface::TYPE_SINGLE => $this->t('Single'),
+        BlockchainConfigServiceInterface::TYPE_MULTIPLE  => $this->t('Multiple'),
       ],
-      '#default_value' => $blockchainType? $blockchainType : 'single',
+      '#default_value' => $blockchainType? $blockchainType :
+        BlockchainConfigServiceInterface::TYPE_SINGLE,
+      '#description' => $this->t('Single means only one node, thus one blockchain database.'),
+    ];
+
+    $form['pool_management'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Pool management'),
+      '#options' => [
+        BlockchainConfigServiceInterface::POOL_MANAGEMENT_MANUAL => $this->t('Manual'),
+        BlockchainConfigServiceInterface::POOL_MANAGEMENT_CRON  => $this->t('CRON'),
+      ],
+      '#default_value' => $blockchainType? $blockchainType :
+        BlockchainConfigServiceInterface::POOL_MANAGEMENT_MANUAL,
+      '#description' => $this->t('The way, pool queue will be managed.'),
+    ];
+
+    $form['actions'] = [
+      '#type' => 'actions',
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Submit'),
+      ],
     ];
 
     return $form;

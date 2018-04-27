@@ -11,6 +11,11 @@ use Drupal\Core\Config\Config;
  */
 interface BlockchainConfigServiceInterface {
 
+  const TYPE_SINGLE = 'single';
+  const TYPE_MULTIPLE = 'multiple';
+  const POOL_MANAGEMENT_MANUAL = 'manual';
+  const POOL_MANAGEMENT_CRON = 'cron';
+
   /**
    * Getter for unique identifier as blockchain node.
    *
