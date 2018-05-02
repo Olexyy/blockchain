@@ -5,15 +5,21 @@ blockchain.config:
     type:
       type: string
       label: 'Type of blockchain'
+    id:
+      type: string
+      label: 'Blockchain identifier'
     pool_management:
       type: string
       label: 'Type of pool management'
     announce_management:
       type: string
       label: 'Type of announce management'
-    interval:
+    interval_pool:
       type: integer
-      label: 'Interval for syncing with other blockchain nodes'
+      label: 'Interval for CRON blockchain pool management'
+    interval_announce:
+      type: integer
+      label: 'Interval for CRON syncing with other blockchain nodes'
     pof_position:
       type: string
       label: 'Proof of work position'

@@ -24,11 +24,15 @@ ____Notes about blockchain implementation.____
   - announce changes if any;
   
 - Settings:
-  - single/distributed
-  - block managing:
+  - blockchain id;
+  - single/multiple;
+  - block pool managing:
     - immediate (batch);
-    - special form (queue);
     - CRON (queue);
   - announce managing:
     - queue (CRON);
     - immediate;
+  - interval CRON announce;
+  - interval CRON block pool;
+  - pof_position;
+  - pof_expression;

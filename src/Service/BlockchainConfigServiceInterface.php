@@ -15,6 +15,12 @@ interface BlockchainConfigServiceInterface {
   const TYPE_MULTIPLE = 'multiple';
   const POOL_MANAGEMENT_MANUAL = 'manual';
   const POOL_MANAGEMENT_CRON = 'cron';
+  const ANNOUNCE_MANAGEMENT_CRON = 'cron';
+  const ANNOUNCE_MANAGEMENT_IMMEDIATE = 'immediate';
+  const INTERVAL_DEFAULT = 60 * 10;
+  const POF_POSITION_START = 'start';
+  const POF_POSITION_END = 'end';
+  const POF_EXPRESSION = '00';
 
   /**
    * Getter for unique identifier as blockchain node.
