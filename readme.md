@@ -25,6 +25,7 @@ ____Notes about blockchain implementation.____
   
 - Settings:
   - blockchain id;
+  - blockchain node id;
   - single/multiple;
   - block pool managing:
     - immediate (batch);

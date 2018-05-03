@@ -5,9 +5,12 @@ blockchain.config:
     type:
       type: string
       label: 'Type of blockchain'
-    id:
+    blockchain_id:
       type: string
       label: 'Blockchain identifier'
+    blockchain_node_id:
+      type: string
+      label: 'Blockchain node identifier'
     pool_management:
       type: string
       label: 'Type of pool management'

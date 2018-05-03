@@ -63,16 +63,28 @@ class BlockchainBlockSettingsForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
-    $keys = [
-      'type', 'pool_management', 'interval_pool','announce_management',
-      'interval_announce', 'pof_position', 'pof_expression',
-    ];
-    foreach ($keys as $key) {
-      if ($form_state->hasValue($key)) {
-      $this->blockchainService->getConfigService()->getConfig(TRUE)
-        ->set($key, $form_state->getValue($key))->save();
+    $element = $form_state->getTriggeringElement();
+    if ($element['#type'] == 'button') {
+      if ($element['#context'] == 'regenerate_blockchain_id') {
+        $this->blockchainService->getConfigService()->setBlockchainId();
+      }
+      elseif ($element['#context'] == 'regenerate_blockchain_node_id') {
+        $this->blockchainService->getConfigService()->setBlockchainNodeId();
       }
     }
+    else {
+      $keys = [
+        'type', 'pool_management', 'interval_pool','announce_management',
+        'interval_announce', 'pof_position', 'pof_expression',
+      ];
+      foreach ($keys as $key) {
+        if ($form_state->hasValue($key)) {
+          $this->blockchainService->getConfigService()->getConfig(TRUE)
+            ->set($key, $form_state->getValue($key))->save();
+        }
+      }
+    }
+
   }
 
   /**
@@ -94,6 +106,20 @@ class BlockchainBlockSettingsForm extends FormBase {
     $announce_management = $this->blockchainService->getConfigService()->getConfig()->get('announce_management');
     $pof_position = $this->blockchainService->getConfigService()->getConfig()->get('pof_position');
     $pof_expression = $this->blockchainService->getConfigService()->getConfig()->get('pof_expression');
+    $blockchain_id = $this->blockchainService->getConfigService()->getBlockchainId();
+    $blockchain_node_id = $this->blockchainService->getConfigService()->getBlockchainNodeId();
+
+    $form['blockchain_id'] = [
+      '#type' => 'item',
+      '#description' => $blockchain_id,
+      '#title' => $this->t('Blockchain id'),
+    ];
+
+    $form['blockchain_node_id'] = [
+      '#type' => 'item',
+      '#description' => $blockchain_node_id,
+      '#title' => $this->t('Blockchain node id'),
+    ];
 
     $form['type'] = [
       '#type' => 'select',
@@ -106,9 +132,6 @@ class BlockchainBlockSettingsForm extends FormBase {
         BlockchainConfigServiceInterface::TYPE_SINGLE,
       '#description' => $this->t('Single means only one node, thus one blockchain database.'),
     ];
-
-    // TODO: id;
-    // TODO: immutable settings if any item;
 
     $form['pool_management'] = [
       '#type' => 'select',
@@ -189,6 +212,21 @@ class BlockchainBlockSettingsForm extends FormBase {
         '#value' => $this->t('Submit'),
       ],
     ];
+
+    if (!$this->blockchainService->getBlockchainBlockCount()) {
+      $form['actions']['regenerate_blockchain_id'] = [
+        '#type' => 'button',
+        '#executes_submit_callback' => TRUE,
+        '#value' => $this->t('Regenerate blockchain id'),
+        '#context' => 'regenerate_blockchain_id',
+      ];
+      $form['actions']['regenerate_blockchain_node_id'] = [
+        '#type' => 'button',
+        '#executes_submit_callback' => TRUE,
+        '#value' => $this->t('Regenerate blockchain node id'),
+        '#context' => 'regenerate_blockchain_node_id',
+      ];
+    }
 
     return $form;
   }

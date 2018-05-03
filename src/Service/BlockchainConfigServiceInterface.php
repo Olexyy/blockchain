@@ -23,12 +23,12 @@ interface BlockchainConfigServiceInterface {
   const POF_EXPRESSION = '00';
 
   /**
-   * Getter for unique identifier as blockchain node.
+   * Getter for unique identifier.
    *
    * @return string
    *   Unique identifier.
    */
-  function generateNodeName();
+  function generateId();
 
   /**
    * Getter for config.
@@ -47,5 +47,43 @@ interface BlockchainConfigServiceInterface {
    *   Values for given state.
    */
   public function getState();
+
+  /**
+   * Getter for blockchain identifier.
+   *
+   * @return string
+   *   UUID.
+   */
+  public function getBlockchainId();
+
+  /**
+   * Setter for blockchain identifier.
+   *
+   * @param string|null $blockchain_id
+   *   Given UUID.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainId($blockchain_id = NULL);
+
+  /**
+   * Getter for blockchain node identifier.
+   *
+   * @return string
+   *   UUID.
+   */
+  public function getBlockchainNodeId();
+
+  /**
+   * Setter for blockchain node identifier.
+   *
+   * @param string|null $blockchain_node_id
+   *   Given UUID.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainNodeId($blockchain_node_id = NULL);
 
 }

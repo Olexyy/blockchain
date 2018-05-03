@@ -4,4 +4,4 @@ services:
     arguments: ['@uuid','@state','@config.factory']
   blockchain.service:
     class: Drupal\blockchain\Service\BlockchainService
-    arguments: ['@blockchain.config']
+    arguments: ['@blockchain.config', '@entity_type.manager']

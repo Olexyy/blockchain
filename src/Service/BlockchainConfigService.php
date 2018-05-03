@@ -52,7 +52,8 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function generateNodeName() {
+  public function generateId() {
+
     return $this->uuid->generate();
   }
 
@@ -60,9 +61,11 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    * {@inheritdoc}
    */
   public function getConfig($editable = FALSE) {
+
     if ($editable) {
       return $this->configFactory->getEditable('blockchain.config');
     }
+
     return $this->configFactory->get('blockchain.config');
   }
 
@@ -70,7 +73,51 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    * {@inheritdoc}
    */
   public function getState() {
+
     return $this->state->get('blockchain.state', []);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainId() {
+
+    if (!$blockchain_id = $this->getConfig()->get('blockchain_id')) {
+      $blockchain_id = $this->generateId();
+      $this->setBlockchainId($blockchain_id);
+    }
+
+    return $blockchain_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainNodeId() {
+
+    if (!$blockchain_node_id = $this->getConfig()->get('blockchain_node_id')) {
+      $blockchain_node_id = $this->generateId();
+      $this->setBlockchainNodeId($blockchain_node_id);
+    }
+
+    return $blockchain_node_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainId($blockchain_id = NULL) {
+    $blockchain_id = $blockchain_id? $blockchain_id : $this->generateId();
+    $this->getConfig(TRUE)->set('blockchain_id', $blockchain_id)->save();
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainNodeId($blockchain_node_id = NULL) {
+    $blockchain_node_id = $blockchain_node_id? $blockchain_node_id : $this->generateId();
+    $this->getConfig(TRUE)->set('blockchain_node_id', $blockchain_node_id)->save();
+    return $this;
+  }
 }

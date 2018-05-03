@@ -28,4 +28,20 @@ interface BlockchainServiceInterface {
    */
   public function getConfigService();
 
+  /**
+   * Getter for blockchain block storage.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface|null
+   *   Storage object.
+   */
+  public function getBlockchainBlockStorage();
+
+  /**
+   * Getter for blockchain blocks count.
+   *
+   * @return int
+   *   Number of items.
+   */
+  public function getBlockchainBlockCount();
+
 }
