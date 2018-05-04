@@ -37,3 +37,9 @@ ____Notes about blockchain implementation.____
   - interval CRON block pool;
   - pof_position;
   - pof_expression;
+  
+  TODOS:
+  - blockchain API service (protocol)
+  - blockchain node spec
+  - business data as plugins (selected in settings) dynamic 
+  - 

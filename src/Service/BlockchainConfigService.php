@@ -120,4 +120,26 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
     $this->getConfig(TRUE)->set('blockchain_node_id', $blockchain_node_id)->save();
     return $this;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainType() {
+    if(!($blockchainType = $this->getConfig()->get('blockchain_type'))) {
+      $blockchainType = static::TYPE_SINGLE;
+      $this->setBlockchainType($blockchainType);
+    }
+    return $blockchainType;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainType($blockchainType) {
+    $this->getConfig(TRUE)
+      ->set('blockchain_type', $blockchainType)
+      ->save();
+    return $this;
+  }
+
 }

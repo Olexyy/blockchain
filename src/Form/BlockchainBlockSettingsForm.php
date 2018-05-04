@@ -74,7 +74,7 @@ class BlockchainBlockSettingsForm extends FormBase {
     }
     else {
       $keys = [
-        'type', 'pool_management', 'interval_pool','announce_management',
+        'blockchain_type', 'pool_management', 'interval_pool','announce_management',
         'interval_announce', 'pof_position', 'pof_expression',
       ];
       foreach ($keys as $key) {
@@ -100,8 +100,7 @@ class BlockchainBlockSettingsForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $form['blockchainblock_settings']['#markup'] = 'Settings form for Blockchain Block entities. Manage field settings here.';
-    $blockchainType = $this->blockchainService->getConfigService()->getConfig()->get('type');
+    $blockchainType = $this->blockchainService->getConfigService()->getBlockchainType();
     $poolManagement = $this->blockchainService->getConfigService()->getConfig()->get('pool_management');
     $announce_management = $this->blockchainService->getConfigService()->getConfig()->get('announce_management');
     $pof_position = $this->blockchainService->getConfigService()->getConfig()->get('pof_position');
@@ -121,15 +120,14 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#title' => $this->t('Blockchain node id'),
     ];
 
-    $form['type'] = [
+    $form['blockchain_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Blockchain type'),
       '#options' => [
         BlockchainConfigServiceInterface::TYPE_SINGLE => $this->t('Single'),
         BlockchainConfigServiceInterface::TYPE_MULTIPLE  => $this->t('Multiple'),
       ],
-      '#default_value' => $blockchainType? $blockchainType :
-        BlockchainConfigServiceInterface::TYPE_SINGLE,
+      '#default_value' => $blockchainType,
       '#description' => $this->t('Single means only one node, thus one blockchain database.'),
     ];
 
@@ -209,7 +207,7 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#type' => 'actions',
       'submit' => [
         '#type' => 'submit',
-        '#value' => $this->t('Submit'),
+        '#value' => $this->t('Save'),
       ],
     ];
 

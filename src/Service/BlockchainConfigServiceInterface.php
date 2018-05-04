@@ -86,4 +86,23 @@ interface BlockchainConfigServiceInterface {
    */
   public function setBlockchainNodeId($blockchain_node_id = NULL);
 
+  /**
+   * Getter for blockchain type.
+   *
+   * @return string
+   *   Blockchain type.
+   */
+  public function getBlockchainType();
+
+  /**
+   * Setter for blockchain type.
+   *
+   * @param string $blockchainType
+   *   Type.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainType($blockchainType);
+
 }
