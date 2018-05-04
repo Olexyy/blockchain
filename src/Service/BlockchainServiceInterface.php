@@ -52,4 +52,12 @@ interface BlockchainServiceInterface {
    */
   public function blockchainIsEmpty();
 
+  /**
+   * Getter for options of blockchain data plugins.
+   *
+   * @return array
+   *   Options compatible array.
+   */
+  public function getBlockchainDataList();
+
 }

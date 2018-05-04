@@ -29,3 +29,6 @@ blockchain.config:
     powExpression:
       type: string
       label: 'Proof of work expression'
+    dataHandler:
+      type: string
+      label: 'Data handler for blockchain'

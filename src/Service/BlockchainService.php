@@ -4,6 +4,7 @@ namespace Drupal\blockchain\Service;
 
 
 use Drupal\blockchain\Entity\BlockchainBlock;
+use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -28,20 +29,30 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $entityTypeManager;
 
   /**
+   * Blockchain data manager.
+   *
+   * @var BlockchainDataManager
+   */
+  protected $blockchainDataManager;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
    *   Given service.
    * @param EntityTypeManagerInterface $entityTypeManager
    *   Given service.
+   * @param BlockchainDataManager $blockchainDataManager
+   *   Given blockchain data manager.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
-    EntityTypeManagerInterface $entityTypeManager) {
+    EntityTypeManagerInterface $entityTypeManager,
+    BlockchainDataManager $blockchainDataManager) {
 
     $this->entityTypeManager = $entityTypeManager;
     $this->blockchainServiceSettings = $blockchainSettingsService;
-
+    $this->blockchainDataManager = $blockchainDataManager;
   }
 
   /**
@@ -90,6 +101,19 @@ class BlockchainService implements BlockchainServiceInterface {
    */
   public function blockchainIsEmpty() {
     return !$this->getBlockchainBlockCount();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainDataList() {
+
+    $list = [];
+    foreach($this->blockchainDataManager->getDefinitions() as $plugin) {
+      $list[$plugin['id']] = $plugin['label'];
+    }
+
+    return $list;
   }
 
 }

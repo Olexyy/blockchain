@@ -197,6 +197,15 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#description' => $this->t('Proof of work expression in previous hash.'),
     ];
 
+    $form['dataHandler'] = [
+      '#type' => 'select',
+      '#required' => TRUE,
+      '#title' => $this->t('Blockchain data handler.'),
+      '#options' => $this->blockchainService->getBlockchainDataList(),
+      '#default_value' => $this->blockchainService->getConfigService()->getConfig()->get('dataHandler'),
+      '#description' => $this->t('Select data handler for given blockchain.'),
+    ];
+
     $form['actions'] = [
       '#type' => 'actions',
       'submit' => [

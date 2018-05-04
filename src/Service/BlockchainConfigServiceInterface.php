@@ -21,10 +21,11 @@ interface BlockchainConfigServiceInterface {
   const POF_POSITION_START = 'start';
   const POF_POSITION_END = 'end';
   const POF_EXPRESSION = '00';
+  const DATA_HANDLER = 'simple';
   const KEYS = [
     'blockchainType', 'blockchainId', 'blockchainNodeId', 'poolManagement',
     'announceManagement', 'intervalPool', 'intervalAnnounce', 'powPosition',
-    'powExpression',
+    'powExpression', 'dataHandler',
   ];
 
   /**
