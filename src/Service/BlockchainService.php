@@ -85,4 +85,11 @@ class BlockchainService implements BlockchainServiceInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function blockchainIsEmpty() {
+    return !$this->getBlockchainBlockCount();
+  }
+
 }

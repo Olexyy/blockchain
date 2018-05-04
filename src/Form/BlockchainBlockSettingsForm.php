@@ -50,7 +50,7 @@ class BlockchainBlockSettingsForm extends FormBase {
    *   The unique string identifying the form.
    */
   public function getFormId() {
-    return 'blockchainblock_settings';
+    return 'blockchain_block_settings';
   }
 
   /**
@@ -73,11 +73,7 @@ class BlockchainBlockSettingsForm extends FormBase {
       }
     }
     else {
-      $keys = [
-        'blockchain_type', 'pool_management', 'interval_pool','announce_management',
-        'interval_announce', 'pof_position', 'pof_expression',
-      ];
-      foreach ($keys as $key) {
+      foreach (BlockchainConfigServiceInterface::KEYS as $key) {
         if ($form_state->hasValue($key)) {
           $this->blockchainService->getConfigService()->getConfig(TRUE)
             ->set($key, $form_state->getValue($key))->save();
@@ -101,26 +97,28 @@ class BlockchainBlockSettingsForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
 
     $blockchainType = $this->blockchainService->getConfigService()->getBlockchainType();
-    $poolManagement = $this->blockchainService->getConfigService()->getConfig()->get('pool_management');
-    $announce_management = $this->blockchainService->getConfigService()->getConfig()->get('announce_management');
-    $pof_position = $this->blockchainService->getConfigService()->getConfig()->get('pof_position');
-    $pof_expression = $this->blockchainService->getConfigService()->getConfig()->get('pof_expression');
-    $blockchain_id = $this->blockchainService->getConfigService()->getBlockchainId();
-    $blockchain_node_id = $this->blockchainService->getConfigService()->getBlockchainNodeId();
+    $poolManagement = $this->blockchainService->getConfigService()->getPoolManagement();
+    $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
+    $powPosition = $this->blockchainService->getConfigService()->getPowPosition();
+    $powExpression = $this->blockchainService->getConfigService()->getPowExpression();
+    $blockchainId = $this->blockchainService->getConfigService()->getBlockchainId();
+    $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
+    $intervalPool = $this->blockchainService->getConfigService()->getIntervalPool();
+    $intervalAnnounce = $this->blockchainService->getConfigService()->getIntervalAnnounce();
 
-    $form['blockchain_id'] = [
+    $form['blockchainId'] = [
       '#type' => 'item',
-      '#description' => $blockchain_id,
+      '#description' => $blockchainId,
       '#title' => $this->t('Blockchain id'),
     ];
 
-    $form['blockchain_node_id'] = [
+    $form['blockchainNodeId'] = [
       '#type' => 'item',
-      '#description' => $blockchain_node_id,
+      '#description' => $blockchainNodeId,
       '#title' => $this->t('Blockchain node id'),
     ];
 
-    $form['blockchain_type'] = [
+    $form['blockchainType'] = [
       '#type' => 'select',
       '#title' => $this->t('Blockchain type'),
       '#options' => [
@@ -131,75 +129,71 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#description' => $this->t('Single means only one node, thus one blockchain database.'),
     ];
 
-    $form['pool_management'] = [
+    $form['poolManagement'] = [
       '#type' => 'select',
       '#title' => $this->t('Pool management'),
       '#options' => [
         BlockchainConfigServiceInterface::POOL_MANAGEMENT_MANUAL => $this->t('Manual'),
         BlockchainConfigServiceInterface::POOL_MANAGEMENT_CRON  => $this->t('CRON'),
       ],
-      '#default_value' => $poolManagement? $poolManagement :
-        BlockchainConfigServiceInterface::POOL_MANAGEMENT_MANUAL,
+      '#default_value' => $poolManagement,
       '#description' => $this->t('The way, pool queue will be managed.'),
     ];
 
-    $form['interval_pool'] = [
+    $form['intervalPool'] = [
       '#type' => 'number',
       '#title' => $this->t('Pool management interval'),
-      '#default_value' => BlockchainConfigServiceInterface::INTERVAL_DEFAULT,
+      '#default_value' => $intervalPool,
       '#required' => TRUE,
       '#min' => 1,
       '#description' => $this->t('Interval for pool management CRON job.'),
       '#states' => [
         'visible' => [
-          ':input[name="pool_management"]' => ['value' => BlockchainConfigServiceInterface::POOL_MANAGEMENT_CRON],
+          ':input[name="poolManagement"]' => ['value' => BlockchainConfigServiceInterface::POOL_MANAGEMENT_CRON],
         ],
       ],
     ];
 
-    $form['announce_management'] = [
+    $form['announceManagement'] = [
       '#type' => 'select',
       '#title' => $this->t('Announce management'),
       '#options' => [
         BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE => $this->t('Immediate'),
         BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON  => $this->t('CRON'),
       ],
-      '#default_value' => $announce_management? $announce_management :
-        BlockchainConfigServiceInterface::POOL_MANAGEMENT_MANUAL,
+      '#default_value' => $announceManagement,
       '#description' => $this->t('The way, announce queue will be managed.'),
     ];
 
-    $form['interval_announce'] = [
+    $form['intervalAnnounce'] = [
       '#type' => 'number',
       '#title' => $this->t('Announce management interval'),
-      '#default_value' => BlockchainConfigServiceInterface::INTERVAL_DEFAULT,
+      '#default_value' => $intervalAnnounce,
       '#required' => TRUE,
       '#min' => 1,
       '#description' => $this->t('Interval for announce management CRON job.'),
       '#states' => [
         'visible' => [
-          ':input[name="announce_management"]' => ['value' => BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON],
+          ':input[name="announceManagement"]' => ['value' => BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON],
         ],
       ],
     ];
 
-    $form['pof_position'] = [
+    $form['powPosition'] = [
       '#type' => 'select',
       '#title' => $this->t('Proof of work position'),
       '#options' => [
         BlockchainConfigServiceInterface::POF_POSITION_START => $this->t('Start'),
         BlockchainConfigServiceInterface::POF_POSITION_END  => $this->t('End'),
       ],
-      '#default_value' => $pof_position? $pof_position :
-        BlockchainConfigServiceInterface::POF_POSITION_START,
+      '#default_value' => $powPosition,
       '#description' => $this->t('Proof of work position in previous hash.'),
     ];
 
-    $form['pof_expression'] = [
+    $form['powExpression'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Proof of work expression'),
-      '#default_value' => $pof_expression? $pof_expression :
-        BlockchainConfigServiceInterface::POF_EXPRESSION,
+      '#default_value' => $powExpression,
       '#description' => $this->t('Proof of work expression in previous hash.'),
     ];
 
@@ -211,7 +205,7 @@ class BlockchainBlockSettingsForm extends FormBase {
       ],
     ];
 
-    if (!$this->blockchainService->getBlockchainBlockCount()) {
+    if ($this->blockchainService->blockchainIsEmpty()) {
       $form['actions']['regenerate_blockchain_id'] = [
         '#type' => 'button',
         '#executes_submit_callback' => TRUE,

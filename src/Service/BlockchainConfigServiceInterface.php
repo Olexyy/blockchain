@@ -21,6 +21,11 @@ interface BlockchainConfigServiceInterface {
   const POF_POSITION_START = 'start';
   const POF_POSITION_END = 'end';
   const POF_EXPRESSION = '00';
+  const KEYS = [
+    'blockchainType', 'blockchainId', 'blockchainNodeId', 'poolManagement',
+    'announceManagement', 'intervalPool', 'intervalAnnounce', 'powPosition',
+    'powExpression',
+  ];
 
   /**
    * Getter for unique identifier.
@@ -104,5 +109,120 @@ interface BlockchainConfigServiceInterface {
    *   Chaining.
    */
   public function setBlockchainType($blockchainType);
+
+  /**
+   * Getter for pool management.
+   *
+   * @return string
+   *   Pool management.
+   */
+  public function getPoolManagement();
+
+  /**
+   * Setter for pool management.
+   *
+   * @param string $poolManagement
+   *   Type of poll management.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setPoolManagement($poolManagement);
+
+  /**
+   * Getter for announce management.
+   *
+   * @return string
+   *   Announce management.
+   */
+  public function getAnnounceManagement();
+
+  /**
+   * Setter for announce management.
+   *
+   * @param string $announceManagement
+   *   Type of announce management.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setAnnounceManagement($announceManagement);
+
+  /**
+   * Getter for POW position.
+   *
+   * @return string
+   *   POW position.
+   */
+  public function getPowPosition();
+
+  /**
+   * Setter for POW position.
+   *
+   * @param string $powPosition
+   *   POW position.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setPowPosition($powPosition);
+
+  /**
+   * Getter for POW expression.
+   *
+   * @return string
+   *   Announce management.
+   */
+  public function getPowExpression();
+
+  /**
+   * Setter for POW expression.
+   *
+   * @param string $powExpression
+   *   POW expression.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setPowExpression($powExpression);
+
+  /**
+   * Getter for interval of pool management.
+   *
+   * @return string
+   *   Interval.
+   */
+  public function getIntervalPool();
+
+  /**
+   * Setter for interval of pool management.
+   *
+   * @param string $intervalPool
+   *   Interval.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setIntervalPool($intervalPool);
+
+  /**
+   * Getter for interval of announce management.
+   *
+   * @return string
+   *   Interval.
+   */
+  public function getIntervalAnnounce();
+
+  /**
+   * Setter for interval of announce management.
+   *
+   * @param string $intervalAnnounce
+   *   Interval.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setIntervalAnnounce($intervalAnnounce);
+
 
 }

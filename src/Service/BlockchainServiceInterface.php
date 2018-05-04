@@ -44,4 +44,12 @@ interface BlockchainServiceInterface {
    */
   public function getBlockchainBlockCount();
 
+  /**
+   * Check if blockchain is empty.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function blockchainIsEmpty();
+
 }
