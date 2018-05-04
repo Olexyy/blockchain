@@ -73,6 +73,10 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
       ->setLabel(t('Block data'))
       ->setDescription(t('Serialized block data.'));
 
+    $fields['data_provider'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Data provider'))
+      ->setDescription(t('Provider for data.'));
+
     $fields['timestamp'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));
