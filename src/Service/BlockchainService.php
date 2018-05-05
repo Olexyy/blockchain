@@ -4,6 +4,7 @@ namespace Drupal\blockchain\Service;
 
 
 use Drupal\blockchain\Entity\BlockchainBlock;
+use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -114,6 +115,28 @@ class BlockchainService implements BlockchainServiceInterface {
     }
 
     return $list;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainDataHandler(BlockchainBlockInterface $block) {
+    $pluginId = $this->getConfigService()->getConfig()->get('dataHandler');
+    try {
+      return $this->blockchainDataManager->createInstance($pluginId, [
+        'blockchainBlock' => $block,
+      ]);
+    }
+    catch (\Exception $exception) {
+      return NULL;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainDataManager() {
+    return $this->blockchainDataManager;
   }
 
 }

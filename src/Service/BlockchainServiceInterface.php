@@ -4,6 +4,8 @@ namespace Drupal\blockchain\Service;
 
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
+use Drupal\blockchain\Plugin\BlockchainDataInterface;
+use Drupal\blockchain\Plugin\BlockchainDataManager;
 
 /**
  * Interface BlockchainServiceInterface.
@@ -59,5 +61,23 @@ interface BlockchainServiceInterface {
    *   Options compatible array.
    */
   public function getBlockchainDataList();
+
+  /**
+   * Getter for blockchain data handler.
+   *
+   * @param BlockchainBlockInterface $block
+   *   Block to be handled.
+   *
+   * @return BlockchainDataInterface
+   *   Given handler.
+   */
+  public function getBlockchainDataHandler(BlockchainBlockInterface $block);
+
+  /**
+   * Getter for blockchain data manager.
+   *
+   * @return BlockchainDataManager
+   */
+  public function getBlockchainDataManager();
 
 }

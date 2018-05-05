@@ -45,14 +45,14 @@ class SimpleBlockchainData extends BlockchainDataBase {
 
     return [
       static::KEY => [
-        '#type' => 'textfield',
+        '#type' => 'textarea',
         '#required' => TRUE,
         '#title' => $this->t('Data'),
       ]
     ];
   }
 
-  public function extractValue(FormStateInterface $formState) {
+  public function setSubmitData(FormStateInterface $formState) {
 
     if ($formState->hasValue(static::KEY)) {
       $this->setData($formState->getValue(static::KEY));

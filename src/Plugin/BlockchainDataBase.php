@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Plugin;
 
 use Drupal\blockchain\Entity\BlockchainBlock;
+use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
@@ -54,13 +55,14 @@ abstract class BlockchainDataBase extends PluginBase implements
                               $plugin_definition, EntityTypeManager $entityTypeManager,
                               Client $httpClient, RequestStack $requestStack,
                               LoggerChannelFactory $loggerFactory) {
+
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entityTypeManager;
     $this->httpClient = $httpClient;
     $this->requestStack = $requestStack;
     $this->loggerFactory = $loggerFactory;
     if (isset($configuration['blockchainBlock']) &&
-      $configuration['blockchainBlock'] instanceof BlockchainBlock) {
+      $configuration['blockchainBlock'] instanceof BlockchainBlockInterface) {
       $this->blockchainBlock =  $configuration['blockchainBlock'];
     }
   }

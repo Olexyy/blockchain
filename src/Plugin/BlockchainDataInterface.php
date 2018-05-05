@@ -45,7 +45,7 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
    * @param FormStateInterface $formState
    *   Form state.
    */
-  public function extractValue(FormStateInterface $formState);
+  public function setSubmitData(FormStateInterface $formState);
 
   /**
    * Getter for element view.
