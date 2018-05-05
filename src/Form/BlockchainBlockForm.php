@@ -85,7 +85,7 @@ class BlockchainBlockForm extends ContentEntityForm {
     $entity = $this->entity;
     $dataHandler = $this->blockchainService->getBlockchainDataHandler($entity);
     $dataHandler->setSubmitData($form_state);
-    // Set to queue and process it conditionally.
+    // Set to queue (pool) and process it conditionally.
     //$status = parent::save($form, $form_state);
     $status = NULL;
     switch ($status) {
