@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Class BlockchainDataInterface.
@@ -29,5 +30,32 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
    *   Some object.
    */
   public function getData();
+
+  /**
+   * Getter for form widget.
+   *
+   * @return array
+   *   Render array.
+   */
+  public function getWidget();
+
+  /**
+   * Extracts and submits value.
+   *
+   * @param FormStateInterface $formState
+   *   Form state.
+   */
+  public function extractValue(FormStateInterface $formState);
+
+  /**
+   * Getter for element view.
+   *
+   * @param mixed $data
+   *   Anything.
+   *
+   * @return array
+   *   Render array.
+   */
+  public function getView($data);
 
 }
