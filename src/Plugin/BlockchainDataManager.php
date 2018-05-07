@@ -28,4 +28,5 @@ class BlockchainDataManager extends DefaultPluginManager {
     $this->alterInfo('blockchain_data_plugin_info');
     $this->setCacheBackend($cache_backend, 'blockchain_data_plugins');
   }
+
 }

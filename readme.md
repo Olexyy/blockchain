@@ -35,8 +35,8 @@ ____Notes about blockchain implementation.____
     - immediate;
   - interval CRON announce;
   - interval CRON block pool;
-  - pof_position;
-  - pof_expression;
+  - pow_position;
+  - pow_expression;
   
   TODOS:
   - blockchain API service (protocol)

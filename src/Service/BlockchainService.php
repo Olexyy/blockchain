@@ -2,10 +2,10 @@
 
 namespace Drupal\blockchain\Service;
 
-
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
+use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -60,6 +60,7 @@ class BlockchainService implements BlockchainServiceInterface {
    * {@inheritdoc}
    */
   public function getConfigService() {
+
     return $this->blockchainServiceSettings;
   }
 
@@ -67,11 +68,14 @@ class BlockchainService implements BlockchainServiceInterface {
    * {@inheritdoc}
    */
   public function getGenericBlock() {
+
     $block = BlockchainBlock::create();
-    $block->setHash('000');
+    $block->setHash(Util::hash('111'));
     $block->setTimestamp(time());
-    $block->setData('Generic block');
-    $block->setAuthor('me');
+    $block->setNonce('111');
+    $block->setAuthor($this->getConfigService()->getBlockchainNodeId());
+    $this->getBlockchainDataHandler($block)->setData('Generic block.');
+
     return $block;
   }
 
@@ -79,8 +83,10 @@ class BlockchainService implements BlockchainServiceInterface {
    * {@inheritdoc}
    */
   public function getBlockchainBlockCount() {
+
     return $this->getBlockchainBlockStorage()
       ->getQuery()
+      ->accessCheck(FALSE)
       ->count()
       ->execute();
   }
@@ -88,11 +94,29 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function getLastBlockchainBlock() {
+
+    $blockId = $this->getBlockchainBlockStorage()
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->sort('id', 'DESC')
+      ->range(0,1)
+      ->execute();
+    if ($blockId) {
+      return BlockchainBlock::load(current($blockId));
+    }
+
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getBlockchainBlockStorage() {
+
     try {
       return $this->entityTypeManager->getStorage('blockchain_block');
-    }
-    catch (\Exception $exception) {
+    } catch (\Exception $exception) {
       return NULL;
     }
   }
@@ -101,6 +125,7 @@ class BlockchainService implements BlockchainServiceInterface {
    * {@inheritdoc}
    */
   public function blockchainIsEmpty() {
+
     return !$this->getBlockchainBlockCount();
   }
 
@@ -121,13 +146,13 @@ class BlockchainService implements BlockchainServiceInterface {
    * {@inheritdoc}
    */
   public function getBlockchainDataHandler(BlockchainBlockInterface $block) {
+
     $pluginId = $this->getConfigService()->getConfig()->get('dataHandler');
     try {
       return $this->blockchainDataManager->createInstance($pluginId, [
         'blockchainBlock' => $block,
       ]);
-    }
-    catch (\Exception $exception) {
+    } catch (\Exception $exception) {
       return NULL;
     }
   }
@@ -135,8 +160,23 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlockchainDataManager() {
-    return $this->blockchainDataManager;
+  public function hashIsValid($hash) {
+
+    $powPosition = $this->getConfigService()->getPowPosition();
+    $powExpression = $this->getConfigService()->getPowExpression();
+    $length = strlen($powExpression);
+    if ($powPosition === BlockchainConfigServiceInterface::POW_POSITION_START) {
+      if (substr($hash, 0, $length) === $powExpression) {
+        return TRUE;
+      }
+    }
+    else {
+      if (substr($hash, -$length) === $powExpression) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
 }

@@ -5,7 +5,6 @@ namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
-use Drupal\blockchain\Plugin\BlockchainDataManager;
 
 /**
  * Interface BlockchainServiceInterface.
@@ -74,10 +73,22 @@ interface BlockchainServiceInterface {
   public function getBlockchainDataHandler(BlockchainBlockInterface $block);
 
   /**
-   * Getter for blockchain data manager.
+   * Validates hash according to given Pow rules.
    *
-   * @return BlockchainDataManager
+   * @param string $hash
+   *   Hash.
+   *
+   * @return bool
+   *   Test result.
    */
-  public function getBlockchainDataManager();
+  public function hashIsValid($hash);
+
+  /**
+   * Getter for last block if any.
+   *
+   * @return BlockchainBlockInterface|null
+   *   Blockchain block if any.
+   */
+  public function getLastBlockchainBlock();
 
 }

@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Plugin\BlockchainData;
 
 use Drupal\blockchain\Plugin\BlockchainDataBase;
+use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -61,10 +62,23 @@ class SimpleBlockchainData extends BlockchainDataBase {
   }
 
   public function getView($data) {
+
     return [
       '#type' => 'item',
       '#title' => $this->t('Data'),
       '#description' => $data,
     ];
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getHash() {
+
+    return Util::hash(
+    $this->blockchainBlock->getData().
+    $this->blockchainBlock->getTimestamp().
+    $this->blockchainBlock->getNonce());
+  }
+
 }

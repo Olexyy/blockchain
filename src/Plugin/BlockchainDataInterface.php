@@ -58,4 +58,12 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
    */
   public function getView($data);
 
+  /**
+   * Getter for block hash.
+   *
+   * @return string
+   *   Hash, provided by Util class.
+   */
+  public function getHash();
+
 }

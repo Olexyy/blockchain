@@ -18,9 +18,9 @@ interface BlockchainConfigServiceInterface {
   const ANNOUNCE_MANAGEMENT_CRON = 'cron';
   const ANNOUNCE_MANAGEMENT_IMMEDIATE = 'immediate';
   const INTERVAL_DEFAULT = 60 * 10;
-  const POF_POSITION_START = 'start';
-  const POF_POSITION_END = 'end';
-  const POF_EXPRESSION = '00';
+  const POW_POSITION_START = 'start';
+  const POW_POSITION_END = 'end';
+  const POW_EXPRESSION = '00';
   const DATA_HANDLER = 'simple';
   const KEYS = [
     'blockchainType', 'blockchainId', 'blockchainNodeId', 'poolManagement',

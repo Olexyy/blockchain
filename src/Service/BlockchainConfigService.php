@@ -210,7 +210,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   public function getPowPosition() {
 
     if(!($powPosition = $this->getConfig()->get('powPosition'))) {
-      $powPosition = static::POF_POSITION_START;
+      $powPosition = static::POW_POSITION_START;
       $this->setPowPosition($powPosition);
     }
 

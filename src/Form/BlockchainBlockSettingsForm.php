@@ -183,8 +183,8 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#type' => 'select',
       '#title' => $this->t('Proof of work position'),
       '#options' => [
-        BlockchainConfigServiceInterface::POF_POSITION_START => $this->t('Start'),
-        BlockchainConfigServiceInterface::POF_POSITION_END  => $this->t('End'),
+        BlockchainConfigServiceInterface::POW_POSITION_START => $this->t('Start'),
+        BlockchainConfigServiceInterface::POW_POSITION_END  => $this->t('End'),
       ],
       '#default_value' => $powPosition,
       '#description' => $this->t('Proof of work position in previous hash.'),
