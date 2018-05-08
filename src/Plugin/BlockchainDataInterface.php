@@ -12,14 +12,19 @@ use Drupal\Core\Form\FormStateInterface;
  */
 interface BlockchainDataInterface extends PluginInspectionInterface {
 
+  const LOGGER_CHANNEL = 'blockchain_queue';
+  const QUEUE = 'blockchain_queue';
+  const DATA_KEY = 'blockchainBlockData';
+  const BLOCK_KEY = 'blockchainBlock';
+
   /**
    * Setter for data.
    *
    * @param mixed $data
-   *   SOme dat to be set.
+   *   Some data to be set.
    *
-   * @return string|false
-   *   Serialized data or false.
+   * @return bool
+   *   Execution result.
    */
   public function setData($data);
 
@@ -32,22 +37,6 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
   public function getData();
 
   /**
-   * Getter for form widget.
-   *
-   * @return array
-   *   Render array.
-   */
-  public function getWidget();
-
-  /**
-   * Extracts and sets to block submit value.
-   *
-   * @param FormStateInterface $formState
-   *   Form state.
-   */
-  public function setSubmitData(FormStateInterface $formState);
-
-  /**
    * Extracts and returns submit value.
    *
    * @param FormStateInterface $formState
@@ -57,6 +46,14 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
    *   Serialized value expected.
    */
   public function getSubmitData(FormStateInterface $formState);
+
+  /**
+   * Getter for form widget.
+   *
+   * @return array
+   *   Render array.
+   */
+  public function getWidget();
 
   /**
    * Getter for element view.

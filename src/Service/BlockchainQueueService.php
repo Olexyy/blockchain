@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Service;
 
+use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
@@ -89,7 +90,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   public function addItem($blockData) {
 
     $item = (object) [
-      'blockData' => $blockData,
+      BlockchainDataInterface::DATA_KEY => $blockData,
     ];
     $this->getPool()->createItem($item);
   }

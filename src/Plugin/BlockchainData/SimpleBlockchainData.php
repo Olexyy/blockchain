@@ -3,7 +3,6 @@
 namespace Drupal\blockchain\Plugin\BlockchainData;
 
 use Drupal\blockchain\Plugin\BlockchainDataBase;
-use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -27,7 +26,7 @@ class SimpleBlockchainData extends BlockchainDataBase {
   public function setData($data) {
 
     if (is_string($data)) {
-      $this->blockchainBlock->setData($data);
+      $this->blockchainBlock->setData($this->dataToSleep($data));
       return TRUE;
     }
 
@@ -39,7 +38,23 @@ class SimpleBlockchainData extends BlockchainDataBase {
    */
   public function getData() {
 
-    return $this->blockchainBlock->getData();
+    if ($data = $this->blockchainBlock->getData()) {
+      $this->dataWakeUp($this->blockchainBlock->getData());
+    }
+
+    return '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSubmitData(FormStateInterface $formState) {
+
+    if ($formState->hasValue(static::KEY)) {
+      return $this->dataToSleep($formState->getValue(static::KEY));
+    }
+
+    return '';
   }
 
   /**
@@ -54,29 +69,6 @@ class SimpleBlockchainData extends BlockchainDataBase {
         '#title' => $this->t('Data'),
       ]
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setSubmitData(FormStateInterface $formState) {
-
-    if ($formState->hasValue(static::KEY)) {
-      $this->setData($formState->getValue(static::KEY));
-    }
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSubmitData(FormStateInterface $formState) {
-
-    if ($formState->hasValue(static::KEY)) {
-      return $formState->getValue(static::KEY);
-    }
-
-    return '';
   }
 
   /**

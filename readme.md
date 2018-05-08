@@ -39,6 +39,7 @@ ____Notes about blockchain implementation.____
   - pow_expression;
   
   TODOS:
-  - blockchain API service (protocol)
-  - blockchain node management (service)
-  - business data as plugins (selected in settings) dynamic OK
+  - blockchain API service (protocol);
+  - blockchain node management (service);
+  - list and admin management for blockchain;
+  - business data as plugins (selected in settings) dynamic ~;

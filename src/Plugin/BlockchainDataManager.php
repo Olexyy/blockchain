@@ -45,4 +45,22 @@ class BlockchainDataManager extends DefaultPluginManager {
     return $list;
   }
 
+  /**
+   * Extracts plugin id from string data.
+   *
+   * @param string $data
+   *   Given data.
+   *
+   * @return string|null
+   *   Plugin name if any.
+   */
+  public function extractPluginId($data) {
+    if ($parsed = explode('::', $data)) {
+      if ($this->hasDefinition($parsed[0])) {
+        return $parsed[0];
+      }
+    }
+    return NULL;
+  }
+
 }

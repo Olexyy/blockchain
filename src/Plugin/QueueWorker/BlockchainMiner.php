@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Plugin\QueueWorker;
 
 use Drupal\blockchain\Entity\BlockchainBlock;
+use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Logger\LoggerChannelFactory;
@@ -77,9 +78,13 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function processItem($data) {
-    $blockData = isset($data->blockData) && $data->blockData ? $data->blockData : NULL;
+    $blockData = property_exists($data, BlockchainDataInterface::DATA_KEY) ?
+      $data->{BlockchainDataInterface::DATA_KEY} : NULL;
     if (!$blockData) {
       throw new \Exception('Missing block data.');
+    }
+    if (!$this->blockchainService->getBlockchainDataManager()->extractPluginId($blockData)) {
+      throw new \Exception('Invalid data handler plugin id.');
     }
     if (!$lastBlock = $this->blockchainService->getStorageService()->getLastBlock()) {
       throw new \Exception('Missing generic block.');
@@ -91,7 +96,7 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
       ->getConfigService()->getBlockchainNodeId());
     $block->setNonce($newNonce);
     $block->setPreviousHash($lastBlock->getHash());
-    $this->blockchainService->getBlockDataHandler($block)->setData($blockData);
+    $block->setData($blockData);
     $block->setTimestamp(time());
     $block->save();
     // Announce --->>>>>.

@@ -18,9 +18,6 @@ use GuzzleHttp\Client;
 abstract class BlockchainDataBase extends PluginBase implements
   BlockchainDataInterface, ContainerFactoryPluginInterface {
 
-  const LOGGER_CHANNEL = 'blockchain';
-  const QUEUE = 'importer_queue';
-
   /**
    * Blockchain block.
    *
@@ -61,9 +58,9 @@ abstract class BlockchainDataBase extends PluginBase implements
     $this->httpClient = $httpClient;
     $this->requestStack = $requestStack;
     $this->loggerFactory = $loggerFactory;
-    if (isset($configuration['blockchainBlock']) &&
-      $configuration['blockchainBlock'] instanceof BlockchainBlockInterface) {
-      $this->blockchainBlock =  $configuration['blockchainBlock'];
+    if (isset($configuration[static::BLOCK_KEY]) &&
+      $configuration[static::BLOCK_KEY] instanceof BlockchainBlockInterface) {
+      $this->blockchainBlock =  $configuration[static::BLOCK_KEY];
     }
   }
 
@@ -91,6 +88,39 @@ abstract class BlockchainDataBase extends PluginBase implements
    */
   protected function getLogger() {
     return $this->loggerFactory->get(self::LOGGER_CHANNEL);
+  }
+
+  /**
+   * Prepares data before persistence.
+   *
+   * @param string $data
+   *    Raw data.
+   *
+   * @return string
+   *   Prepared data string.
+   */
+  protected function dataToSleep($data) {
+
+    return $this->getPluginId() . '::' . $data;
+  }
+
+  /**
+   * Prepares data after reading.
+   *
+   * @param string $data
+   *    Raw data.
+   *
+   * @return string
+   *   Prepared data string.
+   */
+  protected function dataWakeUp($data) {
+
+    $prefix = $this->getPluginId() . '::';
+    if (strpos($data, $prefix) === 0) {
+      return substr($data, strlen($prefix)+1, strlen($data));
+    }
+
+    return '';
   }
 
 }
