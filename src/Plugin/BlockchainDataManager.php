@@ -29,4 +29,20 @@ class BlockchainDataManager extends DefaultPluginManager {
     $this->setCacheBackend($cache_backend, 'blockchain_data_plugins');
   }
 
+  /**
+   * Manager plugins as list.
+   *
+   * @return array
+   *   Options array.
+   */
+  public function getList() {
+
+    $list = [];
+    foreach($this->getDefinitions() as $plugin) {
+      $list[$plugin['id']] = $plugin['label'];
+    }
+
+    return $list;
+  }
+
 }

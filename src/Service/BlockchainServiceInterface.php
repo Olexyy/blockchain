@@ -2,9 +2,9 @@
 
 namespace Drupal\blockchain\Service;
 
-
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
+use Drupal\blockchain\Plugin\BlockchainDataManager;
 
 /**
  * Interface BlockchainServiceInterface.
@@ -12,14 +12,6 @@ use Drupal\blockchain\Plugin\BlockchainDataInterface;
  * @package Drupal\blockchain\Service
  */
 interface BlockchainServiceInterface {
-
-  /**
-   * Getter for generic block.
-   *
-   * @return BlockchainBlockInterface
-   *   Given block.
-   */
-  function getGenericBlock();
 
   /**
    * Getter for settings service.
@@ -30,36 +22,28 @@ interface BlockchainServiceInterface {
   public function getConfigService();
 
   /**
-   * Getter for blockchain block storage.
+   * Getter for blockchain storage service.
    *
-   * @return \Drupal\Core\Entity\EntityStorageInterface|null
-   *   Storage object.
+   * @return BlockchainStorageServiceInterface
+   *   Service object.
    */
-  public function getBlockchainBlockStorage();
+  public function getStorageService();
 
   /**
-   * Getter for blockchain blocks count.
+   * Getter for generic block.
    *
-   * @return int
-   *   Number of items.
+   * @return BlockchainBlockInterface
+   *   Given block.
    */
-  public function getBlockchainBlockCount();
+  function getGenericBlock();
 
   /**
-   * Check if blockchain is empty.
+   * Blockchain data manager.
    *
-   * @return bool
-   *   Test result.
+   * @return BlockchainDataManager
+   *   Service.
    */
-  public function blockchainIsEmpty();
-
-  /**
-   * Getter for options of blockchain data plugins.
-   *
-   * @return array
-   *   Options compatible array.
-   */
-  public function getBlockchainDataList();
+  public function getBlockchainDataManager();
 
   /**
    * Getter for blockchain data handler.
@@ -82,13 +66,5 @@ interface BlockchainServiceInterface {
    *   Test result.
    */
   public function hashIsValid($hash);
-
-  /**
-   * Getter for last block if any.
-   *
-   * @return BlockchainBlockInterface|null
-   *   Blockchain block if any.
-   */
-  public function getLastBlockchainBlock();
 
 }

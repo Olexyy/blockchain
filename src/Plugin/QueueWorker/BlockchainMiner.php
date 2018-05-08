@@ -81,7 +81,7 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
     if (!$blockData) {
       throw new \Exception('Missing block data.');
     }
-    if (!$lastBlock = $this->blockchainService->getLastBlockchainBlock()) {
+    if (!$lastBlock = $this->blockchainService->getStorageService()->getLastBlock()) {
       throw new \Exception('Missing generic block.');
     }
     $nonce = $lastBlock->getNonce();

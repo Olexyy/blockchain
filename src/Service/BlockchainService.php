@@ -6,7 +6,6 @@ use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\blockchain\Utils\Util;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Class BlockchainService.
@@ -23,13 +22,6 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainServiceSettings;
 
   /**
-   * Entity type manager.
-   *
-   * @var EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
    * Blockchain data manager.
    *
    * @var BlockchainDataManager
@@ -37,23 +29,37 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainDataManager;
 
   /**
+   * Blockchain storage service.
+   *
+   * @var BlockchainStorageServiceInterface
+   */
+  protected $blockchainStorageService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
    *   Given service.
-   * @param EntityTypeManagerInterface $entityTypeManager
+   * @param BlockchainStorageServiceInterface $blockchainStorageService
    *   Given service.
    * @param BlockchainDataManager $blockchainDataManager
    *   Given blockchain data manager.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
-    EntityTypeManagerInterface $entityTypeManager,
+    BlockchainStorageServiceInterface $blockchainStorageService,
     BlockchainDataManager $blockchainDataManager) {
 
-    $this->entityTypeManager = $entityTypeManager;
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
+    $this->blockchainStorageService = $blockchainStorageService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getStorageService() {
+    return $this->blockchainStorageService;
   }
 
   /**
@@ -82,64 +88,8 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlockchainBlockCount() {
-
-    return $this->getBlockchainBlockStorage()
-      ->getQuery()
-      ->accessCheck(FALSE)
-      ->count()
-      ->execute();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getLastBlockchainBlock() {
-
-    $blockId = $this->getBlockchainBlockStorage()
-      ->getQuery()
-      ->accessCheck(FALSE)
-      ->sort('id', 'DESC')
-      ->range(0,1)
-      ->execute();
-    if ($blockId) {
-      return BlockchainBlock::load(current($blockId));
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlockchainBlockStorage() {
-
-    try {
-      return $this->entityTypeManager->getStorage('blockchain_block');
-    } catch (\Exception $exception) {
-      return NULL;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function blockchainIsEmpty() {
-
-    return !$this->getBlockchainBlockCount();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlockchainDataList() {
-
-    $list = [];
-    foreach($this->blockchainDataManager->getDefinitions() as $plugin) {
-      $list[$plugin['id']] = $plugin['label'];
-    }
-
-    return $list;
+  public function getBlockchainDataManager() {
+    return $this->blockchainDataManager;
   }
 
   /**

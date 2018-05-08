@@ -201,7 +201,7 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#type' => 'select',
       '#required' => TRUE,
       '#title' => $this->t('Blockchain data handler.'),
-      '#options' => $this->blockchainService->getBlockchainDataList(),
+      '#options' => $this->blockchainService->getBlockchainDataManager()->getList(),
       '#default_value' => $this->blockchainService->getConfigService()->getConfig()->get('dataHandler'),
       '#description' => $this->t('Select data handler for given blockchain.'),
     ];
@@ -214,7 +214,7 @@ class BlockchainBlockSettingsForm extends FormBase {
       ],
     ];
 
-    if ($this->blockchainService->blockchainIsEmpty()) {
+    if (!$this->blockchainService->getStorageService()->anyBlock()) {
       $form['actions']['regenerate_blockchain_id'] = [
         '#type' => 'button',
         '#executes_submit_callback' => TRUE,
