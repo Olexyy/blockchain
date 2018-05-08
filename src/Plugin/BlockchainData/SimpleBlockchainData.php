@@ -39,7 +39,7 @@ class SimpleBlockchainData extends BlockchainDataBase {
   public function getData() {
 
     if ($data = $this->blockchainBlock->getData()) {
-      $this->dataWakeUp($this->blockchainBlock->getData());
+      return $this->dataWakeUp($this->blockchainBlock->getData());
     }
 
     return '';
@@ -67,6 +67,7 @@ class SimpleBlockchainData extends BlockchainDataBase {
         '#type' => 'textarea',
         '#required' => TRUE,
         '#title' => $this->t('Data'),
+        '#default_value' => $this->getData(),
       ]
     ];
   }

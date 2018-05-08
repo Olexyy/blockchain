@@ -12,8 +12,6 @@ delete blockchain block entities:
 edit blockchain block entities:
   title: 'Edit Blockchain Block entities'
 
-view published blockchain block entities:
-  title: 'View published Blockchain Block entities'
+view blockchain block entities:
+  title: 'View Blockchain Block entities'
 
-view unpublished blockchain block entities:
-  title: 'View unpublished Blockchain Block entities'

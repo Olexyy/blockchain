@@ -21,10 +21,7 @@ class BlockchainBlockAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\blockchain\Entity\BlockchainBlockInterface $entity */
     switch ($operation) {
       case 'view':
-        if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished blockchain block entities');
-        }
-        return AccessResult::allowedIfHasPermission($account, 'view published blockchain block entities');
+        return AccessResult::allowedIfHasPermission($account, 'view blockchain block entities');
 
       case 'update':
         return AccessResult::allowedIfHasPermission($account, 'edit blockchain block entities');
