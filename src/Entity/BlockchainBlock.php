@@ -176,9 +176,23 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
   public function getHash() {
 
     return Util::hash(
+      $this->getAuthor() .
+      $this->getPreviousHash().
       $this->getData().
       $this->getTimestamp().
       $this->getNonce());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMiningString() {
+
+    return
+      $this->getAuthor().
+      $this->getPreviousHash().
+      $this->getData().
+      $this->getTimestamp();
   }
 
 }

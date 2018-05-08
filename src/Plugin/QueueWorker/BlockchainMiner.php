@@ -89,34 +89,34 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
     if (!$lastBlock = $this->blockchainService->getStorageService()->getLastBlock()) {
       throw new \Exception('Missing generic block.');
     }
-    $nonce = $lastBlock->getNonce();
-    $newNonce = $this->mine($nonce);
     $block = BlockchainBlock::create();
-    $block->setAuthor($this->blockchainService
-      ->getConfigService()->getBlockchainNodeId());
-    $block->setNonce($newNonce);
     $block->setPreviousHash($lastBlock->getHash());
     $block->setData($blockData);
+    $block->setAuthor($this->blockchainService
+      ->getConfigService()->getBlockchainNodeId());
     $block->setTimestamp(time());
+    $newNonce = $this->mine($block->getMiningString());
+    $block->setNonce($newNonce);
+
     $block->save();
     // Announce --->>>>>.
   }
 
   /**
+   * Mining procedure.
    *
-   *
-   * @param $lastNonce
-   *   Last nonce.
+   * @param string $miningString
+   *   Given value.
    *
    * @return string
    */
-  protected function mine($lastNonce) {
+  protected function mine($miningString) {
 
     $nonce = 0;
-    $result = Util::hash($lastNonce.$nonce);
+    $result = Util::hash($miningString.$nonce);
     while (!$this->blockchainService->hashIsValid($result)) {
       $nonce++;
-      $result = Util::hash($lastNonce.$nonce);
+      $result = Util::hash($miningString.$nonce);
     }
 
     return $nonce;

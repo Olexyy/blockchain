@@ -121,7 +121,7 @@ class BlockchainBlockForm extends ContentEntityForm {
    * @param $context
    *   Batch context.
    */
-  public static function processBatch($data = [], &$context) {
+  public static function processBatch(&$context) {
 
     $blockchainService = BlockchainService::instance();
     $message = t('Mining is in progress...');
