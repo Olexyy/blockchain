@@ -11,7 +11,7 @@ namespace Drupal\blockchain\Utils;
 class Util {
 
   public static function hash($string) {
-    return hash('sha512', $string);
+    return hash('sha256', $string);
   }
 
 }
