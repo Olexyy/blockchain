@@ -3,7 +3,6 @@
 namespace Drupal\blockchain\Service;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\Core\Queue\QueueWorkerInterface;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
 use Drupal\Core\Queue\SuspendQueueException;
 
@@ -56,27 +55,21 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   }
 
   /**
-   * Getter for logger.
-   *
-   * @return \Drupal\Core\Logger\LoggerChannelInterface
-   *   Logger.
+   * {@inheritdoc}
    */
   public function getLogger() {
     return $this->loggerFactory->get(static::LOGGER_CHANNEL);
   }
 
   /**
-   * Gets blockchain queue.
-   *
-   * @return \Drupal\Core\Queue\QueueInterface
-   *   Queue object.
+   * {@inheritdoc}
    */
   public function getPool() {
     return $this->queueFactory->get(static::POOL_NAME);
   }
 
   /**
-   * @return null|QueueWorkerInterface
+   * {@inheritdoc}
    */
   public function getMiner() {
     try {
@@ -87,10 +80,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   }
 
   /**
-   * Queues block data to queue.
-   *
-   * @param mixed $blockData
-   *   Given block data to be queued.
+   * {@inheritdoc}
    */
   public function addBlock($blockData) {
     $item = (object) [
@@ -100,12 +90,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   }
 
   /**
-   * Processes mining.
-   *
-   * @param int $limit
-   *   Limit of items to be processed.
-   * @param int $leaseTime
-   *   Time during which item will be processed.
+   * {@inheritdoc}
    */
   public function doMining($limit = 0, $leaseTime = 3600) {
 
