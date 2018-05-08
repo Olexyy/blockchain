@@ -71,6 +71,10 @@ class BlockchainBlockSettingsForm extends FormBase {
       elseif ($element['#context'] == 'regenerate_blockchain_node_id') {
         $this->blockchainService->getConfigService()->setBlockchainNodeId();
       }
+      elseif ($element['#context'] == 'put_generic_block') {
+        $genericBlock = $this->blockchainService->getGenericBlock();
+        $genericBlock->save();
+      }
     }
     else {
       foreach (BlockchainConfigServiceInterface::KEYS as $key) {
@@ -105,6 +109,7 @@ class BlockchainBlockSettingsForm extends FormBase {
     $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
     $intervalPool = $this->blockchainService->getConfigService()->getIntervalPool();
     $intervalAnnounce = $this->blockchainService->getConfigService()->getIntervalAnnounce();
+    $anyBlock = $this->blockchainService->getStorageService()->anyBlock();
 
     $form['blockchainId'] = [
       '#type' => 'item',
@@ -180,6 +185,7 @@ class BlockchainBlockSettingsForm extends FormBase {
     ];
 
     $form['powPosition'] = [
+      '#disabled' => $anyBlock,
       '#type' => 'select',
       '#title' => $this->t('Proof of work position'),
       '#options' => [
@@ -191,6 +197,7 @@ class BlockchainBlockSettingsForm extends FormBase {
     ];
 
     $form['powExpression'] = [
+      '#disabled' => $anyBlock,
       '#type' => 'textfield',
       '#title' => $this->t('Proof of work expression'),
       '#default_value' => $powExpression,
@@ -198,6 +205,7 @@ class BlockchainBlockSettingsForm extends FormBase {
     ];
 
     $form['dataHandler'] = [
+      '#disabled' => $anyBlock,
       '#type' => 'select',
       '#required' => TRUE,
       '#title' => $this->t('Blockchain data handler.'),
@@ -214,7 +222,7 @@ class BlockchainBlockSettingsForm extends FormBase {
       ],
     ];
 
-    if (!$this->blockchainService->getStorageService()->anyBlock()) {
+    if (!$anyBlock) {
       $form['actions']['regenerate_blockchain_id'] = [
         '#type' => 'button',
         '#executes_submit_callback' => TRUE,
@@ -226,6 +234,12 @@ class BlockchainBlockSettingsForm extends FormBase {
         '#executes_submit_callback' => TRUE,
         '#value' => $this->t('Regenerate blockchain node id'),
         '#context' => 'regenerate_blockchain_node_id',
+      ];
+      $form['actions']['put_generic_block'] = [
+        '#type' => 'button',
+        '#executes_submit_callback' => TRUE,
+        '#value' => $this->t('Put generic block'),
+        '#context' => 'put_generic_block',
       ];
     }
 

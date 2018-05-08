@@ -30,6 +30,14 @@ interface BlockchainServiceInterface {
   public function getStorageService();
 
   /**
+   * Blockchain queue service.
+   *
+   * @return BlockchainQueueServiceInterface
+   *   Service object.
+   */
+  public function getQueueService();
+
+  /**
    * Getter for generic block.
    *
    * @return BlockchainBlockInterface
@@ -54,7 +62,7 @@ interface BlockchainServiceInterface {
    * @return BlockchainDataInterface
    *   Given handler.
    */
-  public function getBlockchainDataHandler(BlockchainBlockInterface $block);
+  public function getBlockDataHandler(BlockchainBlockInterface $block);
 
   /**
    * Validates hash according to given Pow rules.
@@ -66,5 +74,13 @@ interface BlockchainServiceInterface {
    *   Test result.
    */
   public function hashIsValid($hash);
+
+  /**
+   * Static call for service.
+   *
+   * @return BlockchainServiceInterface
+   *   Service instance.
+   */
+  public static function instance();
 
 }

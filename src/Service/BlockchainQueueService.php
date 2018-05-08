@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\blockchain\Service;
+
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
@@ -58,6 +59,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
    * {@inheritdoc}
    */
   public function getLogger() {
+
     return $this->loggerFactory->get(static::LOGGER_CHANNEL);
   }
 
@@ -65,6 +67,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
    * {@inheritdoc}
    */
   public function getPool() {
+
     return $this->queueFactory->get(static::POOL_NAME);
   }
 
@@ -72,6 +75,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
    * {@inheritdoc}
    */
   public function getMiner() {
+
     try {
       return $this->queueWorkerManager->createInstance(static::POOL_NAME);
     } catch (\Exception $exception) {
@@ -82,7 +86,8 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function addBlock($blockData) {
+  public function addItem($blockData) {
+
     $item = (object) [
       'blockData' => $blockData,
     ];
@@ -110,6 +115,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
         }
       }
     }
+    return $i;
   }
 
 }

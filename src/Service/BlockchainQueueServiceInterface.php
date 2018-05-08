@@ -42,7 +42,7 @@ interface BlockchainQueueServiceInterface {
    * @param mixed $blockData
    *   Given block data to be queued.
    */
-  public function addBlock($blockData);
+  public function addItem($blockData);
 
   /**
    * Processes mining.
@@ -51,6 +51,9 @@ interface BlockchainQueueServiceInterface {
    *   Limit of items to be processed.
    * @param int $leaseTime
    *   Time during which item will be processed.
+   *
+   * @return int
+   *   Count of processed items.
    */
   public function doMining($limit = 0, $leaseTime = 3600);
 

@@ -10,7 +10,7 @@ services:
     arguments: ['@entity_type.manager']
   blockchain.queue:
     class: Drupal\blockchain\Service\BlockchainQueueService
-    arguments: ['@queue', '@logger.factory']
+    arguments: ['@queue', '@plugin.manager.queue_worker', '@logger.factory']
   blockchain.service:
     class: Drupal\blockchain\Service\BlockchainService
-    arguments: ['@blockchain.config', '@blockchain.storage', '@blockchain.data.manager']
+    arguments: ['@blockchain.config', '@blockchain.storage', '@blockchain.data.manager', '@blockchain.queue']

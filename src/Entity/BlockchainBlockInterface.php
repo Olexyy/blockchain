@@ -86,7 +86,7 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    *
    * @return string|null
    */
-  function getHash();
+  function getPreviousHash();
 
   /**
    * Setter for hash.
@@ -97,7 +97,7 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    * @return \Drupal\blockchain\Entity\BlockchainBlockInterface
    *   Chaining.
    */
-  function setHash($hash);
+  function setPreviousHash($hash);
 
   /**
    * Getter for timestamp.
@@ -117,5 +117,13 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    *   Chaining.
    */
   function setTimestamp($timestamp);
+
+  /**
+   * Getter for block hash as object.
+   *
+   * @return string
+   *   Hash, provided by Util class.
+   */
+  public function getHash();
 
 }

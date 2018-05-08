@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Form;
 
+use Drupal\blockchain\Service\BlockchainService;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
@@ -72,7 +73,7 @@ class BlockchainBlockForm extends ContentEntityForm {
     /* @var $entity \Drupal\blockchain\Entity\BlockchainBlockInterface */
     $entity = $this->entity;
     unset($form['data']);
-    $dataHandler = $this->blockchainService->getBlockchainDataHandler($entity);
+    $dataHandler = $this->blockchainService->getBlockDataHandler($entity);
     $form = array_merge($form, $dataHandler->getWidget());
   }
 
@@ -83,11 +84,19 @@ class BlockchainBlockForm extends ContentEntityForm {
 
     /* @var $entity \Drupal\blockchain\Entity\BlockchainBlockInterface */
     $entity = $this->entity;
-    $dataHandler = $this->blockchainService->getBlockchainDataHandler($entity);
-    $dataHandler->setSubmitData($form_state);
+    $dataHandler = $this->blockchainService->getBlockDataHandler($entity);
+    $this->blockchainService->getQueueService()->addItem($dataHandler->getSubmitData($form_state));
     // Set to queue (pool) and process it conditionally.
     //$status = parent::save($form, $form_state);
-    $status = NULL;
+    $batch = [
+      'title' => $this->t('Mining block...'),
+      'operations' => [
+        [ static::class . '::processBatch', [] ],
+      ],
+      'finished' => static::class .'::finalizeBatch',
+    ];
+    batch_set($batch);
+    /*
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Blockchain Block.', [
@@ -101,6 +110,44 @@ class BlockchainBlockForm extends ContentEntityForm {
         ]));
     }
     $form_state->setRedirect('entity.blockchain_block.canonical', ['blockchain_block' => $entity->id()]);
+    */
+  }
+
+  /**
+   * Batch processor.
+   *
+   * @param array $data
+   *   Given data.
+   * @param $context
+   *   Batch context.
+   */
+  public static function processBatch($data = [], &$context) {
+
+    $blockchainService = BlockchainService::instance();
+    $message = t('Mining is in progress...');
+    $results = [];
+    $results[] = $blockchainService->getQueueService()->doMining();
+    $context['message'] = $message;
+    $context['results'] = $results;
+  }
+
+  /**
+   * Batch finalizer.
+   *
+   * {@inheritdoc}
+   */
+  public static function finalizeBatch($success, $results, $operations) {
+
+    if ($success) {
+      $message = t('@count blocks processed.', [
+        '@count' => count($results),
+      ]);
+    }
+    else {
+      $message = t('Finished with an error.');
+    }
+
+    drupal_set_message($message);
   }
 
 }

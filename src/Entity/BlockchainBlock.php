@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Entity;
 
 
+use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -59,7 +60,7 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
       ->setLabel(t('Author of block'))
       ->setDescription(t('The user ID of author of the Blockchain Block entity.'));
 
-    $fields['hash'] = BaseFieldDefinition::create('string')
+    $fields['previous_hash'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Block previous hash'))
       ->setDescription(t('Hash of previous block.'));
 
@@ -72,10 +73,6 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
       ->setSetting('case_sensitive', TRUE)
       ->setLabel(t('Block data'))
       ->setDescription(t('Serialized block data.'));
-
-    $fields['data_provider'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Data provider'))
-      ->setDescription(t('Provider for data.'));
 
     $fields['timestamp'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
@@ -147,14 +144,29 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
    * {@inheritdoc}
    */
   public function getNonce() {
-    return $this->get('data')->value;
+    return $this->get('nonce')->value;
   }
 
   /**
    * {@inheritdoc}
    */
   public function setNonce($nonce) {
-    $this->set('data', $nonce);
+    $this->set('nonce', $nonce);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPreviousHash() {
+    return $this->get('previous_hash')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPreviousHash($hash) {
+    $this->set('previous_hash', $hash);
     return $this;
   }
 
@@ -162,15 +174,11 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
    * {@inheritdoc}
    */
   public function getHash() {
-    return $this->get('data')->value;
-  }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setHash($hash) {
-    $this->set('data', $hash);
-    return $this;
+    return Util::hash(
+      $this->getData().
+      $this->getTimestamp().
+      $this->getNonce());
   }
 
 }

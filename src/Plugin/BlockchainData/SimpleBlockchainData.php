@@ -42,6 +42,9 @@ class SimpleBlockchainData extends BlockchainDataBase {
     return $this->blockchainBlock->getData();
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getWidget() {
 
     return [
@@ -53,6 +56,9 @@ class SimpleBlockchainData extends BlockchainDataBase {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setSubmitData(FormStateInterface $formState) {
 
     if ($formState->hasValue(static::KEY)) {
@@ -61,6 +67,21 @@ class SimpleBlockchainData extends BlockchainDataBase {
 
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getSubmitData(FormStateInterface $formState) {
+
+    if ($formState->hasValue(static::KEY)) {
+      return $formState->getValue(static::KEY);
+    }
+
+    return '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getView($data) {
 
     return [
@@ -68,17 +89,6 @@ class SimpleBlockchainData extends BlockchainDataBase {
       '#title' => $this->t('Data'),
       '#description' => $data,
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getHash() {
-
-    return Util::hash(
-    $this->blockchainBlock->getData().
-    $this->blockchainBlock->getTimestamp().
-    $this->blockchainBlock->getNonce());
   }
 
 }

@@ -36,6 +36,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainStorageService;
 
   /**
+   * Blockchain queue service.
+   *
+   * @var BlockchainQueueServiceInterface
+   */
+  protected $blockchainQueueService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -44,15 +51,19 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Given service.
    * @param BlockchainDataManager $blockchainDataManager
    *   Given blockchain data manager.
+   * @param BlockchainQueueServiceInterface $blockchainQueueService
+   *   Given queue service.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
     BlockchainStorageServiceInterface $blockchainStorageService,
-    BlockchainDataManager $blockchainDataManager) {
+    BlockchainDataManager $blockchainDataManager,
+    BlockchainQueueServiceInterface $blockchainQueueService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
     $this->blockchainStorageService = $blockchainStorageService;
+    $this->blockchainQueueService = $blockchainQueueService;
   }
 
   /**
@@ -73,16 +84,9 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getGenericBlock() {
+  public function getQueueService() {
 
-    $block = BlockchainBlock::create();
-    $block->setHash(Util::hash('111'));
-    $block->setTimestamp(time());
-    $block->setNonce('111');
-    $block->setAuthor($this->getConfigService()->getBlockchainNodeId());
-    $this->getBlockchainDataHandler($block)->setData('Generic block.');
-
-    return $block;
+    return $this->blockchainQueueService;
   }
 
   /**
@@ -95,7 +99,22 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlockchainDataHandler(BlockchainBlockInterface $block) {
+  public function getGenericBlock() {
+
+    $block = BlockchainBlock::create();
+    $block->setPreviousHash(Util::hash('111'));
+    $block->setTimestamp(time());
+    $block->setNonce('111');
+    $block->setAuthor($this->getConfigService()->getBlockchainNodeId());
+    $this->getBlockDataHandler($block)->setData('Generic block.');
+
+    return $block;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockDataHandler(BlockchainBlockInterface $block) {
 
     $pluginId = $this->getConfigService()->getConfig()->get('dataHandler');
     try {
@@ -127,6 +146,13 @@ class BlockchainService implements BlockchainServiceInterface {
     }
 
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function instance() {
+    return \Drupal::service('blockchain.service');
   }
 
 }

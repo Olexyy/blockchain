@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\blockchain\QueueWorker;
+namespace Drupal\blockchain\Plugin\QueueWorker;
 
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
-  const LOGGER_CHANNEL = 'importer_queue';
+  const LOGGER_CHANNEL = 'blockchain_pool';
 
   /**
    * Logger service.
@@ -87,10 +87,11 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
     $nonce = $lastBlock->getNonce();
     $newNonce = $this->mine($nonce);
     $block = BlockchainBlock::create();
+    $block->setAuthor($this->blockchainService
+      ->getConfigService()->getBlockchainNodeId());
     $block->setNonce($newNonce);
-    $block->setHash($this->blockchainService->
-      getBlockchainDataHandler($lastBlock)->getHash());
-    $this->blockchainService->getBlockchainDataHandler($block)->setData($data);
+    $block->setPreviousHash($lastBlock->getHash());
+    $this->blockchainService->getBlockDataHandler($block)->setData($blockData);
     $block->setTimestamp(time());
     $block->save();
     // Announce --->>>>>.

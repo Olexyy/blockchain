@@ -40,12 +40,23 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
   public function getWidget();
 
   /**
-   * Extracts and submits value.
+   * Extracts and sets to block submit value.
    *
    * @param FormStateInterface $formState
    *   Form state.
    */
   public function setSubmitData(FormStateInterface $formState);
+
+  /**
+   * Extracts and returns submit value.
+   *
+   * @param FormStateInterface $formState
+   *   Form state.
+   *
+   * @return string
+   *   Serialized value expected.
+   */
+  public function getSubmitData(FormStateInterface $formState);
 
   /**
    * Getter for element view.
@@ -57,13 +68,5 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
    *   Render array.
    */
   public function getView($data);
-
-  /**
-   * Getter for block hash.
-   *
-   * @return string
-   *   Hash, provided by Util class.
-   */
-  public function getHash();
 
 }
