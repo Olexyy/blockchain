@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -64,5 +65,17 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
    *   Render array.
    */
   public function getFormatter();
+
+  /**
+   * Manages logic for moving values from form state to items.
+   *
+   * @param FieldItemListInterface $items
+   *   Field items.
+   * @param array $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Form state object.
+   */
+  public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state);
 
 }
