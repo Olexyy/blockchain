@@ -58,12 +58,9 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
   /**
    * Getter for element view.
    *
-   * @param mixed $data
-   *   Anything.
-   *
    * @return array
    *   Render array.
    */
-  public function getView($data);
+  public function getView();
 
 }

@@ -68,6 +68,7 @@ class SimpleBlockchainData extends BlockchainDataBase {
         '#required' => TRUE,
         '#title' => $this->t('Data'),
         '#default_value' => $this->getData(),
+        '#placeholder' => $this->t('Put block data here'),
       ]
     ];
   }
@@ -75,12 +76,12 @@ class SimpleBlockchainData extends BlockchainDataBase {
   /**
    * {@inheritdoc}
    */
-  public function getView($data) {
+  public function getView() {
 
     return [
       '#type' => 'item',
       '#title' => $this->t('Data'),
-      '#description' => $data,
+      '#description' => $this->getData(),
     ];
   }
 
