@@ -3,7 +3,6 @@
 namespace Drupal\blockchain\Plugin\BlockchainData;
 
 use Drupal\blockchain\Plugin\BlockchainDataBase;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -92,18 +91,6 @@ class SimpleBlockchainData extends BlockchainDataBase {
       '#title' => $this->t('Data'),
       '#description' => $this->getData(),
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
-
-    foreach ($items as $key => $item) {
-      $this->setData($item->value);
-      $item->value = $this->getRawData();
-    }
-
   }
 
 }

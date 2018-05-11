@@ -5,6 +5,8 @@ namespace Drupal\blockchain\Plugin;
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -120,6 +122,18 @@ abstract class BlockchainDataBase extends PluginBase implements
     }
 
     return '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
+
+    foreach ($items as $key => $item) {
+      $this->setData($item->value);
+      $item->value = $this->getRawData();
+    }
+
   }
 
 }
