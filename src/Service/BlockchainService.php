@@ -115,17 +115,17 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlockDataHandler(BlockchainBlockInterface $block) {
+  public function getBlockDataHandler($data = NULL) {
 
     $pluginId = $this->getConfigService()->getConfig()->get('dataHandler');
-    if ($data = $block->getData()) {
+    if ($data) {
       if ($extractedId = $this->blockchainDataManager->extractPluginId($data)) {
         $pluginId = $extractedId;
       }
     }
     try {
       return $this->blockchainDataManager->createInstance($pluginId, [
-        BlockchainDataInterface::BLOCK_KEY => $block,
+        BlockchainDataInterface::DATA_KEY => $data,
       ]);
     } catch (\Exception $exception) {
       return NULL;

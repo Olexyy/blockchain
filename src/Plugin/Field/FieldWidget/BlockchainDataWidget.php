@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Core\Field\Plugin\Field\FieldWidget;
+namespace Drupal\blockchain\Plugin\Field\FieldWidget;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
@@ -90,11 +90,24 @@ class BlockchainDataWidget extends WidgetBase implements ContainerFactoryPluginI
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 
-    /** @var BlockchainBlockInterface $blockchainBlock */
-    $blockchainBlock = $items->getEntity();
-    $blockchainDataHandler = $this->blockchainService->getBlockDataHandler($blockchainBlock);
+    $blockDataHandler = $this->blockchainService->getBlockDataHandler($items[$delta]->value);
+    $element['value'] = $element + $blockDataHandler->getWidget();
 
-    return $blockchainDataHandler->getView();
+    return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
+
+    parent::extractFormValues($items, $form, $form_state);
+    $blockDataHandler = $this->blockchainService->getBlockDataHandler();
+    foreach ($items as $key => $item) {
+      $blockDataHandler->setData($item->value);
+      $item->value = $blockDataHandler->getRawData();
+    }
+
   }
 
 }

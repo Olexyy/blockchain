@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\blockchain\Plugin\FieldType;
+namespace Drupal\blockchain\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\Plugin\Field\FieldType\StringLongItem;
 

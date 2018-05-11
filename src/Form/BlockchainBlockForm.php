@@ -57,24 +57,8 @@ class BlockchainBlockForm extends ContentEntityForm {
   public function buildForm(array $form, FormStateInterface $form_state) {
 
     $form = parent::buildForm($form, $form_state);
-    $this->prepareForm($form);
 
     return $form;
-  }
-
-  /**
-   * Prepares form depending on blockchain data handler.
-   *
-   * @param array $form
-   *   Render array.
-   */
-  protected function prepareForm(array &$form) {
-
-    /* @var $entity \Drupal\blockchain\Entity\BlockchainBlockInterface */
-    $entity = $this->entity;
-    unset($form['data']);
-    $dataHandler = $this->blockchainService->getBlockDataHandler($entity);
-    $form = array_merge($form, $dataHandler->getWidget());
   }
 
   /**
@@ -84,8 +68,8 @@ class BlockchainBlockForm extends ContentEntityForm {
 
     /* @var $entity \Drupal\blockchain\Entity\BlockchainBlockInterface */
     $entity = $this->entity;
-    $dataHandler = $this->blockchainService->getBlockDataHandler($entity);
-    $this->blockchainService->getQueueService()->addItem($dataHandler->getSubmitData($form_state));
+    // Here we pass raw data.
+    $this->blockchainService->getQueueService()->addItem($entity->getData());
     // Set to queue (pool) and process it conditionally.
     //$status = parent::save($form, $form_state);
     $batch = [
@@ -116,8 +100,6 @@ class BlockchainBlockForm extends ContentEntityForm {
   /**
    * Batch processor.
    *
-   * @param array $data
-   *   Given data.
    * @param $context
    *   Batch context.
    */

@@ -18,15 +18,13 @@ class SimpleBlockchainData extends BlockchainDataBase {
 
   use StringTranslationTrait;
 
-  const KEY = 'simpleBlockchainData';
-
   /**
    * {@inheritdoc}
    */
   public function setData($data) {
 
     if (is_string($data)) {
-      $this->blockchainBlock->setData($this->dataToSleep($data));
+      $this->data = $this->dataToSleep($data);
       return TRUE;
     }
 
@@ -36,10 +34,21 @@ class SimpleBlockchainData extends BlockchainDataBase {
   /**
    * {@inheritdoc}
    */
+  public function setSubmitData(FormStateInterface $formState) {
+
+    /*if ($formState->hasValue(static::KEY)) {
+      $this->data = $this->dataToSleep($formState->getValue(static::KEY));
+    }*/
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getData() {
 
-    if ($data = $this->blockchainBlock->getData()) {
-      return $this->dataWakeUp($this->blockchainBlock->getData());
+    if ($this->data) {
+      return $this->dataWakeUp($this->data);
     }
 
     return '';
@@ -48,10 +57,10 @@ class SimpleBlockchainData extends BlockchainDataBase {
   /**
    * {@inheritdoc}
    */
-  public function getSubmitData(FormStateInterface $formState) {
+  public function getRawData() {
 
-    if ($formState->hasValue(static::KEY)) {
-      return $this->dataToSleep($formState->getValue(static::KEY));
+    if ($this->data) {
+      return $this->data;
     }
 
     return '';
@@ -63,20 +72,19 @@ class SimpleBlockchainData extends BlockchainDataBase {
   public function getWidget() {
 
     return [
-      static::KEY => [
-        '#type' => 'textarea',
-        '#required' => TRUE,
-        '#title' => $this->t('Data'),
-        '#default_value' => $this->getData(),
-        '#placeholder' => $this->t('Put block data here'),
-      ]
+      '#type' => 'textarea',
+      '#required' => TRUE,
+      '#title' => $this->t('Data'),
+      '#default_value' => $this->getData(),
+      '#disabled' => (bool) $this->getData(),
+      '#description' => $this->t('Block data'),
     ];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getView() {
+  public function getFormatter() {
 
     return [
       '#type' => 'item',

@@ -69,10 +69,18 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
       ->setDescription(t('Nonce number for given block.'))
       ->setRequired(TRUE);
 
-    $fields['data'] = BaseFieldDefinition::create('string_long')
+    $fields['data'] = BaseFieldDefinition::create('blockchain_data')
       ->setSetting('case_sensitive', TRUE)
       ->setLabel(t('Block data'))
-      ->setDescription(t('Serialized block data.'));
+      ->setDescription(t('Serialized block data.'))
+      ->setDisplayOptions('view', [
+        'type' => 'blockchain_block_formatter',
+        'weight' => 0,
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'blockchain_block_widget',
+        'weight' => 0,
+      ]);
 
     $fields['timestamp'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))

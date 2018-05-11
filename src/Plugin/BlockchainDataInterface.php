@@ -15,10 +15,11 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
   const LOGGER_CHANNEL = 'blockchain_queue';
   const QUEUE = 'blockchain_queue';
   const DATA_KEY = 'blockchainBlockData';
-  const BLOCK_KEY = 'blockchainBlock';
 
   /**
    * Setter for data.
+   *
+   * This may be object or just string.
    *
    * @param mixed $data
    *   Some data to be set.
@@ -31,21 +32,22 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
   /**
    * Getter for data.
    *
+   * This may be object or just string.
+   *
    * @return mixed
    *   Some object.
    */
   public function getData();
 
   /**
-   * Extracts and returns submit value.
+   * Getter for raw data.
    *
-   * @param FormStateInterface $formState
-   *   Form state.
+   * This is always string in format {plugin_id}::{data}.
    *
    * @return string
-   *   Serialized value expected.
+   *   May be also empty string if value not set.
    */
-  public function getSubmitData(FormStateInterface $formState);
+  public function getRawData();
 
   /**
    * Getter for form widget.
@@ -61,6 +63,6 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
    * @return array
    *   Render array.
    */
-  public function getView();
+  public function getFormatter();
 
 }

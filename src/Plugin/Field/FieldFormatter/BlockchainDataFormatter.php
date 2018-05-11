@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Core\Field\Plugin\Field\FieldFormatter;
+namespace Drupal\blockchain\Plugin\Field\FieldFormatter;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
@@ -105,7 +105,7 @@ class BlockchainDataFormatter extends FormatterBase implements ContainerFactoryP
     $blockchainBlock = $items->getEntity();
     $blockchainDataHandler = $this->blockchainService->getBlockDataHandler($blockchainBlock);
 
-    return $blockchainDataHandler->getView();
+    return $blockchainDataHandler->getFormatter();
   }
 
   /**

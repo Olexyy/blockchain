@@ -3,7 +3,6 @@
 namespace Drupal\blockchain\Plugin;
 
 use Drupal\blockchain\Entity\BlockchainBlock;
-use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Logger\LoggerChannelFactory;
@@ -23,7 +22,7 @@ abstract class BlockchainDataBase extends PluginBase implements
    *
    * @var BlockchainBlock
    */
-  protected $blockchainBlock;
+  protected $data;
 
   /**
    * @var \Drupal\Core\Entity\EntityTypeManager
@@ -58,10 +57,10 @@ abstract class BlockchainDataBase extends PluginBase implements
     $this->httpClient = $httpClient;
     $this->requestStack = $requestStack;
     $this->loggerFactory = $loggerFactory;
-    if (isset($configuration[static::BLOCK_KEY]) &&
-      $configuration[static::BLOCK_KEY] instanceof BlockchainBlockInterface) {
-      $this->blockchainBlock =  $configuration[static::BLOCK_KEY];
+    if (isset($configuration[static::DATA_KEY])) {
+      $this->data =  $configuration[static::DATA_KEY];
     }
+
   }
 
   /**

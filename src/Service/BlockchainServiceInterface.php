@@ -56,13 +56,13 @@ interface BlockchainServiceInterface {
   /**
    * Getter for blockchain data handler.
    *
-   * @param BlockchainBlockInterface $block
+   * @param string|null $data
    *   Block to be handled.
    *
    * @return BlockchainDataInterface
    *   Given handler.
    */
-  public function getBlockDataHandler(BlockchainBlockInterface $block);
+  public function getBlockDataHandler($data = NULL);
 
   /**
    * Validates hash according to given Pow rules.
