@@ -21,13 +21,3 @@ entity.blockchain_block.canonical:
   base_route: entity.blockchain_block.canonical
   title: 'View'
 
-entity.blockchain_block.edit_form:
-  route_name: entity.blockchain_block.edit_form
-  base_route: entity.blockchain_block.canonical
-  title: 'Edit'
-
-entity.blockchain_block.delete_form:
-  route_name:  entity.blockchain_block.delete_form
-  base_route:  entity.blockchain_block.canonical
-  title: Delete
-  weight: 10

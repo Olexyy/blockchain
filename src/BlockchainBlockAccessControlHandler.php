@@ -23,11 +23,6 @@ class BlockchainBlockAccessControlHandler extends EntityAccessControlHandler {
       case 'view':
         return AccessResult::allowedIfHasPermission($account, 'view blockchain block entities');
 
-      case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit blockchain block entities');
-
-      case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete blockchain block entities');
     }
 
     // Unknown operation, no opinion.

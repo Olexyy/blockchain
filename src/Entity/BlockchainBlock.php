@@ -24,8 +24,6 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     "form" = {
  *       "default" = "Drupal\blockchain\Form\BlockchainBlockForm",
  *       "add" = "Drupal\blockchain\Form\BlockchainBlockForm",
- *       "edit" = "Drupal\blockchain\Form\BlockchainBlockForm",
- *       "delete" = "Drupal\blockchain\Form\BlockchainBlockDeleteForm",
  *     },
  *     "access" = "Drupal\blockchain\BlockchainBlockAccessControlHandler",
  *     "route_provider" = {
@@ -38,10 +36,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     "id" = "id",
  *   },
  *   links = {
- *     "canonical" = "/blockchain/block/blockchain_block/{blockchain_block}",
- *     "add-form" = "/blockchain/block/blockchain_block/add",
- *     "edit-form" = "/blockchain/block/blockchain_block/{blockchain_block}/edit",
- *     "delete-form" = "/blockchain/block/blockchain_block/{blockchain_block}/delete",
+ *     "canonical" = "/blockchain_block/{blockchain_block}",
+ *     "add-form" = "/blockchain_block/add",
  *     "collection" = "/admin/structure/blockchain_block/collection",
  *   },
  *   field_ui_base_route = "blockchain_block.settings"

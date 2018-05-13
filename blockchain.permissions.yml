@@ -6,12 +6,6 @@ administer blockchain block entities:
   description: 'Allow to access the administration form to configure Blockchain Block entities.'
   restrict access: true
 
-delete blockchain block entities:
-  title: 'Delete Blockchain Block entities'
-
-edit blockchain block entities:
-  title: 'Edit Blockchain Block entities'
-
 view blockchain block entities:
   title: 'View Blockchain Block entities'
 
