@@ -1,15 +1,7 @@
 
-# Blockchain Block menu items definition
-entity.blockchain_block.collection:
-  title: 'Blockchain Blocks list'
-  route_name: entity.blockchain_block.collection
-  description: 'List Blockchain Block entities'
-  parent: system.admin_structure
-  weight: 100
-
 blockchain_block.admin.structure.settings:
-  title: 'Blockchain settings'
-  description: 'Configure Blockchain Block entities'
+  title: 'Blockchain'
+  description: 'Configure Blockchain'
   route_name: blockchain_block.settings
   parent: system.admin_structure
 
@@ -21,3 +13,10 @@ entity.blockchain_node.collection:
   parent: blockchain_block.settings
   weight: 99
 
+# Blockchain Block menu items definition
+entity.blockchain_block.collection:
+  title: 'Blockchain collection'
+  route_name: entity.blockchain_block.collection
+  description: 'Blockchain Blocks entities collection'
+  parent: blockchain_block.settings
+  weight: 100

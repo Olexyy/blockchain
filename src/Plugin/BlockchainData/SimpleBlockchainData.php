@@ -34,17 +34,6 @@ class SimpleBlockchainData extends BlockchainDataBase {
   /**
    * {@inheritdoc}
    */
-  public function setSubmitData(FormStateInterface $formState) {
-
-    /*if ($formState->hasValue(static::KEY)) {
-      $this->data = $this->dataToSleep($formState->getValue(static::KEY));
-    }*/
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getData() {
 
     if ($this->data) {

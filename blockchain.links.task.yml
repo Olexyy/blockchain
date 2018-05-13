@@ -10,6 +10,12 @@ blockchain_block.blockchain_node:
   base_route: blockchain_block.settings
   weight: 10
 
+entity.blockchain_block.collection:
+  route_name: entity.blockchain_block.collection
+  title: 'Blockchain blocks'
+  base_route: blockchain_block.settings
+  weight: 11
+
 entity.blockchain_block.canonical:
   route_name: entity.blockchain_block.canonical
   base_route: entity.blockchain_block.canonical

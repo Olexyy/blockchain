@@ -205,7 +205,6 @@ class BlockchainBlockSettingsForm extends FormBase {
     ];
 
     $form['dataHandler'] = [
-      '#disabled' => $anyBlock,
       '#type' => 'select',
       '#required' => TRUE,
       '#title' => $this->t('Blockchain data handler.'),

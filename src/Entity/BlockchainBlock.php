@@ -42,7 +42,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     "add-form" = "/blockchain/block/blockchain_block/add",
  *     "edit-form" = "/blockchain/block/blockchain_block/{blockchain_block}/edit",
  *     "delete-form" = "/blockchain/block/blockchain_block/{blockchain_block}/delete",
- *     "collection" = "/blockchain/block/blockchain_block",
+ *     "collection" = "/admin/structure/blockchain_block/collection",
  *   },
  *   field_ui_base_route = "blockchain_block.settings"
  * )

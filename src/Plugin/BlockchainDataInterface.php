@@ -41,6 +41,14 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
   public function getData();
 
   /**
+   * Predicate to define if handler has data.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasData();
+
+  /**
    * Getter for raw data.
    *
    * This is always string in format {plugin_id}::{data}.
