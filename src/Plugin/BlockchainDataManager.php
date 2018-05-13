@@ -63,4 +63,24 @@ class BlockchainDataManager extends DefaultPluginManager {
     return NULL;
   }
 
+  /**
+   * Get property of definition.
+   *
+   * @param string $pluginId
+   *   Plugin id.
+   * @param string $property
+   *   Name of property.
+   *
+   * @return null|mixed
+   *   Property value if any.
+   */
+  public function definitionGet($pluginId, $property) {
+    if ($definition = $this->getDefinition($pluginId, FALSE)) {
+      if (isset($definition[$property])) {
+        return $definition[$property];
+      }
+    }
+    return NULL;
+  }
+
 }

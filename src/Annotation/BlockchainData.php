@@ -26,4 +26,11 @@ class BlockchainData extends Plugin {
    * @var \Drupal\Core\Annotation\Translation
    */
   public $label;
+
+  /**
+   * Flag whether plugin has settings.
+   *
+   * @var bool
+   */
+  public $settings;
 }

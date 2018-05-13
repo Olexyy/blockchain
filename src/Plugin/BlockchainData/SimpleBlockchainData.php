@@ -11,7 +11,8 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  *
  * @BlockchainData(
  *  id = "simple",
- *  label = @Translation("Simple string data")
+ *  label = @Translation("Simple string data"),
+ *  settings = false
  * )
  */
 class SimpleBlockchainData extends BlockchainDataBase {

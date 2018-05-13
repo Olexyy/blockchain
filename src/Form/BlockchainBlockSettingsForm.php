@@ -6,6 +6,7 @@ use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -204,14 +205,26 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#description' => $this->t('Proof of work expression in previous hash.'),
     ];
 
+    $currentDataHandler = $this->blockchainService->getConfigService()->getConfig()->get('dataHandler');
     $form['dataHandler'] = [
       '#type' => 'select',
       '#required' => TRUE,
       '#title' => $this->t('Blockchain data handler.'),
       '#options' => $this->blockchainService->getBlockchainDataManager()->getList(),
-      '#default_value' => $this->blockchainService->getConfigService()->getConfig()->get('dataHandler'),
+      '#default_value' => $currentDataHandler,
       '#description' => $this->t('Select data handler for given blockchain.'),
     ];
+
+    $hasSettings = $this->blockchainService
+      ->getBlockchainDataManager()
+      ->definitionGet($currentDataHandler, 'settings');
+    if ($hasSettings) {
+      $form['dataHandlerSettings'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Data handler settings'),
+        '#url' => Url::fromRoute('<current>'),
+      ];
+    }
 
     $form['actions'] = [
       '#type' => 'actions',

@@ -14,7 +14,8 @@ use Drupal\node\NodeInterface;
  *
  * @BlockchainData(
  *  id = "node_data",
- *  label = @Translation("Node data")
+ *  label = @Translation("Node data"),
+ *  settings = true
  * )
  */
 class NodeBlockchainData extends BlockchainDataBase {

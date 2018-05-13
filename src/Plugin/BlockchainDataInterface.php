@@ -86,4 +86,12 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
    */
   public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state);
 
+
+  /**
+   * Predicate defies if property has settings.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasSettings();
 }

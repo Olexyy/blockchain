@@ -164,4 +164,12 @@ abstract class BlockchainDataBase extends PluginBase implements
     return (bool) $this->data;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function hasSettings() {
+
+    return $this->pluginDefinition['settings'];
+  }
+
 }
