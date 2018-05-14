@@ -111,6 +111,8 @@ class BlockchainBlockSettingsForm extends FormBase {
     $intervalPool = $this->blockchainService->getConfigService()->getIntervalPool();
     $intervalAnnounce = $this->blockchainService->getConfigService()->getIntervalAnnounce();
     $anyBlock = $this->blockchainService->getStorageService()->anyBlock();
+    $blockchainAuth = $this->blockchainService->getConfigService()->isBlockchainAuth();
+    $blockchainFilterType = $this->blockchainService->getConfigService()->getBlockchainFilterType();
 
     $form['blockchainId'] = [
       '#type' => 'item',
@@ -135,6 +137,38 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#description' => $this->t('Single means only one node, thus one blockchain database.'),
     ];
 
+    $form['blockchainAuth'] = [
+      '#type' => 'checkbox',
+      '#default_value' => $blockchainAuth,
+      '#title' => $this->t('Auth token enabled'),
+      '#description' => $this->t('Does API use token Blockchain token to interact.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="blockchainType"]' => [
+            'value' => BlockchainConfigServiceInterface::TYPE_MULTIPLE
+          ],
+        ],
+      ],
+    ];
+
+    $form['blockchainFilterType'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Blockchain nodes filtering type'),
+      '#options' => [
+        BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST => $this->t('Blacklist'),
+        BlockchainConfigServiceInterface::FILTER_TYPE_WHITELIST => $this->t('Whitelist'),
+      ],
+      '#default_value' => $blockchainFilterType,
+      '#description' => $this->t('The way, blockchain nodes will be filtered.'),
+      '#states' => [
+        'visible' => [
+          ':input[name="blockchainType"]' => [
+            'value' => BlockchainConfigServiceInterface::TYPE_MULTIPLE
+          ],
+        ],
+      ],
+    ];
+
     $form['poolManagement'] = [
       '#type' => 'select',
       '#title' => $this->t('Pool management'),
@@ -155,7 +189,9 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#description' => $this->t('Interval for pool management CRON job.'),
       '#states' => [
         'visible' => [
-          ':input[name="poolManagement"]' => ['value' => BlockchainConfigServiceInterface::POOL_MANAGEMENT_CRON],
+          ':input[name="poolManagement"]' => [
+            'value' => BlockchainConfigServiceInterface::POOL_MANAGEMENT_CRON
+          ],
         ],
       ],
     ];

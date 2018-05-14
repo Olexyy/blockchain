@@ -22,10 +22,13 @@ interface BlockchainConfigServiceInterface {
   const POW_POSITION_END = 'end';
   const POW_EXPRESSION = '00';
   const DATA_HANDLER = 'simple';
+  const FILTER_TYPE_BLACKLIST = 'blacklist';
+  const FILTER_TYPE_WHITELIST = 'whitelist';
   const KEYS = [
     'blockchainType', 'blockchainId', 'blockchainNodeId', 'poolManagement',
     'announceManagement', 'intervalPool', 'intervalAnnounce', 'powPosition',
-    'powExpression', 'dataHandler',
+    'powExpression', 'dataHandler', 'blockchainAuth', 'blockchainFilterType',
+
   ];
 
   /**
@@ -225,5 +228,42 @@ interface BlockchainConfigServiceInterface {
    */
   public function setIntervalAnnounce($intervalAnnounce);
 
+  /**
+   * Getter for auth setting.
+   *
+   * @return bool
+   *   Result.
+   */
+  public function isBlockchainAuth();
+
+  /**
+   * Setter for auth setting.
+   *
+   * @param $blockchainAuth
+   *    Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainAuth($blockchainAuth);
+
+  /**
+   * Getter for blockchain nodes filter type.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getBlockchainFilterType();
+
+  /**
+   * Setter for blockchain nodes filter type.
+   *
+   * @param $blockchainFilterType
+   *    Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainFilterType($blockchainFilterType);
 
 }

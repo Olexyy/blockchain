@@ -40,6 +40,7 @@ ____Notes about blockchain implementation.____
   
   TODOS:
   - blockchain API service (protocol);
+  - blockchain API validate;
   - blockchain node management (service);
   - list and admin management for blockchain;
   - business data as plugins (selected in settings) dynamic OK;

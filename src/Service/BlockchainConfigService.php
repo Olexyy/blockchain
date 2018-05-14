@@ -286,7 +286,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
 
     if(!($intervalAnnounce = $this->getConfig()->get('intervalAnnounce'))) {
       $intervalAnnounce = static::INTERVAL_DEFAULT;
-      $this->setIntervalPool($intervalAnnounce);
+      $this->setIntervalAnnounce($intervalAnnounce);
     }
 
     return $intervalAnnounce;
@@ -299,6 +299,51 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
 
     $this->getConfig(TRUE)
       ->set('intervalAnnounce', $intervalAnnounce)
+      ->save();
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isBlockchainAuth() {
+
+    return $this->getConfig()->get('blockchainAuth');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainAuth($blockchainAuth) {
+
+    $this->getConfig(TRUE)
+      ->set('blockchainAuth', $blockchainAuth)
+      ->save();
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainFilterType() {
+
+    if(!($blockchainFilterType = $this->getConfig()->get('blockchainFilterType'))) {
+      $blockchainFilterType = static::INTERVAL_DEFAULT;
+      $this->setIntervalPool($blockchainFilterType);
+    }
+
+    return $blockchainFilterType;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainFilterType($blockchainFilterType) {
+
+    $this->getConfig(TRUE)
+      ->set('blockchainFilterType', $blockchainFilterType)
       ->save();
 
     return $this;

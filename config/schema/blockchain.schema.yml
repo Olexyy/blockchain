@@ -8,7 +8,7 @@ blockchain.config:
     blockchainAuth:
       type: boolean
       label: 'Use auth token'
-    blockchainFiterType:
+    blockchainFilterType:
       type: string
       label: 'Type of blockchain nodes filtering'
     blockchainFilterList:
