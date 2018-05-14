@@ -11,6 +11,12 @@ services:
   blockchain.queue:
     class: Drupal\blockchain\Service\BlockchainQueueService
     arguments: ['@queue', '@plugin.manager.queue_worker', '@logger.factory']
+  blockchain.api:
+    class: Drupal\blockchain\Service\BlockchainApiService
+    arguments: ['@request_stack', '@http_client']
+  blockchain.node:
+    class: Drupal\blockchain\Service\BlockchainNodeService
+    arguments: ['@entity_type.manager']
   blockchain.service:
     class: Drupal\blockchain\Service\BlockchainService
-    arguments: ['@blockchain.config', '@blockchain.storage', '@blockchain.data.manager', '@blockchain.queue']
+    arguments: ['@blockchain.config', '@blockchain.storage', '@blockchain.data.manager', '@blockchain.queue', '@blockchain.api', '@blockchain.node']

@@ -33,7 +33,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "canonical" = "/admin/structure/blockchain_node/{blockchain_node}",
  *     "add-form" = "/admin/structure/blockchain_node/add",
  *     "edit-form" = "/admin/structure/blockchain_node/{blockchain_node}/edit",
- *     "delete-form" = "/admin/structure//blockchain_node/{blockchain_node}/delete",
+ *     "delete-form" = "/admin/structure/blockchain_node/{blockchain_node}/delete",
  *     "collection" = "/admin/structure/blockchain_node"
  *   }
  * )
@@ -53,5 +53,34 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * @var string
    */
   protected $label;
+
+  /**
+   * The Blockchain Node ip address.
+   *
+   * @var string
+   */
+  protected $ip;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function entityTypeId() {
+    return 'blockchain_node';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getIp() {
+    return $this->ip;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setIp($ip) {
+    $this->ip = $ip;
+    return $this;
+  }
 
 }

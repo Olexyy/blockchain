@@ -44,6 +44,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainQueueService;
 
   /**
+   * Blockchain API service.
+   *
+   * @var BlockchainApiServiceInterface
+   */
+  protected $blockchainApiService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -54,17 +61,21 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Given blockchain data manager.
    * @param BlockchainQueueServiceInterface $blockchainQueueService
    *   Given queue service.
+   * @param BlockchainApiServiceInterface $blockchainApiService
+   *   Given Blockchain API service.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
     BlockchainStorageServiceInterface $blockchainStorageService,
     BlockchainDataManager $blockchainDataManager,
-    BlockchainQueueServiceInterface $blockchainQueueService) {
+    BlockchainQueueServiceInterface $blockchainQueueService,
+    BlockchainApiServiceInterface $blockchainApiService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
     $this->blockchainStorageService = $blockchainStorageService;
     $this->blockchainQueueService = $blockchainQueueService;
+    $this->blockchainApiService = $blockchainApiService;
   }
 
   /**
@@ -80,6 +91,13 @@ class BlockchainService implements BlockchainServiceInterface {
   public function getConfigService() {
 
     return $this->blockchainServiceSettings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getApiService() {
+    return $this->blockchainApiService;
   }
 
   /**

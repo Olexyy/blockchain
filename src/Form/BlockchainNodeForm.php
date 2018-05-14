@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Form;
 
+use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -14,8 +15,9 @@ class BlockchainNodeForm extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $form = parent::form($form, $form_state);
 
+    $form = parent::form($form, $form_state);
+    /** @var BlockchainNodeInterface $blockchain_node */
     $blockchain_node = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
@@ -25,7 +27,6 @@ class BlockchainNodeForm extends EntityForm {
       '#description' => $this->t("Label for the Blockchain Node."),
       '#required' => TRUE,
     ];
-
     $form['id'] = [
       '#type' => 'machine_name',
       '#default_value' => $blockchain_node->id(),
@@ -34,8 +35,13 @@ class BlockchainNodeForm extends EntityForm {
       ],
       '#disabled' => !$blockchain_node->isNew(),
     ];
-
-    /* You will need additional form elements for your custom properties. */
+    $form['ip'] = [
+      '#type' => 'textfield',
+      '#default_value' => $blockchain_node->getIp(),
+      '#title' => $this->t('Ip address'),
+      '#description' => $this->t("Ip address for the Blockchain Node."),
+      '#required' => TRUE,
+    ];
 
     return $form;
   }
@@ -49,13 +55,13 @@ class BlockchainNodeForm extends EntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Blockchain Node.', [
+        $this->messenger()->addStatus($this->t('Created the %label Blockchain Node.', [
           '%label' => $blockchain_node->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Blockchain Node.', [
+        $this->messenger()->addStatus($this->t('Saved the %label Blockchain Node.', [
           '%label' => $blockchain_node->label(),
         ]));
     }

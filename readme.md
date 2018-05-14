@@ -44,3 +44,6 @@ ____Notes about blockchain implementation.____
   - list and admin management for blockchain;
   - business data as plugins (selected in settings) dynamic OK;
   - field type, formatter and widget OK;
+  - settings:
+    - blacklist/whitelist;
+    - use auth;

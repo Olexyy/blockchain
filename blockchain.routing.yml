@@ -1,0 +1,7 @@
+blockchain.subscribe:
+  path: '/blockchain/subscribe'
+  defaults:
+    _controller: \Drupal\blockchain\Controller\BlockchainController::subscribe
+  requirements:
+    _method: 'POST'
+    _custom_access: \Drupal\blockchain\Controller\BlockchainController::access

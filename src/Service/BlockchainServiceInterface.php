@@ -38,6 +38,14 @@ interface BlockchainServiceInterface {
   public function getQueueService();
 
   /**
+   * Getter for API service.
+   *
+   * @return BlockchainApiServiceInterface
+   *   Service object.
+   */
+  public function getApiService();
+
+  /**
    * Getter for generic block.
    *
    * @return BlockchainBlockInterface

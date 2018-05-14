@@ -5,6 +5,15 @@ blockchain.config:
     blockchainType:
       type: string
       label: 'Type of blockchain'
+    blockchainAuth:
+      type: boolean
+      label: 'Use auth token'
+    blockchainFiterType:
+      type: string
+      label: 'Type of blockchain nodes filtering'
+    blockchainFilterList:
+      type: string
+      label: 'List of blockchain nodes IPs to filter'
     blockchainId:
       type: string
       label: 'Blockchain identifier'

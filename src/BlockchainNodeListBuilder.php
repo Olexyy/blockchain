@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain;
 
+use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 
@@ -14,8 +15,11 @@ class BlockchainNodeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['label'] = $this->t('Blockchain Node');
-    $header['id'] = $this->t('Machine name');
+
+    $header['id'] = $this->t('Id');
+    $header['label'] = $this->t('Label');
+    $header['ip'] = $this->t('Ip');
+
     return $header + parent::buildHeader();
   }
 
@@ -23,9 +27,12 @@ class BlockchainNodeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = $entity->label();
+
+    /** @var BlockchainNodeInterface $entity */
     $row['id'] = $entity->id();
-    // You probably want a few more properties here...
+    $row['label'] = $entity->label();
+    $row['ip'] = $entity->getIp();
+
     return $row + parent::buildRow($entity);
   }
 
