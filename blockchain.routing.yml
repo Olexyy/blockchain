@@ -4,4 +4,4 @@ blockchain.subscribe:
     _controller: \Drupal\blockchain\Controller\BlockchainController::subscribe
   requirements:
     _method: 'POST'
-    _custom_access: \Drupal\blockchain\Controller\BlockchainController::access
+    _access: 'TRUE'

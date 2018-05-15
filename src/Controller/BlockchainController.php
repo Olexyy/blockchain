@@ -2,10 +2,11 @@
 
 namespace Drupal\blockchain\Controller;
 
+use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
-use Drupal\Core\Access\AccessResult;
+use Drupal\blockchain\Utils\BlockchainRequest;
+use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -25,7 +26,9 @@ class BlockchainController extends ControllerBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('blockchain.service'));
+    return new static(
+      $container->get('blockchain.service')
+    );
   }
 
   /**
@@ -42,29 +45,30 @@ class BlockchainController extends ControllerBase {
    * @return JsonResponse
    */
   public function subscribe() {
+    $blockchainRequest = BlockchainRequest::createFromRequest(
+      $this->blockchainService->getApiService()->getCurrentRequest(),
+      BlockchainRequestInterface::TYPE_SUBSCRIBE
+    );
 
     $ip = $this->blockchainService->getApiService()->getCurrentRequest()->getClientIp();
     $id = $this->blockchainService->getApiService()->getIp();
 
-    return JsonResponse::create([
-      'message' => 'Success'], 200);
-  }
-
-  public function validate() {
-
+    return JsonResponse::create(['message' => 'Success'], 200);
   }
 
   /**
-   * Access handler method.
+   * Request validator.
    *
-   * @param AccountInterface $account
-   *   User account.
-   *
-   * @return \Drupal\Core\Access\AccessResult
-   *   Access check result.
+   * @return JsonResponse|void
    */
-  public function access(AccountInterface $account) {
+  public function validate() {
 
-    return AccessResult::allowed();
+    $configService = $this->blockchainService->getConfigService();
+     if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE
+       || !$configService->isBlockchainAuth()) {
+       return JsonResponse::create(['message' => 'Forbidden'], 403);
+     }
+
   }
+
 }
