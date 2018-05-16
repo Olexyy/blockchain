@@ -91,4 +91,12 @@ interface BlockchainServiceInterface {
    */
   public static function instance();
 
+  /**
+   * Getter for Blockchain Node service.
+   *
+   * @return BlockchainNodeServiceInterface
+   *   Service object.
+   */
+  public function getBlockchainNodeService();
+
 }

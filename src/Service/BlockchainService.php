@@ -4,6 +4,7 @@ namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
+use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\blockchain\Utils\Util;
@@ -51,6 +52,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainApiService;
 
   /**
+   * Blockchain Node service.
+   *
+   * @var BlockchainNodeServiceInterface
+   */
+  protected $blockchainNodeService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -63,19 +71,23 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Given queue service.
    * @param BlockchainApiServiceInterface $blockchainApiService
    *   Given Blockchain API service.
+   * @param BlockchainNodeServiceInterface $blockchainNodeService
+   *   Given Blockchain Node service.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
     BlockchainStorageServiceInterface $blockchainStorageService,
     BlockchainDataManager $blockchainDataManager,
     BlockchainQueueServiceInterface $blockchainQueueService,
-    BlockchainApiServiceInterface $blockchainApiService) {
+    BlockchainApiServiceInterface $blockchainApiService,
+    BlockchainNodeServiceInterface $blockchainNodeService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
     $this->blockchainStorageService = $blockchainStorageService;
     $this->blockchainQueueService = $blockchainQueueService;
     $this->blockchainApiService = $blockchainApiService;
+    $this->blockchainNodeService = $blockchainNodeService;
   }
 
   /**
@@ -177,6 +189,13 @@ class BlockchainService implements BlockchainServiceInterface {
    */
   public static function instance() {
     return \Drupal::service('blockchain.service');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainNodeService() {
+    return $this->blockchainNodeService;
   }
 
 }

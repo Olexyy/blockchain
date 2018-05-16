@@ -94,15 +94,29 @@ class BlockchainController extends ControllerBase {
       return JsonResponse::create(['message' => 'Bad request, no self param.'], 400);
     }
     if ($configService->isBlockchainAuth()) {
-      if (!$request->hasAuthParam()) {
-        return JsonResponse::create(['message' => 'Bad request, no auth param.'], 400);
+      if (!$authToken = $request->getAuthParam()) {
+        return JsonResponse::create(['message' => 'Unauthorized.'], 401);
+      }
+    }
+    if ($request->getType() !== BlockchainRequestInterface::TYPE_SUBSCRIBE) {
+      if (!$blockchainNode = $this->blockchainService->getBlockchainNodeService()->load($request->getSelfParam())) {
+        return JsonResponse::create(['message' => 'Unauthorized.'], 401);
+      }
+    }
+    if ($filterList = $configService->getBlockchainFilterListAsArray()) {
+      if ($configService->getBlockchainFilterType() === BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST) {
+        if (in_array($request->getIp(), $filterList)) {
+          return JsonResponse::create(['message' => 'Forbidden'], 403);
+        }
+      }
+      else {
+        if (!in_array($request->getIp(), $filterList)) {
+          return JsonResponse::create(['message' => 'Forbidden'], 403);
+        }
       }
     }
 
 
-    if ($configService->getBlockchainFilterType() === BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST) {
-
-    }
 
     switch ($request->getType()) {
       case BlockchainRequestInterface::TYPE_SUBSCRIBE:

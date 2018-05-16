@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\blockchain\Service;
+use Drupal\blockchain\Entity\BlockchainNodeInterface;
 
 /**
  * Interface BlockchainNodeServiceInterface.
@@ -23,5 +24,27 @@ interface BlockchainNodeServiceInterface {
    *   Array of entities.
    */
   public function getList();
+
+  /**
+   * Getter for list of Blockchain nodes.
+   *
+   * @param string $id
+   *   Given id.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function exists($id);
+
+  /**
+   * Getter for list of Blockchain nodes.
+   *
+   * @param string $id
+   *   Given id.
+   *
+   * @return BlockchainNodeInterface|null
+   *   Entity if any.
+   */
+  public function load($id);
 
 }

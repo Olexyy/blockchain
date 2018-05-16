@@ -49,4 +49,20 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
     return $this->getStorage()->loadMultiple();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function exists($id) {
+
+    return (bool) $this->load($id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function load($id) {
+
+    return $this->getStorage()->load($id);
+  }
+
 }
