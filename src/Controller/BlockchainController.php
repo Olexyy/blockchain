@@ -77,18 +77,40 @@ class BlockchainController extends ControllerBase {
    * and returns JsonResponse in case of fail or BlockchainRequest
    * in case if request is valid.
    *
+   * @param string $type
+   *   Type of operation.
+   *
    * @return JsonResponse|BlockchainRequestInterface
+   *   Execution result.
    */
   public function validate($type) {
 
-     $configService = $this->blockchainService->getConfigService();
-     if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE) {
-       return JsonResponse::create(['message' => 'Forbidden'], 403);
-     }
-     $request = BlockchainRequest::createFromRequest($this->requestStack->getCurrentRequest(), $type);
+    $configService = $this->blockchainService->getConfigService();
+    if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE) {
+     return JsonResponse::create(['message' => 'Forbidden'], 403);
+    }
+    $request = BlockchainRequest::createFromRequest($this->requestStack->getCurrentRequest(), $type);
+    if (!$request->hasSelfParam()) {
+      return JsonResponse::create(['message' => 'Bad request, no self param.'], 400);
+    }
+    if ($configService->isBlockchainAuth()) {
+      if (!$request->hasAuthParam()) {
+        return JsonResponse::create(['message' => 'Bad request, no auth param.'], 400);
+      }
+    }
 
 
-     return $request;
+    if ($configService->getBlockchainFilterType() === BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST) {
+
+    }
+
+    switch ($request->getType()) {
+      case BlockchainRequestInterface::TYPE_SUBSCRIBE:
+
+        break;
+    }
+
+    return $request;
   }
 
 }

@@ -28,7 +28,7 @@ interface BlockchainConfigServiceInterface {
     'blockchainType', 'blockchainId', 'blockchainNodeId', 'poolManagement',
     'announceManagement', 'intervalPool', 'intervalAnnounce', 'powPosition',
     'powExpression', 'dataHandler', 'blockchainAuth', 'blockchainFilterType',
-
+    'blockchainFilterList',
   ];
 
   /**
@@ -265,5 +265,32 @@ interface BlockchainConfigServiceInterface {
    *   Chaining.
    */
   public function setBlockchainFilterType($blockchainFilterType);
+
+  /**
+   * Getter for blockchain nodes filter list.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getBlockchainFilterList();
+
+  /**
+   * Setter for blockchain nodes filter list
+   *
+   * @param $blockchainFilterList
+   *    Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainFilterList($blockchainFilterList);
+
+  /**
+   * Getter for blockchain nodes filter list.
+   *
+   * @return string[]
+   *   Array of values.
+   */
+  public function getBlockchainFilterListAsArray();
 
 }

@@ -134,7 +134,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getBlockchainType() {
 
-    if(!($blockchainType = $this->getConfig()->get('blockchainType'))) {
+    if (!($blockchainType = $this->getConfig()->get('blockchainType'))) {
       $blockchainType = static::TYPE_SINGLE;
       $this->setBlockchainType($blockchainType);
     }
@@ -159,7 +159,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getPoolManagement() {
 
-    if(!($poolManagement = $this->getConfig()->get('poolManagement'))) {
+    if (!($poolManagement = $this->getConfig()->get('poolManagement'))) {
       $poolManagement = static::POOL_MANAGEMENT_MANUAL;
       $this->setPoolManagement($poolManagement);
     }
@@ -184,7 +184,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getAnnounceManagement() {
 
-    if(!($announceManagement = $this->getConfig()->get('announceManagement'))) {
+    if (!($announceManagement = $this->getConfig()->get('announceManagement'))) {
       $announceManagement = static::ANNOUNCE_MANAGEMENT_IMMEDIATE;
       $this->setAnnounceManagement($announceManagement);
     }
@@ -209,7 +209,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getPowPosition() {
 
-    if(!($powPosition = $this->getConfig()->get('powPosition'))) {
+    if (!($powPosition = $this->getConfig()->get('powPosition'))) {
       $powPosition = static::POW_POSITION_START;
       $this->setPowPosition($powPosition);
     }
@@ -234,7 +234,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getPowExpression() {
 
-    if(!($powExpression = $this->getConfig()->get('powExpression'))) {
+    if (!($powExpression = $this->getConfig()->get('powExpression'))) {
       $powExpression = '00';
       $this->setPowExpression($powExpression);
     }
@@ -259,7 +259,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getIntervalPool() {
 
-    if(!($intervalPool = $this->getConfig()->get('intervalPool'))) {
+    if (!($intervalPool = $this->getConfig()->get('intervalPool'))) {
       $intervalPool = static::INTERVAL_DEFAULT;
       $this->setIntervalPool($intervalPool);
     }
@@ -284,7 +284,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getIntervalAnnounce() {
 
-    if(!($intervalAnnounce = $this->getConfig()->get('intervalAnnounce'))) {
+    if (!($intervalAnnounce = $this->getConfig()->get('intervalAnnounce'))) {
       $intervalAnnounce = static::INTERVAL_DEFAULT;
       $this->setIntervalAnnounce($intervalAnnounce);
     }
@@ -329,9 +329,9 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getBlockchainFilterType() {
 
-    if(!($blockchainFilterType = $this->getConfig()->get('blockchainFilterType'))) {
+    if (!($blockchainFilterType = $this->getConfig()->get('blockchainFilterType'))) {
       $blockchainFilterType = static::INTERVAL_DEFAULT;
-      $this->setIntervalPool($blockchainFilterType);
+      $this->setBlockchainFilterType($blockchainFilterType);
     }
 
     return $blockchainFilterType;
@@ -347,6 +347,40 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
       ->save();
 
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainFilterList() {
+
+    return $this->getConfig()->get('blockchainFilterList');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainFilterList($blockchainFilterList) {
+
+    $this->getConfig(TRUE)
+      ->set('blockchainFilterList', $blockchainFilterList)
+      ->save();
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainFilterListAsArray() {
+
+    if ($list = $this->getBlockchainFilterList()) {
+      $parsed = preg_split('~R~', $list);
+      array_walk($parsed, 'trim');
+      return $parsed;
+    }
+
+    return [];
   }
 
 }

@@ -113,6 +113,7 @@ class BlockchainBlockSettingsForm extends FormBase {
     $anyBlock = $this->blockchainService->getStorageService()->anyBlock();
     $blockchainAuth = $this->blockchainService->getConfigService()->isBlockchainAuth();
     $blockchainFilterType = $this->blockchainService->getConfigService()->getBlockchainFilterType();
+    $blockchainFilterList = $this->blockchainService->getConfigService()->getBlockchainFilterList();
 
     $form['blockchainId'] = [
       '#type' => 'item',
@@ -167,6 +168,13 @@ class BlockchainBlockSettingsForm extends FormBase {
           ],
         ],
       ],
+    ];
+
+    $form['blockchainFilterList'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Blockchain filter list'),
+      '#default_value' => $blockchainFilterList,
+      '#description' => $this->t('List of ip addresses to be filtered, newline separated.'),
     ];
 
     $form['poolManagement'] = [
