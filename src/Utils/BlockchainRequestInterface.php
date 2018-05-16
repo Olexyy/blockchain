@@ -20,9 +20,8 @@ interface BlockchainRequestInterface {
   const PARAM_SELF = 'self';
   const PARAM_COUNT = 'count';
   const PARAM_BLOCKS = 'blocks';
-  const PARAM_TYPE = 'type';
   const PARAMS = [
-    self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT, self::PARAM_BLOCKS, self::PARAM_TYPE,
+    self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT, self::PARAM_BLOCKS,
   ];
 
   /**
@@ -74,12 +73,12 @@ interface BlockchainRequestInterface {
   public function getBlocksParam();
 
   /**
-   * Getter for param.
+   * Getter for type property.
    *
    * @return string
    *   Value.
    */
-  public function getTypeParam();
+  public function getType();
 
   /**
    * BlockchainRequestInterface constructor.
@@ -111,14 +110,6 @@ interface BlockchainRequestInterface {
    *   Test result.
    */
   public function isValid();
-
-  /**
-   * Getter for type.
-   *
-   * @return string
-   *   One of types expected.
-   */
-  public function getType();
 
   /**
    * Factory method.
@@ -166,5 +157,48 @@ interface BlockchainRequestInterface {
    *   Chaining.
    */
   public function setIp($ip);
+
+  /**
+   * Predicate.
+   *
+   * @param string $key
+   *   Name of key.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasParam($key);
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasAuthParam();
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasSelfParam();
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasCountParam();
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasBlocksParam();
 
 }

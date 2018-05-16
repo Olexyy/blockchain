@@ -9,6 +9,8 @@ use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Blockchain controller.
@@ -23,20 +25,30 @@ class BlockchainController extends ControllerBase {
   protected $blockchainService;
 
   /**
+   * Request stack.
+   *
+   * @var RequestStack
+   */
+  protected $requestStack;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('blockchain.service')
+      $container->get('blockchain.service'),
+      $container->get('request_stack')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(BlockchainServiceInterface $blockchainService) {
+  public function __construct(BlockchainServiceInterface $blockchainService,
+                              RequestStack $requestStack) {
 
     $this->blockchainService = $blockchainService;
+    $this->requestStack = $requestStack;
   }
 
   /**
@@ -45,30 +57,38 @@ class BlockchainController extends ControllerBase {
    * @return JsonResponse
    */
   public function subscribe() {
-    $blockchainRequest = BlockchainRequest::createFromRequest(
-      $this->blockchainService->getApiService()->getCurrentRequest(),
-      BlockchainRequestInterface::TYPE_SUBSCRIBE
-    );
 
-    $ip = $this->blockchainService->getApiService()->getCurrentRequest()->getClientIp();
-    $id = $this->blockchainService->getApiService()->getIp();
+    $result = $this->validate(BlockchainRequestInterface::TYPE_SUBSCRIBE);
+    if ($result instanceof Response) {
+      return $result;
+    }
+    elseif ($result instanceof BlockchainRequestInterface) {
+      // implement business logic...
+      return JsonResponse::create(['message' => 'Success'], 200);
+    }
 
-    return JsonResponse::create(['message' => 'Success'], 200);
+    return JsonResponse::create(['message' => 'Server error'], 505);
   }
 
   /**
    * Request validator.
    *
-   * @return JsonResponse|void
+   * This validates request according to defined protocol
+   * and returns JsonResponse in case of fail or BlockchainRequest
+   * in case if request is valid.
+   *
+   * @return JsonResponse|BlockchainRequestInterface
    */
-  public function validate() {
+  public function validate($type) {
 
-    $configService = $this->blockchainService->getConfigService();
-     if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE
-       || !$configService->isBlockchainAuth()) {
+     $configService = $this->blockchainService->getConfigService();
+     if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE) {
        return JsonResponse::create(['message' => 'Forbidden'], 403);
      }
+     $request = BlockchainRequest::createFromRequest($this->requestStack->getCurrentRequest(), $type);
 
+
+     return $request;
   }
 
 }

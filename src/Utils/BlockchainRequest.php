@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Utils;
 
-use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Component\Utility\Xss;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -162,13 +161,6 @@ class BlockchainRequest implements BlockchainRequestInterface {
   /**
    * {@inheritdoc}
    */
-  public function getTypeParam() {
-    return $this->getParam(static::PARAM_TYPE);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getIp() {
     return $this->ip;
   }
@@ -180,6 +172,41 @@ class BlockchainRequest implements BlockchainRequestInterface {
 
     $this->ip = $ip;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasParam($key) {
+    return !$this->getParam($key) === NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasAuthParam() {
+    return !$this->getAuthParam() === NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasSelfParam() {
+    return !$this->getSelfParam() === NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasCountParam() {
+    return !$this->getCountParam() === NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasBlocksParam() {
+    return !$this->getBlocksParam() === NULL;
   }
 
 }
