@@ -40,6 +40,14 @@ interface BlockchainValidatorServiceInterface {
   public function hashIsValid($hash);
 
   /**
+   * Generates auth token.
+   *
+   * @return string
+   *   Hash.
+   */
+  public function tokenGenerate();
+
+  /**
    * Request validator.
    *
    * This validates request according to defined protocol

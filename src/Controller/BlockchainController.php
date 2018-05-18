@@ -33,6 +33,7 @@ class BlockchainController extends ControllerBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
+
     return new static(
       $container->get('blockchain.service'),
       $container->get('request_stack')
@@ -58,14 +59,30 @@ class BlockchainController extends ControllerBase {
 
     $result = $this->validate(BlockchainRequestInterface::TYPE_SUBSCRIBE);
     if ($result instanceof Response) {
+
       return $result;
     }
     elseif ($result instanceof BlockchainRequestInterface) {
-      // implement business logic...
-      return JsonResponse::create(['message' => 'Success'], 200);
+      if (!$this->blockchainService->getBlockchainNodeService()->exists($result->getSelfParam())) {
+        if ($this->blockchainService->getBlockchainNodeService()->createFromRequest($result)) {
+
+          return JsonResponse::create([
+            'message' => 'Success',
+            'details' => 'Added to list.',
+            'self' => $this->blockchainService->getConfigService()->getBlockchainNodeId()], 200);
+        }
+      }
+      else {
+
+        return JsonResponse::create([
+          'message' => 'Not acceptable',
+          'details' => 'Already in list.'], 406);
+      }
     }
 
-    return JsonResponse::create(['message' => 'Server error'], 505);
+    return JsonResponse::create([
+      'message' => 'Server error',
+      'details' => 'Something unexpected happened.'], 505);
   }
 
   /**

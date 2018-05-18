@@ -71,6 +71,21 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   /**
    * {@inheritdoc}
    */
+  public function setId($id) {
+    $this->id = $id;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getId() {
+    $this->id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getIp() {
     return $this->ip;
   }
@@ -80,6 +95,21 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    */
   public function setIp($ip) {
     $this->ip = $ip;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLabel() {
+    return $this->label;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setLabel($label) {
+    $this->label = $label;
     return $this;
   }
 

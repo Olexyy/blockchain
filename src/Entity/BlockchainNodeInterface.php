@@ -36,4 +36,42 @@ interface BlockchainNodeInterface extends ConfigEntityInterface {
    */
   public function setIp($ip);
 
+  /**
+   * Getter for id.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getId();
+
+  /**
+   * Setter for id.
+   *
+   * @param string $id
+   *   Given ip address.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setId($id);
+
+  /**
+   * Getter for label.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getLabel();
+
+  /**
+   * Setter for label.
+   *
+   * @param string $label
+   *   Given label.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setLabel($label);
+
 }

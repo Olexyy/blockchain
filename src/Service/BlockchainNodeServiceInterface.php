@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Service;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
+use Drupal\blockchain\Utils\BlockchainRequestInterface;
 
 /**
  * Interface BlockchainNodeServiceInterface.
@@ -46,5 +47,18 @@ interface BlockchainNodeServiceInterface {
    *   Entity if any.
    */
   public function load($id);
+
+  /**
+   * Factory method.
+   *
+   * @param BlockchainRequestInterface $request
+   *   Request.
+   * @param bool $save
+   *   Flag defines saving action.
+   *
+   * @return BlockchainNodeInterface|null
+   *   New entity if created.
+   */
+  public function createFromRequest(BlockchainRequestInterface $request, $save = TRUE);
 
 }

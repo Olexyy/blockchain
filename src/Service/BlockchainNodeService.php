@@ -3,6 +3,8 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainNode;
+use Drupal\blockchain\Entity\BlockchainNodeInterface;
+use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -63,6 +65,27 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   public function load($id) {
 
     return $this->getStorage()->load($id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createFromRequest(BlockchainRequestInterface $request, $save = TRUE) {
+
+    /** @var BlockchainNodeInterface $blockchainNode */
+    $blockchainNode = $this->getStorage()->create();
+    $blockchainNode
+      ->setId($request->getSelfParam())
+      ->setLabel($request->getSelfParam())
+      ->setIp($request->getIp());
+    try {
+      if ($save) {
+        $this->getStorage()->save($blockchainNode);
+      }
+      return $blockchainNode;
+    } catch (\Exception $exception) {
+      return NULL;
+    }
   }
 
 }
