@@ -37,14 +37,18 @@ ____Notes about blockchain implementation.____
   - interval CRON block pool;
   - pow_position;
   - pow_expression;
+  - use auth;
+  - whitelist/blacklist filtering;
   
   TODOS:
   - blockchain API service (protocol);
-  - blockchain API validate;
-  - blockchain node management (service);
-  - list and admin management for blockchain;
-  - business data as plugins (selected in settings) dynamic OK;
+    - subscribe: process OK
+    - subscribe: init and handle response -->
+  - blockchain API validate ~;
+  - blockchain node management (service) OK;
+  - list and admin management for blockchain OK;
+  - business data as plugins (selected in settings) dynamic ~;
   - field type, formatter and widget OK;
   - settings:
-    - blacklist/whitelist;
-    - use auth;
+    - blacklist/whitelist OK;
+    - use auth OK;
