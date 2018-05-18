@@ -3,8 +3,6 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlock;
-use Drupal\blockchain\Entity\BlockchainBlockInterface;
-use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\blockchain\Utils\Util;
@@ -59,6 +57,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainNodeService;
 
   /**
+   * Blockchain validator service.
+   *
+   * @var BlockchainValidatorServiceInterface
+   */
+  protected $blockchainValidatorService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -73,6 +78,8 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Given Blockchain API service.
    * @param BlockchainNodeServiceInterface $blockchainNodeService
    *   Given Blockchain Node service.
+   * @param BlockchainValidatorServiceInterface $blockchainValidatorService
+   *   Given Blockchain Validate service.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
@@ -80,7 +87,8 @@ class BlockchainService implements BlockchainServiceInterface {
     BlockchainDataManager $blockchainDataManager,
     BlockchainQueueServiceInterface $blockchainQueueService,
     BlockchainApiServiceInterface $blockchainApiService,
-    BlockchainNodeServiceInterface $blockchainNodeService) {
+    BlockchainNodeServiceInterface $blockchainNodeService,
+    BlockchainValidatorServiceInterface $blockchainValidatorService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
@@ -88,6 +96,7 @@ class BlockchainService implements BlockchainServiceInterface {
     $this->blockchainQueueService = $blockchainQueueService;
     $this->blockchainApiService = $blockchainApiService;
     $this->blockchainNodeService = $blockchainNodeService;
+    $this->blockchainValidatorService = $blockchainValidatorService;
   }
 
   /**
@@ -165,29 +174,8 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function hashIsValid($hash) {
-
-    $powPosition = $this->getConfigService()->getPowPosition();
-    $powExpression = $this->getConfigService()->getPowExpression();
-    $length = strlen($powExpression);
-    if ($powPosition === BlockchainConfigServiceInterface::POW_POSITION_START) {
-      if (substr($hash, 0, $length) === $powExpression) {
-        return TRUE;
-      }
-    }
-    else {
-      if (substr($hash, -$length) === $powExpression) {
-        return TRUE;
-      }
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function instance() {
+
     return \Drupal::service('blockchain.service');
   }
 
@@ -195,7 +183,16 @@ class BlockchainService implements BlockchainServiceInterface {
    * {@inheritdoc}
    */
   public function getBlockchainNodeService() {
+
     return $this->blockchainNodeService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getValidatorService() {
+
+    return $this->blockchainValidatorService;
   }
 
 }

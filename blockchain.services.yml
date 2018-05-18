@@ -17,6 +17,16 @@ services:
   blockchain.node:
     class: Drupal\blockchain\Service\BlockchainNodeService
     arguments: ['@entity_type.manager']
+  blockchain.validator:
+    class: Drupal\blockchain\Service\BlockchainValidatorService
+    arguments: ['@blockchain.config', '@blockchain.node']
   blockchain.service:
     class: Drupal\blockchain\Service\BlockchainService
-    arguments: ['@blockchain.config', '@blockchain.storage', '@blockchain.data.manager', '@blockchain.queue', '@blockchain.api', '@blockchain.node']
+    arguments:
+      -  '@blockchain.config'
+      -  '@blockchain.storage'
+      -  '@blockchain.data.manager'
+      -  '@blockchain.queue'
+      -  '@blockchain.api'
+      -  '@blockchain.node'
+      -  '@blockchain.validator'

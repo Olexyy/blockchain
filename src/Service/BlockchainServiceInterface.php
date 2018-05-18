@@ -73,17 +73,6 @@ interface BlockchainServiceInterface {
   public function getBlockDataHandler($data = NULL);
 
   /**
-   * Validates hash according to given Pow rules.
-   *
-   * @param string $hash
-   *   Hash.
-   *
-   * @return bool
-   *   Test result.
-   */
-  public function hashIsValid($hash);
-
-  /**
    * Static call for service.
    *
    * @return BlockchainServiceInterface
@@ -98,5 +87,13 @@ interface BlockchainServiceInterface {
    *   Service object.
    */
   public function getBlockchainNodeService();
+
+  /**
+   * Getter for validator service.
+   *
+   * @return BlockchainValidatorServiceInterface
+   *   Service object.
+   */
+  public function getValidatorService();
 
 }

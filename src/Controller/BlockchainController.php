@@ -2,9 +2,7 @@
 
 namespace Drupal\blockchain\Controller;
 
-use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
-use Drupal\blockchain\Utils\BlockchainRequest;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -85,46 +83,9 @@ class BlockchainController extends ControllerBase {
    */
   public function validate($type) {
 
-    $configService = $this->blockchainService->getConfigService();
-    if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE) {
-     return JsonResponse::create(['message' => 'Forbidden'], 403);
-    }
-    $request = BlockchainRequest::createFromRequest($this->requestStack->getCurrentRequest(), $type);
-    if (!$request->hasSelfParam()) {
-      return JsonResponse::create(['message' => 'Bad request, no self param.'], 400);
-    }
-    if ($configService->isBlockchainAuth()) {
-      if (!$authToken = $request->getAuthParam()) {
-        return JsonResponse::create(['message' => 'Unauthorized.'], 401);
-      }
-    }
-    if ($request->getType() !== BlockchainRequestInterface::TYPE_SUBSCRIBE) {
-      if (!$blockchainNode = $this->blockchainService->getBlockchainNodeService()->load($request->getSelfParam())) {
-        return JsonResponse::create(['message' => 'Unauthorized.'], 401);
-      }
-    }
-    if ($filterList = $configService->getBlockchainFilterListAsArray()) {
-      if ($configService->getBlockchainFilterType() === BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST) {
-        if (in_array($request->getIp(), $filterList)) {
-          return JsonResponse::create(['message' => 'Forbidden'], 403);
-        }
-      }
-      else {
-        if (!in_array($request->getIp(), $filterList)) {
-          return JsonResponse::create(['message' => 'Forbidden'], 403);
-        }
-      }
-    }
-
-
-
-    switch ($request->getType()) {
-      case BlockchainRequestInterface::TYPE_SUBSCRIBE:
-
-        break;
-    }
-
-    return $request;
+    return $this->blockchainService
+      ->getValidatorService()
+      ->validateRequest($type, $this->requestStack->getCurrentRequest());
   }
 
 }

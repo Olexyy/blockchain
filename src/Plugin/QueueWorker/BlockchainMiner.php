@@ -114,7 +114,8 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
 
     $nonce = 0;
     $result = Util::hash($miningString.$nonce);
-    while (!$this->blockchainService->hashIsValid($result)) {
+    $validator = $this->blockchainService->getValidatorService();
+    while (!$validator->hashIsValid($result)) {
       $nonce++;
       $result = Util::hash($miningString.$nonce);
     }
