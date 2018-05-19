@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
+use Drupal\blockchain\Plugin\BlockchainDataInterface;
 
 /**
  * Interface BlockchainStorageServiceInterface.
@@ -51,5 +52,35 @@ interface BlockchainStorageServiceInterface {
    *   Blockchain block if any.
    */
   public function getLastBlock();
+
+  /**
+   * Getter for generic block.
+   *
+   * @return BlockchainBlockInterface
+   *   Given block.
+   */
+  function getGenericBlock();
+
+  /**
+   * Getter for blockchain data handler.
+   *
+   * @param string|null $data
+   *   Block to be handled.
+   *
+   * @return BlockchainDataInterface
+   *   Given handler.
+   */
+  public function getBlockDataHandler($data = NULL);
+
+  /**
+   * Save handler.
+   *
+   * @param BlockchainBlockInterface $block
+   *   Given block.
+   *
+   * @return mixed
+   *   Execution result.
+   */
+  public function save(BlockchainBlockInterface $block);
 
 }

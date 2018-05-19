@@ -73,8 +73,8 @@ class BlockchainBlockSettingsForm extends FormBase {
         $this->blockchainService->getConfigService()->setBlockchainNodeId();
       }
       elseif ($element['#context'] == 'put_generic_block') {
-        $genericBlock = $this->blockchainService->getGenericBlock();
-        $genericBlock->save();
+        $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
+        $this->blockchainService->getStorageService()->save($genericBlock);
       }
     }
     else {
@@ -254,13 +254,13 @@ class BlockchainBlockSettingsForm extends FormBase {
       '#type' => 'select',
       '#required' => TRUE,
       '#title' => $this->t('Blockchain data handler.'),
-      '#options' => $this->blockchainService->getBlockchainDataManager()->getList(),
+      '#options' => $this->blockchainService->getDataManager()->getList(),
       '#default_value' => $currentDataHandler,
       '#description' => $this->t('Select data handler for given blockchain.'),
     ];
 
     $hasSettings = $this->blockchainService
-      ->getBlockchainDataManager()
+      ->getDataManager()
       ->definitionGet($currentDataHandler, 'settings');
     if ($hasSettings) {
       $form['dataHandlerSettings'] = [

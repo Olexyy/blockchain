@@ -83,7 +83,7 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
     if (!$blockData) {
       throw new \Exception('Missing block data.');
     }
-    if (!$this->blockchainService->getBlockchainDataManager()->extractPluginId($blockData)) {
+    if (!$this->blockchainService->getDataManager()->extractPluginId($blockData)) {
       throw new \Exception('Invalid data handler plugin id.');
     }
     if (!$lastBlock = $this->blockchainService->getStorageService()->getLastBlock()) {

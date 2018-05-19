@@ -2,10 +2,7 @@
 
 namespace Drupal\blockchain\Service;
 
-use Drupal\blockchain\Entity\BlockchainBlock;
-use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
-use Drupal\blockchain\Utils\Util;
 
 /**
  * Class BlockchainService.
@@ -102,6 +99,14 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public static function instance() {
+
+    return \Drupal::service('blockchain.service');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getStorageService() {
     return $this->blockchainStorageService;
   }
@@ -132,57 +137,14 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlockchainDataManager() {
+  public function getDataManager() {
     return $this->blockchainDataManager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getGenericBlock() {
-
-    $block = BlockchainBlock::create();
-    $block->setPreviousHash(Util::hash('111'));
-    $block->setTimestamp(time());
-    $block->setNonce('111');
-    $block->setAuthor($this->getConfigService()->getBlockchainNodeId());
-    $this->getBlockDataHandler($block)->setData('Generic block.');
-
-    return $block;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlockDataHandler($data = NULL) {
-
-    $pluginId = $this->getConfigService()->getConfig()->get('dataHandler');
-    if ($data) {
-      if ($extractedId = $this->blockchainDataManager->extractPluginId($data)) {
-        $pluginId = $extractedId;
-      }
-    }
-    try {
-      return $this->blockchainDataManager->createInstance($pluginId, [
-        BlockchainDataInterface::DATA_KEY => $data,
-      ]);
-    } catch (\Exception $exception) {
-      return NULL;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function instance() {
-
-    return \Drupal::service('blockchain.service');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlockchainNodeService() {
+  public function getNodeService() {
 
     return $this->blockchainNodeService;
   }

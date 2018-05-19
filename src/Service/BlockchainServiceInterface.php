@@ -46,31 +46,12 @@ interface BlockchainServiceInterface {
   public function getApiService();
 
   /**
-   * Getter for generic block.
-   *
-   * @return BlockchainBlockInterface
-   *   Given block.
-   */
-  function getGenericBlock();
-
-  /**
    * Blockchain data manager.
    *
    * @return BlockchainDataManager
    *   Service.
    */
-  public function getBlockchainDataManager();
-
-  /**
-   * Getter for blockchain data handler.
-   *
-   * @param string|null $data
-   *   Block to be handled.
-   *
-   * @return BlockchainDataInterface
-   *   Given handler.
-   */
-  public function getBlockDataHandler($data = NULL);
+  public function getDataManager();
 
   /**
    * Static call for service.
@@ -86,7 +67,7 @@ interface BlockchainServiceInterface {
    * @return BlockchainNodeServiceInterface
    *   Service object.
    */
-  public function getBlockchainNodeService();
+  public function getNodeService();
 
   /**
    * Getter for validator service.

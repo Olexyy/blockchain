@@ -63,8 +63,8 @@ class BlockchainController extends ControllerBase {
       return $result;
     }
     elseif ($result instanceof BlockchainRequestInterface) {
-      if (!$this->blockchainService->getBlockchainNodeService()->exists($result->getSelfParam())) {
-        if ($this->blockchainService->getBlockchainNodeService()->createFromRequest($result)) {
+      if (!$this->blockchainService->getNodeService()->exists($result->getSelfParam())) {
+        if ($this->blockchainService->getNodeService()->createFromRequest($result)) {
 
           return JsonResponse::create([
             'message' => 'Success',
