@@ -1,8 +1,10 @@
 <?php
 
 namespace Drupal\blockchain\Service;
+
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
 /**
  * Class BlockchainStorageService.
@@ -19,15 +21,45 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   protected $entityTypeManager;
 
   /**
+   * Logger factory.
+   *
+   * @var LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
+
+  /**
+   * Blockchain config service.
+   *
+   * @var BlockchainConfigServiceInterface
+   */
+  protected $configService;
+
+
+  /**
    * BlockchainStorageService constructor.
    *
    * @param EntityTypeManagerInterface $entityTypeManager
    *   Given service.
+   * @param LoggerChannelFactoryInterface $loggerFactory
+   *   Logger factory.
+   * @param BlockchainConfigServiceInterface $blockchainSettingsService
+   *   Blockchain config service.
    */
-  public function __construct(
-    EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager,
+                              LoggerChannelFactoryInterface $loggerFactory,
+                              BlockchainConfigServiceInterface $blockchainSettingsService) {
 
     $this->entityTypeManager = $entityTypeManager;
+    $this->loggerFactory = $loggerFactory;
+    $this->configService = $blockchainSettingsService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLogger() {
+
+    return $this->loggerFactory->get(static::LOGGER_CHANNEL);
   }
 
   /**

@@ -10,12 +10,12 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  * BlockchainBlockData as simple string.
  *
  * @BlockchainData(
- *  id = "simple",
- *  label = @Translation("Simple string data"),
+ *  id = "raw",
+ *  label = @Translation("Raw string data"),
  *  settings = false
  * )
  */
-class SimpleBlockchainData extends BlockchainDataBase {
+class RawBlockchainData extends BlockchainDataBase {
 
   use StringTranslationTrait;
 

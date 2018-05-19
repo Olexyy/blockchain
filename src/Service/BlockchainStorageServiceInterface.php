@@ -11,6 +11,15 @@ use Drupal\blockchain\Entity\BlockchainBlockInterface;
  */
 interface BlockchainStorageServiceInterface {
 
+  const LOGGER_CHANNEL = 'blockchain.storage';
+
+  /**
+   * Getter for logger.
+   *
+   * @return \Drupal\Core\Logger\LoggerChannelInterface
+   */
+  public function getLogger();
+
   /**
    * Getter for blockchain block storage.
    *

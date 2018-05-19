@@ -7,7 +7,7 @@ services:
     parent: default_plugin_manager
   blockchain.storage:
     class: Drupal\blockchain\Service\BlockchainStorageService
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@logger.factory']
   blockchain.queue:
     class: Drupal\blockchain\Service\BlockchainQueueService
     arguments: ['@queue', '@plugin.manager.queue_worker', '@logger.factory']
