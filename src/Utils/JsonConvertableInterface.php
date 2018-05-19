@@ -16,4 +16,6 @@ interface JsonConvertableInterface {
   public static function createFromFormState(FormStateInterface $formState);
 
   public function toJson();
+
+  public function getWidgetType($name);
 }

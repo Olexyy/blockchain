@@ -8,7 +8,6 @@ use Drupal\blockchain\Utils\JsonDataContainer;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\node\Entity\Node;
 
 /**
  * NodeBlockchainData based on json serializable class.
@@ -48,7 +47,7 @@ class JsonBlockchainData extends BlockchainDataBase {
       return JsonDataContainer::createFromJson($data);
     }
 
-    return NULL;
+    return new JsonDataContainer();
   }
 
   /**
@@ -73,8 +72,12 @@ class JsonBlockchainData extends BlockchainDataBase {
     $widget = [];
 
     foreach (get_object_vars($this->getData()) as $name => $value) {
+
+      $type = $this->getData()->getWidgetType($name)?
+        $this->getData()->getWidgetType($name) : 'textfield';
+
       $widget[$name] = [
-        '#type' => 'textfield',
+        '#type' => $type,
         '#default_value' => $value,
         '#title' => $this->t(ucfirst($name)),
       ];
@@ -104,7 +107,7 @@ class JsonBlockchainData extends BlockchainDataBase {
   }
 
   /**
-   * // todo manage bundles and fields
+   *
    *
    * {@inheritdoc}
    */

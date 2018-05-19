@@ -50,4 +50,17 @@ class JsonDataContainer implements JsonConvertableInterface {
     }
     return $object;
   }
+
+  public function getWidgetType($name) {
+
+    $types = [
+      'title' => 'textfield',
+      'body' => 'textarea',
+    ];
+    if (isset($types[$name])) {
+      return $types[$name];
+    }
+
+    return NULL;
+  }
 }

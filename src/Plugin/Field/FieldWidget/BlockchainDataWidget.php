@@ -89,7 +89,7 @@ class BlockchainDataWidget extends WidgetBase implements ContainerFactoryPluginI
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 
-    $blockDataHandler = $this->blockchainService->getBlockDataHandler($items[$delta]->value);
+    $blockDataHandler = $this->blockchainService->getStorageService()->getBlockDataHandler($items[$delta]->value);
     $element['value'] = $element + $blockDataHandler->getWidget();
 
     return $element;

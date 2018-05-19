@@ -83,7 +83,9 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
 
     try {
       return $this->entityTypeManager->getStorage('blockchain_block');
-    } catch (\Exception $exception) {
+    } catch (\Exception $e) {
+      $this->getLogger()
+        ->error($e->getMessage() . $e->getTraceAsString());
       return NULL;
     }
   }
@@ -158,7 +160,9 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       return $this->blockchainDataManager->createInstance($pluginId, [
         BlockchainDataInterface::DATA_KEY => $data,
       ]);
-    } catch (\Exception $exception) {
+    } catch (\Exception $e) {
+      $this->getLogger()
+        ->error($e->getMessage() . $e->getTraceAsString());
       return NULL;
     }
   }
@@ -170,8 +174,9 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
 
     try {
       return $this->getBlockStorage()->save($block);
-    }
-    catch (\Exception $exception) {
+    } catch (\Exception $e) {
+      $this->getLogger()
+        ->error($e->getMessage() . $e->getTraceAsString());
       return NULL;
     }
   }
