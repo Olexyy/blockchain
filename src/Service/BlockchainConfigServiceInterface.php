@@ -293,4 +293,12 @@ interface BlockchainConfigServiceInterface {
    */
   public function getBlockchainFilterListAsArray();
 
+  /**
+   * Generates auth token.
+   *
+   * @return string
+   *   Hash.
+   */
+  public function tokenGenerate();
+
 }

@@ -52,3 +52,5 @@ ____Notes about blockchain implementation.____
   - settings:
     - blacklist/whitelist OK;
     - use auth OK;
+  - blockchain response class
+  - possibility to assign blockchain id and node id if bc is empty

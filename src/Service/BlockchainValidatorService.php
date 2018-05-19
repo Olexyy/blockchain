@@ -74,14 +74,6 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
   /**
    * {@inheritdoc}
    */
-  public function tokenGenerate() {
-
-    return Util::hash($this->configService->getBlockchainId().$this->configService->getBlockchainNodeId());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function validateRequest($type, Request $request) {
 
     $configService = $this->configService;
@@ -138,12 +130,6 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
           ], 403);
         }
       }
-    }
-
-    switch ($request->getType()) {
-      case BlockchainRequestInterface::TYPE_SUBSCRIBE:
-
-        break;
     }
 
     return $request;

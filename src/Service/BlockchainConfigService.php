@@ -383,4 +383,12 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function tokenGenerate() {
+
+    return Util::hash($this->configService->getBlockchainId().$this->configService->getBlockchainNodeId());
+  }
+
 }
