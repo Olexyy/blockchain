@@ -101,7 +101,7 @@ class BlockchainDataWidget extends WidgetBase implements ContainerFactoryPluginI
   public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
 
     parent::extractFormValues($items, $form, $form_state);
-    $blockDataHandler = $this->blockchainService->getBlockDataHandler();
+    $blockDataHandler = $this->blockchainService->getStorageService()->getBlockDataHandler();
     $blockDataHandler->extractFormValues($items, $form, $form_state);
 
   }
