@@ -28,9 +28,9 @@ class BlockchainData extends Plugin {
   public $label;
 
   /**
-   * Flag whether plugin has settings.
+   * Target class.
    *
-   * @var bool
+   * @var string
    */
-  public $settings;
+  public $targetClass;
 }
