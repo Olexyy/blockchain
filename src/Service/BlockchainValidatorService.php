@@ -4,6 +4,7 @@ namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Utils\BlockchainRequest;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
+use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\blockchain\Utils\Util;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,56 +79,69 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
     $configService = $this->configService;
     if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE) {
-      return JsonResponse::create([
-        'message' => 'Forbidden',
-        'details' => 'Access to this resource is restricted.'
-      ], 403);
+
+      return BlockchainResponse::create()
+        ->setIp($request->getIp())
+        ->setStatusCode(403)
+        ->setMessageParam('Forbidden')
+        ->setDetails('Access to this resource is restricted.');
     }
     $request = BlockchainRequest::createFromRequest($request, $type);
     if (!$request->hasSelfParam()) {
-      return JsonResponse::create([
-        'message' => 'Bad request',
-        'details' => 'No self param.'
-      ], 400);
+
+      return BlockchainResponse::create()
+        ->setIp($request->getIp())
+        ->setStatusCode(400)
+        ->setMessageParam('Bad request')
+        ->setDetails('No self param.');
     }
     if ($configService->isBlockchainAuth()) {
       if (!$authToken = $request->getAuthParam()) {
-        return JsonResponse::create([
-          'message' => 'Unauthorized',
-          'details' => 'Auth token required.'
-        ], 401);
+
+        return BlockchainResponse::create()
+          ->setIp($request->getIp())
+          ->setStatusCode(401)
+          ->setMessageParam('Unauthorized')
+          ->setDetails('Auth token required.');
       }
-      if (!$this->authIsValid(
-        $request->getSelfParam(), $request->getAuthParam())) {
-        return JsonResponse::create([
-          'message' => 'Unauthorized',
-          'details' => 'Auth token is invalid.'
-        ], 401);
+      if (!$this->authIsValid($request->getSelfParam(), $request->getAuthParam())) {
+
+        return BlockchainResponse::create()
+          ->setIp($request->getIp())
+          ->setStatusCode(401)
+          ->setMessageParam('Unauthorized')
+          ->setDetails('Auth token invalid.');
       }
     }
     if ($request->getType() !== BlockchainRequestInterface::TYPE_SUBSCRIBE) {
       if (!$blockchainNode = $this->blockchainNodeService->load($request->getSelfParam())) {
-        return JsonResponse::create([
-          'message' => 'Unauthorized',
-          'details' => 'Not subscribed yet.'
-        ], 401);
+
+        return BlockchainResponse::create()
+          ->setIp($request->getIp())
+          ->setStatusCode(401)
+          ->setMessageParam('Unauthorized')
+          ->setDetails('Not subscribed yet.');
       }
     }
     if ($filterList = $configService->getBlockchainFilterListAsArray()) {
       if ($configService->getBlockchainFilterType() === BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST) {
         if (in_array($request->getIp(), $filterList)) {
-          return JsonResponse::create([
-            'message' => 'Forbidden',
-            'details' => 'You are forbidden to access this resource.'
-          ], 403);
+
+          return BlockchainResponse::create()
+            ->setIp($request->getIp())
+            ->setStatusCode(403)
+            ->setMessageParam('Forbidden')
+            ->setDetails('You are forbidden to access this resource.');
         }
       }
       else {
         if (!in_array($request->getIp(), $filterList)) {
-          return JsonResponse::create([
-            'message' => 'Forbidden',
-            'details' => 'You are forbidden to access this resource.'
-          ], 403);
+
+          return BlockchainResponse::create()
+            ->setIp($request->getIp())
+            ->setStatusCode(403)
+            ->setMessageParam('Forbidden')
+            ->setDetails('You are forbidden to access this resource.');
         }
       }
     }

@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Utils;
 
-use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -10,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @package Drupal\blockchain\Utils
  */
-interface BlockchainRequestInterface {
+interface BlockchainRequestInterface extends BlockchainHttpInterface {
 
   const TYPE_SUBSCRIBE = 'subscribe';
   const TYPE_ANNOUNCE = 'announce';
@@ -23,22 +22,6 @@ interface BlockchainRequestInterface {
   const PARAMS = [
     self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT, self::PARAM_BLOCKS,
   ];
-
-  /**
-   * Getter for param if exists.
-   *
-   * @return string|array|null
-   *   Value if any.
-   */
-  public function getParam($key);
-
-  /**
-   * Getter for array of params.
-   *
-   * @return array
-   *   Params.
-   */
-  public function getParams();
 
   /**
    * Getter for param.
@@ -138,36 +121,6 @@ interface BlockchainRequestInterface {
    *   This object.
    */
   public static function createFromRequest(Request $request, $type);
-
-  /**
-   * Getter for ip.
-   *
-   * @return string
-   *   Value.
-   */
-  public function getIp();
-
-  /**
-   * Setter for property.
-   *
-   * @param string $ip
-   *   Value.
-   *
-   * @return $this
-   *   Chaining.
-   */
-  public function setIp($ip);
-
-  /**
-   * Predicate.
-   *
-   * @param string $key
-   *   Name of key.
-   *
-   * @return bool
-   *   Test result.
-   */
-  public function hasParam($key);
 
   /**
    * Predicate.

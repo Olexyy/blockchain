@@ -1,18 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: oos
- * Date: 18.05.18
- * Time: 23:56
- */
 
 namespace Drupal\blockchain\Service;
 
 
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
+use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Interface BlockchainValidatorServiceInterface.
+ *
+ * @package Drupal\blockchain\Service
+ */
 interface BlockchainValidatorServiceInterface {
 
   /**
@@ -51,7 +51,7 @@ interface BlockchainValidatorServiceInterface {
    *
    * @param Request $request
    *   Request object.
-   * @return JsonResponse|BlockchainRequestInterface
+   * @return BlockchainResponseInterface|BlockchainRequestInterface
    *   Execution result.
    */
   public function validateRequest($type, Request $request);

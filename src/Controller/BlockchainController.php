@@ -4,6 +4,7 @@ namespace Drupal\blockchain\Controller;
 
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
+use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -57,10 +58,17 @@ class BlockchainController extends ControllerBase {
    */
   public function subscribe() {
 
+    $this->getLogger('blockchain.api')
+      ->info('Subscribe attempt initialize');
     $result = $this->validate(BlockchainRequestInterface::TYPE_SUBSCRIBE);
-    if ($result instanceof Response) {
+    if ($result instanceof BlockchainResponseInterface) {
+      $this->getLogger('blockchain.api')
+        ->info('Subscribe attempt failed for @ip, code: @code.',[
+        '@code' => $result->getStatusCode(),
+        '@ip' => $result->getIp(),
+      ]);
 
-      return $result;
+      return $result->toJsonResponse();
     }
     elseif ($result instanceof BlockchainRequestInterface) {
       if (!$this->blockchainService->getNodeService()->exists($result->getSelfParam())) {
@@ -95,7 +103,7 @@ class BlockchainController extends ControllerBase {
    * @param string $type
    *   Type of operation.
    *
-   * @return JsonResponse|BlockchainRequestInterface
+   * @return BlockchainResponseInterface|BlockchainRequestInterface
    *   Execution result.
    */
   public function validate($type) {

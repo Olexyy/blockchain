@@ -23,4 +23,5 @@ interface JsonBlockchainDataInterface {
   public function getWidget();
 
   public function getFormatter();
+
 }

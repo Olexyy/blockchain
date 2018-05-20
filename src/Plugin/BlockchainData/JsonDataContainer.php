@@ -15,7 +15,7 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
 
   public static function create(array $values = []) {
 
-    $object  = new static();
+    $object = new static();
     $object->fromArray($values);
 
     return $object;

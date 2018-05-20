@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @package Drupal\blockchain\Utils
  */
-class BlockchainRequest implements BlockchainRequestInterface {
+class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestInterface {
 
   /**
    * Type.
@@ -20,23 +20,11 @@ class BlockchainRequest implements BlockchainRequestInterface {
   protected $type;
 
   /**
-   * Params.
-   *
-   * @var array
-   */
-  protected $params;
-
-  /**
    * Valid state.
    *
    * @var bool
    */
   protected $valid;
-
-  /**
-   * @var string
-   */
-  protected $ip;
 
   /**
    * {@inheritdoc}
@@ -114,25 +102,6 @@ class BlockchainRequest implements BlockchainRequestInterface {
   /**
    * {@inheritdoc}
    */
-  public function getParam($key) {
-
-    if (isset($this->params[$key])) {
-      return $this->params[$key];
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getParams() {
-    return $this->params;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getAuthParam() {
     return $this->getParam(static::PARAM_AUTH);
   }
@@ -156,29 +125,6 @@ class BlockchainRequest implements BlockchainRequestInterface {
    */
   public function getBlocksParam() {
     return $this->getParam(static::PARAM_BLOCKS);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getIp() {
-    return $this->ip;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setIp($ip) {
-
-    $this->ip = $ip;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function hasParam($key) {
-    return !$this->getParam($key) === NULL;
   }
 
   /**
