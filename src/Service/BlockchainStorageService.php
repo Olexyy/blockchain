@@ -7,6 +7,7 @@ use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\blockchain\Utils\Util;
+use Drupal\Component\Utility\Random;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
@@ -133,14 +134,14 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
    */
   public function getGenericBlock() {
 
+    $rand = new Random();
     $block = BlockchainBlock::create();
-    $block->setPreviousHash(Util::hash('111'));
+    $block->setPreviousHash(Util::hash($rand->string()));
     $block->setTimestamp(time());
-    $block->setNonce('111');
+    $block->setNonce(mt_rand(0, 10000));
     $block->setAuthor($this->configService->getBlockchainNodeId());
-    $dataHandler = $this->getBlockDataHandler(NULL);
-    $dataHandler->setData('Generic block.');
-    $block->setData($dataHandler->getData());
+    $dataHandler = $this->getBlockDataHandler('raw::' . $rand->string());
+    $block->setData($dataHandler->getRawData());
 
     return $block;
   }

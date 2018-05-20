@@ -2,7 +2,6 @@
 
 
 namespace Drupal\blockchain\Utils;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Interface JsonConvertableInterface.
@@ -13,7 +12,7 @@ interface JsonConvertableInterface {
 
   public static function createFromJson($values);
 
-  public static function createFromFormState(FormStateInterface $formState);
+  public static function create(array $values = []);
 
   public function toJson();
 

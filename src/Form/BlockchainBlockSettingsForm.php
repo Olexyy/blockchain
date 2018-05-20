@@ -78,12 +78,13 @@ class BlockchainBlockSettingsForm extends FormBase {
       }
     }
     else {
+      $config = $this->blockchainService->getConfigService()->getConfig(TRUE);
       foreach (BlockchainConfigServiceInterface::KEYS as $key) {
         if ($form_state->hasValue($key)) {
-          $this->blockchainService->getConfigService()->getConfig(TRUE)
-            ->set($key, $form_state->getValue($key))->save();
+          $config->set($key, $form_state->getValue($key));
         }
       }
+      $config->save();
     }
 
   }
@@ -116,15 +117,19 @@ class BlockchainBlockSettingsForm extends FormBase {
     $blockchainFilterList = $this->blockchainService->getConfigService()->getBlockchainFilterList();
 
     $form['blockchainId'] = [
-      '#type' => 'item',
-      '#description' => $blockchainId,
+      '#type' => 'textfield',
+      '#default_value' => $blockchainId,
       '#title' => $this->t('Blockchain id'),
+      '#description' => $this->t('Blockchain id for this blockchain.'),
+      '#disabled' => $anyBlock,
     ];
 
     $form['blockchainNodeId'] = [
-      '#type' => 'item',
-      '#description' => $blockchainNodeId,
+      '#type' => 'textfield',
+      '#default_value' => $blockchainNodeId,
+      '#description' => $this->t('Blockchain node id is used as author for mined blocks.'),
       '#title' => $this->t('Blockchain node id'),
+      '#disabled' => $anyBlock,
     ];
 
     $form['blockchainType'] = [

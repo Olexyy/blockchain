@@ -113,10 +113,10 @@ class JsonBlockchainData extends BlockchainDataBase {
    */
   public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state) {
 
-    $entity = JsonDataContainer::createFromFormState($form_state);
-
     foreach ($items as $key => $item) {
-      $this->setData($entity->toJson());
+      $values = $item->value;
+      $entity = JsonDataContainer::create($values);
+      $this->setData($entity);
       $item->value = $this->getRawData();
     }
 

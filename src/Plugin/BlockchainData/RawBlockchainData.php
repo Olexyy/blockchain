@@ -3,7 +3,6 @@
 namespace Drupal\blockchain\Plugin\BlockchainData;
 
 use Drupal\blockchain\Plugin\BlockchainDataBase;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**

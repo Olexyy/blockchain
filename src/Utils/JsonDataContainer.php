@@ -1,7 +1,6 @@
 <?php
 
 namespace Drupal\blockchain\Utils;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Class SerializableDataContainer.
@@ -16,9 +15,13 @@ class JsonDataContainer implements JsonConvertableInterface {
   public function __construct(array $values = []) {
     foreach (get_object_vars($this) as $name => $value) {
       if (isset($values[$name])) {
-        $this->{$name} = $value;
+        $this->{$name} = $values[$name];
       }
     }
+  }
+
+  public static function create(array $values = []) {
+    return new static($values);
   }
 
   public static function createFromJson($values) {
@@ -38,17 +41,6 @@ class JsonDataContainer implements JsonConvertableInterface {
     }
 
     return json_encode($values);
-  }
-
-  public static function createFromFormState(FormStateInterface $formState){
-
-    $object = new static();
-    foreach (get_object_vars($object) as $name => $value) {
-      if ($formState->hasValue($name)) {
-        $object->{$name} = $formState->getValue($name);
-      }
-    }
-    return $object;
   }
 
   public function getWidgetType($name) {
