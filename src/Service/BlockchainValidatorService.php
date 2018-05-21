@@ -78,6 +78,14 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
   public function validateRequest($type, Request $request) {
 
     $configService = $this->configService;
+    if ($request->getMethod() !== Request::METHOD_POST) {
+
+      return BlockchainResponse::create()
+        ->setIp($request->getClientIp())
+        ->setStatusCode(400)
+        ->setMessageParam('Bad request')
+        ->setDetailsParam('Incorrect method.');
+    }
     if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE) {
 
       return BlockchainResponse::create()

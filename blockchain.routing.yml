@@ -1,5 +1,5 @@
 blockchain.subscribe:
-  path: '/blockchain/subscribe'
+  path: '/blockchain/api/subscribe'
   defaults:
     _controller: \Drupal\blockchain\Controller\BlockchainController::subscribe
   requirements:

@@ -59,7 +59,7 @@ class BlockchainController extends ControllerBase {
   public function subscribe() {
 
     $logger = $this->getLogger('blockchain.api');
-    $logger->info('Subscribe attempt initialized.');
+    $logger->info('Subscribe attempt initiated.');
     $result = $this->validate(BlockchainRequestInterface::TYPE_SUBSCRIBE);
     if ($result instanceof BlockchainResponseInterface) {
 
