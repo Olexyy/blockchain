@@ -4,12 +4,12 @@ namespace Drupal\blockchain\Controller;
 
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
+use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Blockchain controller.
@@ -58,39 +58,42 @@ class BlockchainController extends ControllerBase {
    */
   public function subscribe() {
 
-    $this->getLogger('blockchain.api')
-      ->info('Subscribe attempt initialize');
+    $logger = $this->getLogger('blockchain.api');
+    $logger->info('Subscribe attempt initialized.');
     $result = $this->validate(BlockchainRequestInterface::TYPE_SUBSCRIBE);
     if ($result instanceof BlockchainResponseInterface) {
-      $this->getLogger('blockchain.api')
-        ->info('Subscribe attempt failed for @ip, code: @code.',[
-        '@code' => $result->getStatusCode(),
-        '@ip' => $result->getIp(),
-      ]);
 
-      return $result->toJsonResponse();
+      return $result->log($logger)->toJsonResponse();
     }
     elseif ($result instanceof BlockchainRequestInterface) {
       if (!$this->blockchainService->getNodeService()->exists($result->getSelfParam())) {
         if ($this->blockchainService->getNodeService()->createFromRequest($result)) {
 
-          return JsonResponse::create([
-            'message' => 'Success',
-            'details' => 'Added to list.',
-            'self' => $this->blockchainService->getConfigService()->getBlockchainNodeId()], 200);
+          return BlockchainResponse::create()
+            ->setStatusCode(200)
+            ->setMessageParam('Success')
+            ->setDetailsParam('Added to list')
+            ->log($logger)
+            ->toJsonResponse();
         }
       }
       else {
 
-        return JsonResponse::create([
-          'message' => 'Not acceptable',
-          'details' => 'Already in list.'], 406);
+        return BlockchainResponse::create()
+          ->setStatusCode(406)
+          ->setMessageParam('Not acceptable')
+          ->setDetailsParam('Already in list.')
+          ->log($logger)
+          ->toJsonResponse();
       }
     }
 
-    return JsonResponse::create([
-      'message' => 'Server error',
-      'details' => 'Something unexpected happened.'], 505);
+    return BlockchainResponse::create()
+      ->setStatusCode(505)
+      ->setMessageParam('Server error')
+      ->setDetailsParam('Something unexpected happened.')
+      ->log($logger)
+      ->toJsonResponse();
   }
 
   /**

@@ -62,7 +62,7 @@ class BlockchainResponse extends BlockchainHttpBase implements BlockchainRespons
   /**
    * {@inheritdoc}
    */
-  public function setDetails($details) {
+  public function setDetailsParam($details) {
 
     return $this->setParam(static::PARAM_DETAILS, $details);
   }
@@ -91,6 +91,21 @@ class BlockchainResponse extends BlockchainHttpBase implements BlockchainRespons
   public static function create() {
 
     return new static();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function log($logger) {
+
+    $logger->info('Ip: @ip, code: @code, message: @message, details: @details.',[
+    '@code' => $this->getStatusCode(),
+    '@ip' => $this->getIp(),
+    '@message' => $this->getMessageParam(),
+    '@details' => $this->getDetailsParam(),
+  ]);
+
+    return $this;
   }
 
 }

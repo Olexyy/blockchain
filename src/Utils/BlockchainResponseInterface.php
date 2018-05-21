@@ -69,7 +69,7 @@ interface BlockchainResponseInterface extends BlockchainHttpInterface  {
    * @return $this
    *   Chaining.
    */
-  public function setDetails($details);
+  public function setDetailsParam($details);
 
   /**
    * Returns prepared json response.
@@ -94,5 +94,16 @@ interface BlockchainResponseInterface extends BlockchainHttpInterface  {
    *   Chaining.
    */
   public static function create();
+
+  /**
+   * Handles logging.
+   *
+   * @param  \Psr\Log\LoggerInterface $logger
+   *   The logger for the given channel.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function log($logger);
 
 }

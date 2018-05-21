@@ -81,10 +81,10 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
     if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE) {
 
       return BlockchainResponse::create()
-        ->setIp($request->getIp())
+        ->setIp($request->getClientIp())
         ->setStatusCode(403)
         ->setMessageParam('Forbidden')
-        ->setDetails('Access to this resource is restricted.');
+        ->setDetailsParam('Access to this resource is restricted.');
     }
     $request = BlockchainRequest::createFromRequest($request, $type);
     if (!$request->hasSelfParam()) {
@@ -93,7 +93,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setIp($request->getIp())
         ->setStatusCode(400)
         ->setMessageParam('Bad request')
-        ->setDetails('No self param.');
+        ->setDetailsParam('No self param.');
     }
     if ($configService->isBlockchainAuth()) {
       if (!$authToken = $request->getAuthParam()) {
@@ -102,7 +102,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
           ->setIp($request->getIp())
           ->setStatusCode(401)
           ->setMessageParam('Unauthorized')
-          ->setDetails('Auth token required.');
+          ->setDetailsParam('Auth token required.');
       }
       if (!$this->authIsValid($request->getSelfParam(), $request->getAuthParam())) {
 
@@ -110,7 +110,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
           ->setIp($request->getIp())
           ->setStatusCode(401)
           ->setMessageParam('Unauthorized')
-          ->setDetails('Auth token invalid.');
+          ->setDetailsParam('Auth token invalid.');
       }
     }
     if ($request->getType() !== BlockchainRequestInterface::TYPE_SUBSCRIBE) {
@@ -120,7 +120,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
           ->setIp($request->getIp())
           ->setStatusCode(401)
           ->setMessageParam('Unauthorized')
-          ->setDetails('Not subscribed yet.');
+          ->setDetailsParam('Not subscribed yet.');
       }
     }
     if ($filterList = $configService->getBlockchainFilterListAsArray()) {
@@ -131,7 +131,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
             ->setIp($request->getIp())
             ->setStatusCode(403)
             ->setMessageParam('Forbidden')
-            ->setDetails('You are forbidden to access this resource.');
+            ->setDetailsParam('You are forbidden to access this resource.');
         }
       }
       else {
@@ -141,7 +141,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
             ->setIp($request->getIp())
             ->setStatusCode(403)
             ->setMessageParam('Forbidden')
-            ->setDetails('You are forbidden to access this resource.');
+            ->setDetailsParam('You are forbidden to access this resource.');
         }
       }
     }
