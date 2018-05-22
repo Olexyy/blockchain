@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\blockchain\Service;
+use Drupal\blockchain\Utils\BlockchainResponseInterface;
 
 /**
  * Interface BlockchainApiServiceInterface.
@@ -31,8 +32,8 @@ interface BlockchainApiServiceInterface {
    * @param string $baseUrl
    *   Base url of request.
    *
-   * @return array|null
-   *   Parsed json params or null.
+   * @return BlockchainResponseInterface|null
+   *   Parsed json params as response or null.
    */
   public function executeSubscribe($baseUrl);
 
@@ -43,8 +44,8 @@ interface BlockchainApiServiceInterface {
    *   Full Url.
    * @param array $params
    *   Params to be passed.
-   * @return null|array
-   *   Parsed json params or null.
+   * @return BlockchainResponseInterface|null
+   *   Parsed json params as response or null.
    */
   public function execute($url, array $params);
 }

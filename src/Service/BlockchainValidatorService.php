@@ -6,7 +6,6 @@ use Drupal\blockchain\Utils\BlockchainRequest;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\blockchain\Utils\Util;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
+use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -95,24 +96,41 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
 
     try {
       $response = $this->httpClient->request('POST', $url, ['json' => $params]);
-      if ($response->getStatusCode() === 200) {
-        $body = $response->getBody()->getContents();
+      $body = (array) json_decode($response->getBody()->getContents());
 
-        return json_decode($body);
-      }
-      else {
-        $this->getLogger()->error('Request to @url result: code - @code, details: @details', [
-          '@url' => $url,
-          '@code' => $response->getStatusCode(),
-          '@details' => $response->getReasonPhrase(),
-        ]);
-
-        return NULL;
-      }
+      return BlockchainResponse::create()
+        ->setStatusCode($response->getStatusCode())
+        ->setParams($body);
     } catch (GuzzleException $e) {
-      $this->getLogger()->error($e->getMessage() . $e->getTraceAsString());
+      $this->getLogger()
+        ->error($e->getCode() . $e->getMessage() . $e->getTraceAsString());
 
-      return NULL;
+      return BlockchainResponse::create()
+        ->setStatusCode($e->getCode())
+        ->setParams($this->exceptionMessageToArray($e));
+    }
+  }
+
+  /**
+   * Internal helper to parse Exception.
+   *
+   * @param GuzzleException $exception
+   *   Given exception.
+   *
+   * @return array
+   *   Array of parsed values.
+   */
+  protected function exceptionMessageToArray(GuzzleException $exception) {
+
+    $message = $exception->getMessage();
+    $parsed = explode('response:', $message);
+    if (count($parsed) === 2) {
+      return (array)json_decode(trim($parsed[1]));
+    }
+    else {
+      return [
+        'message' => 'Error parsing Guzzle Exception.'
+      ];
     }
   }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\blockchain\Utils;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
@@ -49,6 +50,15 @@ class BlockchainResponse extends BlockchainHttpBase implements BlockchainRespons
   public function setMessageParam($message) {
 
     return $this->setParam(static::PARAM_MESSAGE, $message);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setParams(array $params) {
+    $this->params = $params;
+
+    return $this;
   }
 
   /**

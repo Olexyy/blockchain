@@ -106,4 +106,15 @@ interface BlockchainResponseInterface extends BlockchainHttpInterface  {
    */
   public function log($logger);
 
+  /**
+   * Setter for array of params.
+   *
+   * @param array $params
+   *   Array of params.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setParams(array $params);
+
 }
