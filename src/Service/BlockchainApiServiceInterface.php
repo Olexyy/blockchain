@@ -12,6 +12,8 @@ interface BlockchainApiServiceInterface {
 
   const LOGGER_CHANNEL = 'blockchain.api';
 
+  const API_SUBSCRIBE = '/blockchain/api/subscribe';
+
   /**
    * Getter for current request.
    *

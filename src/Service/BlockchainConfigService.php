@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Service;
 
+use Drupal\blockchain\Utils\Util;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\State\StateInterface;
@@ -388,7 +389,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function tokenGenerate() {
 
-    return Util::hash($this->configService->getBlockchainId().$this->configService->getBlockchainNodeId());
+    return Util::hash($this->getBlockchainId().$this->getBlockchainNodeId());
   }
 
 }

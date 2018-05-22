@@ -69,15 +69,23 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->drupalGet($this->blockchainSubscribeUrl);
     $this->assertEquals(400, $this->getSession()->getStatusCode());
     $this->assertContains('{"message":"Bad request","details":"Incorrect method."}', $this->getSession()->getPage()->getContent());
+    // Blockchain id is generated on first request, lets check it.
+    $blockchainId = $this->blockchainService->getConfigService()->getBlockchainId();
+    $this->assertNotEmpty($blockchainId, 'Blockchain id is generated.');
+    $this->assertEquals($blockchainId, $this->blockchainService->getConfigService()->getBlockchainId(),
+      'Blockchain id is not regenerated on second call');
     // Blockchain node id is generated on first request, lets check it.
     $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
     $this->assertNotEmpty($blockchainNodeId, 'Blockchain node id is generated.');
     $this->assertEquals($blockchainNodeId, $this->blockchainService->getConfigService()->getBlockchainNodeId(),
-      'Blockchain id si not regenerated on second call');
+      'Blockchain id is not regenerated on second call');
     // Ensure Blockchain type is 'single'.
     $type = $this->blockchainService->getConfigService()->getBlockchainType();
     $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_SINGLE, 'Blockchain type is single');
-    // Cover API is restricted for 'single' type.
+    // Ensure Blockchain 'auth' is false by default.
+    $auth = $this->blockchainService->getConfigService()->isBlockchainAuth();
+    $this->assertFalse($auth, 'Blockchain auth is disabled');
+    // Cover API is restricted for 'single' type. Request is normal.
     $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
     $this->assertEquals(403, $response->getStatusCode());
     $this->assertEquals('Forbidden', $response->getMessageParam());
@@ -87,12 +95,21 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $type = $this->blockchainService->getConfigService()->getBlockchainType();
     $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
     // Try to access with no 'self' param.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
-    ]);
+    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, []);
     $this->assertEquals(400, $response->getStatusCode());
     $this->assertEquals('Bad request', $response->getMessageParam());
     $this->assertEquals('No self param.', $response->getDetailsParam());
-    //
+    // Enable auth.
+    $this->blockchainService->getConfigService()->setBlockchainAuth(TRUE);
+    $auth = $this->blockchainService->getConfigService()->isBlockchainAuth();
+    $this->assertTrue($auth, 'Blockchain auth is enabled');
+    // Cover API is restricted for non 'auth' request.
+    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+      BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
+    ]);
+    $this->assertEquals(401, $response->getStatusCode());
+    $this->assertEquals('Unauthorized', $response->getMessageParam());
+    $this->assertEquals('Auth token required.', $response->getDetailsParam());
 
   }
 

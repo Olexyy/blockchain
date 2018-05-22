@@ -90,9 +90,16 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   protected static function parseRequest(Request $request) {
 
     $params = [];
-    foreach (static::PARAMS as $param) {
-      if ($value = $request->get($param)) {
-        $params[$param] = Xss::filter($value);
+    if ($data = $request->getContent()) {
+      if ($jsonData = (array) json_decode($data)) {
+
+        if (is_array($jsonData)) {
+          foreach (static::PARAMS as $param) {
+            if (isset($jsonData[$param]) && $value = $jsonData[$param]) {
+              $params[$param] = Xss::filter($value);
+            }
+          }
+        }
       }
     }
 
@@ -131,28 +138,28 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function hasAuthParam() {
-    return !$this->getAuthParam() === NULL;
+    return !($this->getAuthParam() === NULL);
   }
 
   /**
    * {@inheritdoc}
    */
   public function hasSelfParam() {
-    return !$this->getSelfParam() === NULL;
+    return !($this->getSelfParam() === NULL);
   }
 
   /**
    * {@inheritdoc}
    */
   public function hasCountParam() {
-    return !$this->getCountParam() === NULL;
+    return !($this->getCountParam() === NULL);
   }
 
   /**
    * {@inheritdoc}
    */
   public function hasBlocksParam() {
-    return !$this->getBlocksParam() === NULL;
+    return !($this->getBlocksParam() === NULL);
   }
 
 }

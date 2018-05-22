@@ -86,7 +86,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
       $params[BlockchainRequestInterface::PARAM_AUTH] = $this->configService->tokenGenerate();
     }
 
-    return $this->execute($baseUrl.'/blockchain/subscribe', $params);
+    return $this->execute($baseUrl.static::API_SUBSCRIBE, $params);
   }
 
   /**
@@ -96,7 +96,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
 
     try {
       $response = $this->httpClient->request('POST', $url, ['json' => $params]);
-      $body = (array) json_decode($response->getBody()->getContents());
+      $body = json_decode($response->getBody()->getContents(), TRUE);
 
       return BlockchainResponse::create()
         ->setStatusCode($response->getStatusCode())
@@ -124,12 +124,14 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
 
     $message = $exception->getMessage();
     $parsed = explode('response:', $message);
-    if (count($parsed) === 2) {
-      return (array)json_decode(trim($parsed[1]));
+    // Try to pars json.
+    if (count($parsed) === 2 && ($jsonData = (array)json_decode(trim($parsed[1])))) {
+      return $jsonData;
     }
     else {
       return [
-        'message' => 'Error parsing Guzzle Exception.'
+        'message' => $message,
+        'details' => $exception->getTraceAsString(),
       ];
     }
   }

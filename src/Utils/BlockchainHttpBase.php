@@ -46,7 +46,7 @@ abstract class BlockchainHttpBase implements BlockchainHttpInterface {
    * {@inheritdoc}
    */
   public function hasParam($key) {
-    return !$this->getParam($key) === NULL;
+    return !($this->getParam($key) === NULL);
   }
 
   /**
