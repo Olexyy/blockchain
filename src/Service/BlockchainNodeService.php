@@ -70,22 +70,35 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function createFromRequest(BlockchainRequestInterface $request, $save = TRUE) {
+  public function create($id, $label, $ip, $save = TRUE) {
 
     /** @var BlockchainNodeInterface $blockchainNode */
     $blockchainNode = $this->getStorage()->create();
     $blockchainNode
-      ->setId($request->getSelfParam())
-      ->setLabel($request->getSelfParam())
-      ->setIp($request->getIp());
+      ->setId($id)
+      ->setLabel($label)
+      ->setIp($ip);
     try {
       if ($save) {
         $this->getStorage()->save($blockchainNode);
       }
+
       return $blockchainNode;
     } catch (\Exception $exception) {
+
       return NULL;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createFromRequest(BlockchainRequestInterface $request, $save = TRUE) {
+
+    return $this->create(
+      $request->getSelfParam(),
+      $request->getSelfParam(),
+      $request->getIp(), $save);
   }
 
 }

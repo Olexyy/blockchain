@@ -331,7 +331,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   public function getBlockchainFilterType() {
 
     if (!($blockchainFilterType = $this->getConfig()->get('blockchainFilterType'))) {
-      $blockchainFilterType = static::INTERVAL_DEFAULT;
+      $blockchainFilterType = static::FILTER_TYPE_BLACKLIST;
       $this->setBlockchainFilterType($blockchainFilterType);
     }
 
@@ -373,10 +373,21 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function setBlockchainFilterListAsArray(array $blockchainFilterList) {
+
+    $blockchainFilterList = implode("\r\n", $blockchainFilterList);
+    $this->setBlockchainFilterList($blockchainFilterList);
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getBlockchainFilterListAsArray() {
 
     if ($list = $this->getBlockchainFilterList()) {
-      $parsed = preg_split('~R~', $list);
+      $parsed = preg_split('~\R~', $list);
       array_walk($parsed, 'trim');
       return $parsed;
     }

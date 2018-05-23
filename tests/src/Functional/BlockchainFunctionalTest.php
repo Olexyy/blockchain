@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\blockchain\Functional;
 
+use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
@@ -37,6 +38,13 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   protected $blockchainSubscribeUrl;
 
   /**
+   * Local ip.
+   *
+   * @var string
+   */
+  protected $localIp;
+
+  /**
    * Modules to install.
    *
    * @var array
@@ -49,6 +57,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   protected function setUp() {
 
     parent::setUp();
+    $this->localIp = '127.0.0.1';
     $this->assertNotEmpty($this->baseUrl, 'Base url is set.');
     $this->blockchainSubscribeUrl = $this->baseUrl . '/blockchain/api/subscribe';
     $this->assertNotEmpty($this->blockchainSubscribeUrl, 'Blockchain subscribe API url is set.');
@@ -110,7 +119,92 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(401, $response->getStatusCode());
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Auth token required.', $response->getDetailsParam());
+    // Cover API is restricted for invalid 'auth' request.
+    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+      BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
+      BlockchainRequestInterface::PARAM_AUTH => 'INVALIDAUTHPARAM',
+    ]);
+    $this->assertEquals(401, $response->getStatusCode());
+    $this->assertEquals('Unauthorized', $response->getMessageParam());
+    $this->assertEquals('Auth token invalid.', $response->getDetailsParam());
+    // TODO test not subscribed yet test case.
+    // Ensure we have blacklist filter mode.
+    $blockchainFilterType = $this->blockchainService->getConfigService()->getBlockchainFilterType();
+    $this->assertEquals($blockchainFilterType, BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST, 'Blockchain filter type is blacklist');
+    $blacklist = $this->blockchainService->getConfigService()->getBlockchainFilterList();
+    $this->assertEmpty($blacklist,'Blockchain blacklist is empty');
+    $this->blockchainService->getConfigService()->setBlockchainFilterListAsArray($this->getBlacklist());
+    // Ensure we included our ip in black list.
+    $blacklist = $this->blockchainService->getConfigService()->getBlockchainFilterListAsArray();
+    $this->assertEquals($this->getBlacklist(), $blacklist, 'Blacklist is equal to expected.');
+    // Generate valid token, so we cover check for blacklist.
+    $authToken = $this->blockchainService->getConfigService()->tokenGenerate();
+    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+      BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
+      BlockchainRequestInterface::PARAM_AUTH => $authToken,
+    ]);
+    $this->assertEquals(403, $response->getStatusCode());
+    $this->assertEquals('Forbidden', $response->getMessageParam());
+    $this->assertEquals('You are forbidden to access this resource.', $response->getDetailsParam());
+    // Ensure we have whitelist filter mode.
+    $this->blockchainService->getConfigService()->setBlockchainFilterType(BlockchainConfigServiceInterface::FILTER_TYPE_WHITELIST);
+    $blockchainFilterType = $this->blockchainService->getConfigService()->getBlockchainFilterType();
+    $this->assertEquals($blockchainFilterType, BlockchainConfigServiceInterface::FILTER_TYPE_WHITELIST, 'Blockchain filter type is whitelist');
+    // Ensure put ip is not in whitelist.
+    $this->blockchainService->getConfigService()->setBlockchainFilterListAsArray($this->getWhitelist());
+    $whitelist = $this->blockchainService->getConfigService()->getBlockchainFilterList();
+    $this->assertNotContains($this->localIp, $whitelist, 'Whitelist does not have local ip address.');
+    // Cover check for whitelist.
+    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+      BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
+      BlockchainRequestInterface::PARAM_AUTH => $authToken,
+    ]);
+    $this->assertEquals(403, $response->getStatusCode());
+    $this->assertEquals('Forbidden', $response->getMessageParam());
+    $this->assertEquals('You are forbidden to access this resource.', $response->getDetailsParam());
+    // Lets reset this for further testing.
+    $this->blockchainService->getConfigService()->setBlockchainFilterListAsArray([]);
+    $whitelist = $this->blockchainService->getConfigService()->getBlockchainFilterList();
+    $this->assertEmpty($whitelist, 'Whitelist is empty.');
+    // Lets focus on Blockchain nodes. Ensure we have any.
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $this->assertFalse($blockchainNodeExists, 'Blockchain node not exists in list');
+    $nodeCount = count($this->blockchainService->getNodeService()->getList());
+    $this->assertEmpty($nodeCount, 'Blockchain node list empty');
+    // Try to create one. Ensure list is not empty.
+    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->localIp);
+    $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
+    $nodeCount = count($this->blockchainService->getNodeService()->getList());
+    $this->assertNotEmpty($nodeCount, 'Blockchain node list not empty');
+    // Cover 'already exists' use case. Use native request method here.
+    $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
+    $this->assertEquals(406, $response->getStatusCode());
+    $this->assertEquals('Not acceptable', $response->getMessageParam());
+    $this->assertEquals('Already in list.', $response->getDetailsParam());
+  }
 
+  /**
+   * Getter for ips.
+   *
+   * @return string[]
+   *   Array of ips including self.
+   */
+  protected function getBlacklist() {
+
+    return ['127.0.0.1', '127.0.0.3', '127.0.0.5'];
+  }
+
+  /**
+   * Getter for ips.
+   *
+   * @return string[]
+   *   Array of ips excluding self.
+   */
+  protected function getWhitelist() {
+
+    return ['127.0.0.2', '127.0.0.4', '127.0.0.6'];
   }
 
 }

@@ -153,7 +153,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
       }
     }
 
-    return $request;
+    return $blockchainRequest;
   }
 
 }

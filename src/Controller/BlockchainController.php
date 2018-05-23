@@ -72,7 +72,7 @@ class BlockchainController extends ControllerBase {
           return BlockchainResponse::create()
             ->setStatusCode(200)
             ->setMessageParam('Success')
-            ->setDetailsParam('Added to list')
+            ->setDetailsParam('Added to list.')
             ->log($logger)
             ->toJsonResponse();
         }

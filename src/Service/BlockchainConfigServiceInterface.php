@@ -275,7 +275,7 @@ interface BlockchainConfigServiceInterface {
   public function getBlockchainFilterList();
 
   /**
-   * Setter for blockchain nodes filter list
+   * Setter for blockchain nodes filter list.
    *
    * @param $blockchainFilterList
    *    Given value.
@@ -284,6 +284,17 @@ interface BlockchainConfigServiceInterface {
    *   Chaining.
    */
   public function setBlockchainFilterList($blockchainFilterList);
+
+  /**
+   * Setter for blockchain nodes filter list.
+   *
+   * @param array $blockchainFilterList
+   *   Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainFilterListAsArray(array $blockchainFilterList);
 
   /**
    * Getter for blockchain nodes filter list.
