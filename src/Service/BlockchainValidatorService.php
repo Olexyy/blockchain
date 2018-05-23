@@ -81,6 +81,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
       return BlockchainResponse::create()
         ->setIp($request->getClientIp())
+        ->setPort($request->getPort())
         ->setStatusCode(400)
         ->setMessageParam('Bad request')
         ->setDetailsParam('Incorrect method.');
@@ -89,6 +90,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
       return BlockchainResponse::create()
         ->setIp($request->getClientIp())
+        ->setPort($request->getPort())
         ->setStatusCode(403)
         ->setMessageParam('Forbidden')
         ->setDetailsParam('Access to this resource is restricted.');
@@ -98,6 +100,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
       return BlockchainResponse::create()
         ->setIp($blockchainRequest->getIp())
+        ->setPort($request->getPort())
         ->setStatusCode(400)
         ->setMessageParam('Bad request')
         ->setDetailsParam('No self param.');
@@ -107,6 +110,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
         return BlockchainResponse::create()
           ->setIp($blockchainRequest->getIp())
+          ->setPort($request->getPort())
           ->setStatusCode(401)
           ->setMessageParam('Unauthorized')
           ->setDetailsParam('Auth token required.');
@@ -115,6 +119,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
         return BlockchainResponse::create()
           ->setIp($blockchainRequest->getIp())
+          ->setPort($request->getPort())
           ->setStatusCode(401)
           ->setMessageParam('Unauthorized')
           ->setDetailsParam('Auth token invalid.');
@@ -125,6 +130,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
         return BlockchainResponse::create()
           ->setIp($blockchainRequest->getIp())
+          ->setPort($request->getPort())
           ->setStatusCode(401)
           ->setMessageParam('Unauthorized')
           ->setDetailsParam('Not subscribed yet.');
@@ -136,6 +142,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
           return BlockchainResponse::create()
             ->setIp($blockchainRequest->getIp())
+            ->setPort($request->getPort())
             ->setStatusCode(403)
             ->setMessageParam('Forbidden')
             ->setDetailsParam('You are forbidden to access this resource.');
@@ -146,6 +153,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
           return BlockchainResponse::create()
             ->setIp($blockchainRequest->getIp())
+            ->setPort($request->getPort())
             ->setStatusCode(403)
             ->setMessageParam('Forbidden')
             ->setDetailsParam('You are forbidden to access this resource.');

@@ -36,6 +36,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
    * {@inheritdoc}
    */
   public function getStorage() {
+
     try {
       return $this->entityTypeManager
         ->getStorage(BlockchainNode::entityTypeId());
@@ -48,6 +49,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
    * {@inheritdoc}
    */
   public function getList() {
+
     return $this->getStorage()->loadMultiple();
   }
 
@@ -70,14 +72,15 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function create($id, $label, $ip, $save = TRUE) {
+  public function create($id, $label, $ip, $port, $save = TRUE) {
 
     /** @var BlockchainNodeInterface $blockchainNode */
     $blockchainNode = $this->getStorage()->create();
     $blockchainNode
       ->setId($id)
       ->setLabel($label)
-      ->setIp($ip);
+      ->setIp($ip)
+      ->setPort($port);
     try {
       if ($save) {
         $this->getStorage()->save($blockchainNode);
@@ -98,7 +101,8 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
     return $this->create(
       $request->getSelfParam(),
       $request->getSelfParam(),
-      $request->getIp(), $save);
+      $request->getIp(),
+      $request->getPort(), $save);
   }
 
 }

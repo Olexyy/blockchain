@@ -110,7 +110,7 @@ class BlockchainResponse extends BlockchainHttpBase implements BlockchainRespons
 
     $logger->info('Ip: @ip, code: @code, message: @message, details: @details.',[
     '@code' => $this->getStatusCode(),
-    '@ip' => $this->getIp(),
+    '@ip' => $this->getIpAndPort(),
     '@message' => $this->getMessageParam(),
     '@details' => $this->getDetailsParam(),
   ]);

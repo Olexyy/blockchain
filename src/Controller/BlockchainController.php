@@ -70,6 +70,8 @@ class BlockchainController extends ControllerBase {
         if ($this->blockchainService->getNodeService()->createFromRequest($result)) {
 
           return BlockchainResponse::create()
+            ->setIp($result->getIp())
+            ->setPort($result->getPort())
             ->setStatusCode(200)
             ->setMessageParam('Success')
             ->setDetailsParam('Added to list.')
@@ -80,6 +82,8 @@ class BlockchainController extends ControllerBase {
       else {
 
         return BlockchainResponse::create()
+          ->setIp($result->getIp())
+          ->setPort($result->getPort())
           ->setStatusCode(406)
           ->setMessageParam('Not acceptable')
           ->setDetailsParam('Already in list.')
@@ -89,6 +93,8 @@ class BlockchainController extends ControllerBase {
     }
 
     return BlockchainResponse::create()
+      ->setIp($result->getIp())
+      ->setPort($result->getPort())
       ->setStatusCode(505)
       ->setMessageParam('Server error')
       ->setDetailsParam('Something unexpected happened.')

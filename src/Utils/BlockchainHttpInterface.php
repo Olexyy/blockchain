@@ -66,4 +66,31 @@ interface BlockchainHttpInterface {
    */
   public function setIp($ip);
 
+  /**
+   * Getter for port.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getPort();
+
+  /**
+   * Setter for port.
+   *
+   * @param string $port
+   *   Given port.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setPort($port);
+
+  /**
+   * Getter for ip:port.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getIpAndPort();
+
 }

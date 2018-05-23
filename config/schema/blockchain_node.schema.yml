@@ -13,3 +13,6 @@ blockchain.blockchain_node.*:
     ip:
       type: string
       label: 'Node ip'
+    port:
+      type: string
+      label: 'Node port'

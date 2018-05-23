@@ -9,9 +9,26 @@ namespace Drupal\blockchain\Utils;
  */
 abstract class BlockchainHttpBase implements BlockchainHttpInterface {
 
+  /**
+   * Parameters.
+   *
+   * @var array
+   */
   protected $params;
 
+  /**
+   * Ip address.
+   *
+   * @var string
+   */
   protected $ip;
+
+  /**
+   * Port.
+   *
+   * @var string
+   */
+  protected $port;
 
   /**
    * {@inheritdoc}
@@ -63,6 +80,29 @@ abstract class BlockchainHttpBase implements BlockchainHttpInterface {
 
     $this->ip = $ip;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPort() {
+    return $this->port;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPort($port) {
+    $this->port = $port;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getIpAndPort() {
+
+    return $this->getIp(). ':' . $this->getPort();
   }
 
 }

@@ -62,6 +62,13 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   protected $ip;
 
   /**
+   * The Blockchain Node port.
+   *
+   * @var string
+   */
+  protected $port;
+
+  /**
    * {@inheritdoc}
    */
   public static function entityTypeId() {
@@ -110,6 +117,21 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    */
   public function setLabel($label) {
     $this->label = $label;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPort() {
+    return $this->port;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPort($port) {
+    $this->port = $port;
     return $this;
   }
 
