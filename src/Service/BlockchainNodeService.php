@@ -105,4 +105,17 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
       $request->getPort(), $save);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function delete(BlockchainNodeInterface $blockchainNode) {
+    try {
+      $this->getStorage()->delete([$blockchainNode]);
+      return TRUE;
+    }
+    catch (\Exception $exception) {
+      return FALSE;
+    }
+  }
+
 }

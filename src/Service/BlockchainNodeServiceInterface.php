@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\blockchain\Service;
+
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 
@@ -79,5 +80,16 @@ interface BlockchainNodeServiceInterface {
    *   New entity if created.
    */
   public function createFromRequest(BlockchainRequestInterface $request, $save = TRUE);
+
+  /**
+   * Delete handler.
+   *
+   * @param BlockchainNodeInterface $blockchainNode
+   *   Given entity.
+   *
+   * @return bool
+   *   Execution result.
+   */
+  public function delete(BlockchainNodeInterface $blockchainNode);
 
 }

@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\blockchain\Functional;
 
+use Drupal\blockchain\Entity\BlockchainNode;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
@@ -45,6 +46,13 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   protected $localIp;
 
   /**
+   * Local port.
+   *
+   * @var string
+   */
+  protected $localPort;
+
+  /**
    * Modules to install.
    *
    * @var array
@@ -58,6 +66,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
 
     parent::setUp();
     $this->localIp = '127.0.0.1';
+    $this->localPort = '80';
     $this->assertNotEmpty($this->baseUrl, 'Base url is set.');
     $this->blockchainSubscribeUrl = $this->baseUrl . '/blockchain/api/subscribe';
     $this->assertNotEmpty($this->blockchainSubscribeUrl, 'Blockchain subscribe API url is set.');
@@ -172,17 +181,31 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $nodeCount = count($this->blockchainService->getNodeService()->getList());
     $this->assertEmpty($nodeCount, 'Blockchain node list empty');
     // Try to create one. Ensure list is not empty.
-    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->localIp);
+    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->localIp, $this->localPort);
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
     $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
     $nodeCount = count($this->blockchainService->getNodeService()->getList());
-    $this->assertNotEmpty($nodeCount, 'Blockchain node list not empty');
+    $this->assertEquals(1, $nodeCount, 'Blockchain node list not empty');
     // Cover 'already exists' use case. Use native request method here.
     $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
     $this->assertEquals(406, $response->getStatusCode());
     $this->assertEquals('Not acceptable', $response->getMessageParam());
     $this->assertEquals('Already in list.', $response->getDetailsParam());
+    // Finally delete node and try to create it via subscribe with response 200.
+    $this->blockchainService->getNodeService()->delete($blockchainNode);
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $this->assertFalse($blockchainNodeExists, 'Blockchain node not exists in list');
+    $nodeCount = $this->blockchainService->getNodeService()->getList();
+    $this->assertEmpty($nodeCount, 'Blockchain node list empty');
+    $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
+    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals('Success', $response->getMessageParam());
+    $this->assertEquals('Added to list.', $response->getDetailsParam());
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
+    $testLoad = $this->blockchainService->getNodeService()->load($blockchainNodeId);
+    $this->assertInstanceOf(BlockchainNodeInterface::class, $testLoad, 'Blockchain node loaded');
   }
 
   /**
