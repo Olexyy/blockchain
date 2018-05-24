@@ -48,14 +48,27 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getList() {
+  public function getList($offset = 0, $limit = 10) {
 
     $list = $this->getStorage()
       ->getQuery()
       ->accessCheck(FALSE)
+      ->range($offset, $limit)
       ->execute();
 
     return $this->getStorage()->loadMultiple($list);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCount() {
+
+    return $this->getStorage()
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->count()
+      ->execute();
   }
 
   /**

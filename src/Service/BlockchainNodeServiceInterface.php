@@ -22,10 +22,23 @@ interface BlockchainNodeServiceInterface {
   /**
    * Getter for list of Blockchain nodes.
    *
-   * @return \Drupal\Core\Entity\EntityInterface[]
+   * @param int $offset
+   *   Offset.
+   * @param int $limit
+   *   Limit.
+   *
+   * @return BlockchainNodeInterface[]
    *   Array of entities.
    */
-  public function getList();
+  public function getList($offset = 0, $limit = 10);
+
+  /**
+   * Count query.
+   *
+   * @return int
+   *   Count of items.
+   */
+  public function getCount();
 
   /**
    * Getter for list of Blockchain nodes.

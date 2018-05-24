@@ -86,11 +86,30 @@ interface BlockchainHttpInterface {
   public function setPort($port);
 
   /**
-   * Getter for ip:port.
+   * Defines if protocol.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function isSecure();
+
+  /**
+   * Setter for protocol security.
+   *
+   * @param bool $secure
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setSecure($secure);
+
+  /**
+   * Endpoint ready to be requested.
    *
    * @return string
-   *   Value.
+   *   Endpoint.
    */
-  public function getIpAndPort();
+  public function getEndPoint();
 
 }

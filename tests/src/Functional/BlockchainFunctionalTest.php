@@ -80,8 +80,8 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   /**
    * Tests that default values are correctly translated to UUIDs in config.
    */
-  public function testBlockchainService() {
-
+  public function testBlockchainServiceSubscribe() {
+    // TODO ADD SECURITY...
     // Cover method checking.
     $this->drupalGet($this->blockchainSubscribeUrl);
     $this->assertEquals(400, $this->getSession()->getStatusCode());

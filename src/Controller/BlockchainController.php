@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Controller;
 
+use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
@@ -52,6 +53,79 @@ class BlockchainController extends ControllerBase {
   }
 
   /**
+   * Announce action.
+   *
+   * @return JsonResponse
+   */
+  public function announce() {
+
+    $logger = $this->getLogger('blockchain.api');
+    $logger->info('Announce attempt initiated.');
+    $result = $this->validate(BlockchainRequestInterface::TYPE_ANNOUNCE);
+    if ($result instanceof BlockchainResponseInterface) {
+
+      return $result->log($logger)->toJsonResponse();
+    }
+    elseif ($result instanceof BlockchainRequestInterface) {
+      if ($result->hasCountParam()) {
+        $ownBlockCount = $this->blockchainService->getStorageService()->getBlockCount();
+        if ($ownBlockCount < $result->getCountParam()) {
+          $this->blockchainService->getQueueService()->addAnnounceItem($result->sleep());
+          $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
+          if ($announceManagement == BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE) {
+            $this->blockchainService->getQueueService()->doAnnounceHandling();
+          }
+
+          return BlockchainResponse::create()
+            ->setIp($result->getIp())
+            ->setPort($result->getPort())
+            ->setSecure($result->isSecure())
+            ->setStatusCode(200)
+            ->setMessageParam('Success')
+            ->setDetailsParam('Added to queue.')
+            ->log($logger)
+            ->toJsonResponse();
+        }
+        else {
+
+          return BlockchainResponse::create()
+            ->setIp($result->getIp())
+            ->setPort($result->getPort())
+            ->setSecure($result->isSecure())
+            ->setStatusCode(406)
+            ->setMessageParam('Not acceptable')
+            ->setDetailsParam('Count of blocks is less or equals.')
+            ->log($logger)
+            ->toJsonResponse();
+        }
+
+      }
+      else {
+
+        return BlockchainResponse::create()
+          ->setIp($result->getIp())
+          ->setPort($result->getPort())
+          ->setSecure($result->isSecure())
+          ->setStatusCode(400)
+          ->setMessageParam('Bad request')
+          ->setDetailsParam('No count param.')
+          ->log($logger)
+          ->toJsonResponse();
+      }
+    }
+
+    return BlockchainResponse::create()
+      ->setIp($result->getIp())
+      ->setPort($result->getPort())
+      ->setSecure($result->isSecure())
+      ->setStatusCode(505)
+      ->setMessageParam('Server error')
+      ->setDetailsParam('Something unexpected happened.')
+      ->log($logger)
+      ->toJsonResponse();
+  }
+
+  /**
    * Subscribe action.
    *
    * @return JsonResponse
@@ -72,6 +146,7 @@ class BlockchainController extends ControllerBase {
           return BlockchainResponse::create()
             ->setIp($result->getIp())
             ->setPort($result->getPort())
+            ->setSecure($result->isSecure())
             ->setStatusCode(200)
             ->setMessageParam('Success')
             ->setDetailsParam('Added to list.')
@@ -84,6 +159,7 @@ class BlockchainController extends ControllerBase {
         return BlockchainResponse::create()
           ->setIp($result->getIp())
           ->setPort($result->getPort())
+          ->setSecure($result->isSecure())
           ->setStatusCode(406)
           ->setMessageParam('Not acceptable')
           ->setDetailsParam('Already in list.')
@@ -95,6 +171,7 @@ class BlockchainController extends ControllerBase {
     return BlockchainResponse::create()
       ->setIp($result->getIp())
       ->setPort($result->getPort())
+      ->setSecure($result->isSecure())
       ->setStatusCode(505)
       ->setMessageParam('Server error')
       ->setDetailsParam('Something unexpected happened.')

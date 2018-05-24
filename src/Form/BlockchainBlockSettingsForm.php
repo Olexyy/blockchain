@@ -115,6 +115,7 @@ class BlockchainBlockSettingsForm extends FormBase {
     $blockchainAuth = $this->blockchainService->getConfigService()->isBlockchainAuth();
     $blockchainFilterType = $this->blockchainService->getConfigService()->getBlockchainFilterType();
     $blockchainFilterList = $this->blockchainService->getConfigService()->getBlockchainFilterList();
+    $allowNotSecure = $this->blockchainService->getConfigService()->getAllowNotSecure();
 
     $form['blockchainId'] = [
       '#type' => 'textfield',
@@ -232,6 +233,13 @@ class BlockchainBlockSettingsForm extends FormBase {
           ':input[name="announceManagement"]' => ['value' => BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON],
         ],
       ],
+    ];
+
+    $form['allowNotSecure'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow not secure protocol'),
+      '#default_value' => $allowNotSecure,
+      '#description' => $this->t('Check to allow not secure protocol for blockchain nodes.'),
     ];
 
     $form['powPosition'] = [

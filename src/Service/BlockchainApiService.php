@@ -7,6 +7,8 @@ use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Promise\Promise;
+use function GuzzleHttp\Promise\settle;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -45,17 +47,26 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   protected $configService;
 
   /**
+   * Blockchain node service.
+   *
+   * @var BlockchainNodeServiceInterface
+   */
+  protected $blockchainNodeService;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(RequestStack $requestStack,
                               Client $httpClient,
                               LoggerChannelFactoryInterface $loggerChannelFactory,
-                              BlockchainConfigServiceInterface $blockchainSettingsService) {
+                              BlockchainConfigServiceInterface $blockchainSettingsService,
+                              BlockchainNodeServiceInterface $blockchainNodeService) {
 
     $this->requestStack = $requestStack;
     $this->httpClient = $httpClient;
     $this->loggerFactory = $loggerChannelFactory;
     $this->configService = $blockchainSettingsService;
+    $this->blockchainNodeService = $blockchainNodeService;
   }
 
   /**
@@ -136,4 +147,22 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function announceAll(array $params) {
+
+    $params[BlockchainRequestInterface::PARAM_SELF] = $this->configService->getBlockchainNodeId();
+    if ($this->configService->isBlockchainAuth()) {
+      $params[BlockchainRequestInterface::PARAM_AUTH] = $this->configService->tokenGenerate();
+    }
+    $endPoints = [];
+    foreach ($this->blockchainNodeService->getList(0, $this->blockchainNodeService->getCount()) as $node) {
+      $endPoints[$node->getEndPoint()] = $this->httpClient->postAsync($node->getEndPoint(), ['json' => $params]);
+    }
+    // Don't care about results...
+    // Wait for the requests to complete, even if some of them fail
+    // LATER SOME LOGGING
+    //$results = settle($endPoints)->wait();
+  }
 }

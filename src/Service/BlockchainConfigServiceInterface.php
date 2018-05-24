@@ -28,7 +28,7 @@ interface BlockchainConfigServiceInterface {
     'blockchainType', 'blockchainId', 'blockchainNodeId', 'poolManagement',
     'announceManagement', 'intervalPool', 'intervalAnnounce', 'powPosition',
     'powExpression', 'dataHandler', 'blockchainAuth', 'blockchainFilterType',
-    'blockchainFilterList',
+    'blockchainFilterList', 'allowNotSecure',
   ];
 
   /**
@@ -311,5 +311,24 @@ interface BlockchainConfigServiceInterface {
    *   Hash.
    */
   public function tokenGenerate();
+
+  /**
+   * Getter for allow not secure protocol.
+   *
+   * @return bool
+   *   Value.
+   */
+  public function getAllowNotSecure();
+
+  /**
+   * Setter for allow not secure protocol.
+   *
+   * @param $allowNotSecure
+   *    Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setAllowNotSecure($allowNotSecure);
 
 }

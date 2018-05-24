@@ -154,4 +154,22 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    */
   public function hasBlocksParam();
 
+  /**
+   * Serializer.
+   *
+   * @return string
+   */
+  public function sleep();
+
+  /**
+   * Deserializer.
+   *
+   * @param string $data
+   *   String data.
+   *
+   * @return $this
+   *   This object.
+   */
+  public static function wakeup($data);
+
 }

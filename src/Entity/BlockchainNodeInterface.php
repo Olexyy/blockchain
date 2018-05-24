@@ -93,4 +93,31 @@ interface BlockchainNodeInterface extends ConfigEntityInterface {
    */
   public function setPort($port);
 
+  /**
+   * Defines if protocol.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function isSecure();
+
+  /**
+   * Setter for protocol security.
+   *
+   * @param bool $secure
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setSecure($secure);
+
+  /**
+   * Endpoint ready to be requested.
+   *
+   * @return string
+   *   Endpoint.
+   */
+  public function getEndPoint();
+
 }

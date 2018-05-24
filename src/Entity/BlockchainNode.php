@@ -69,6 +69,13 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   protected $port;
 
   /**
+   * Defines if protocol is secure.
+   *
+   * @var bool
+   */
+  protected $secure;
+
+  /**
    * {@inheritdoc}
    */
   public static function entityTypeId() {
@@ -133,6 +140,34 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   public function setPort($port) {
     $this->port = $port;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isSecure() {
+
+    return $this->secure;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSecure($secure) {
+
+    $this->secure = $secure;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEndPoint() {
+
+    $protocol = $this->isSecure()? 'https://' : 'http://';
+    $port = $this->getPort()? ':'. $this->getPort() : '';
+    return $protocol . $this->getIp() . $port;
   }
 
 }

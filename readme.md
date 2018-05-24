@@ -54,3 +54,6 @@ ____Notes about blockchain implementation.____
     - use auth OK;
   - blockchain response class
   - possibility to assign blockchain id and node id if bc is empty
+  - HTTP/S + config
+  - announce all with promise https://github.com/guzzle/guzzle/issues/1481
+  - optimize announce all

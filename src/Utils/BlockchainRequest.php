@@ -162,4 +162,27 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
     return !($this->getBlocksParam() === NULL);
   }
 
+  /**
+   * Serializer.
+   *
+   * @return string
+   */
+  public function sleep() {
+
+    return serialize($this);
+  }
+
+  /**
+   * Deserializer.
+   *
+   * @param string $data
+   *   Data to be deserialize.
+   *
+   * @return $this
+   *   This object.
+   */
+  public static function wakeup($data) {
+
+    return unserialize($data);
+  }
 }

@@ -373,6 +373,29 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function getAllowNotSecure() {
+    if (($allowNotSecure = $this->getConfig()->get('allowNotSecure')) === NULL) {
+      $allowNotSecure = TRUE;
+      $this->setAllowNotSecure($allowNotSecure);
+    }
+    return $this->getConfig()->get('allowNotSecure');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAllowNotSecure($allowNotSecure) {
+
+    $this->getConfig(TRUE)
+      ->set('allowNotSecure', $allowNotSecure)
+      ->save();
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setBlockchainFilterListAsArray(array $blockchainFilterList) {
 
     $blockchainFilterList = implode("\r\n", $blockchainFilterList);

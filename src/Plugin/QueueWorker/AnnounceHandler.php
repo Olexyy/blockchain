@@ -4,9 +4,9 @@ namespace Drupal\blockchain\Plugin\QueueWorker;
 
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
-use Drupal\blockchain\Service\BlockchainApiServiceInterface;
+use Drupal\blockchain\Service\BlockchainQueueServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
-use Drupal\blockchain\Utils\BlockchainRequestInterface;
+use Drupal\blockchain\Utils\BlockchainRequest;
 use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -14,16 +14,16 @@ use Drupal\Core\Queue\QueueWorkerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Processes import.
+ * Processes announce handling.
  *
  * @QueueWorker(
- * id = "blockchain_pool",
- * title = @Translation("Blockchain pool worker."),
+ * id = "announce_queue",
+ * title = @Translation("Announce queue handler."),
  * )
  */
-class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginInterface {
+class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
-  const LOGGER_CHANNEL = 'blockchain_pool';
+  const LOGGER_CHANNEL = 'announce_handler';
 
   /**
    * Logger service.
@@ -53,7 +53,8 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
    * @param BlockchainServiceInterface $blockchainService
    *   Blockchain service.
    */
-  public function __construct(array $configuration, $plugin_id,
+  public function __construct(array $configuration,
+                              $plugin_id,
                               $plugin_definition,
                               LoggerChannelFactory $loggerFactory,
                               BlockchainServiceInterface $blockchainService) {
@@ -80,30 +81,21 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function processItem($data) {
-    $blockData = property_exists($data, BlockchainDataInterface::DATA_KEY) ?
-      $data->{BlockchainDataInterface::DATA_KEY} : NULL;
-    if (!$blockData) {
-      throw new \Exception('Missing block data.');
+    $announceData = property_exists($data, BlockchainQueueServiceInterface::ANNOUNCE_QUEUE_ITEM) ?
+      $data->{BlockchainQueueServiceInterface::ANNOUNCE_QUEUE_ITEM} : NULL;
+    if (!$announceData) {
+      throw new \Exception('Missing announce data.');
     }
-    if (!$this->blockchainService->getDataManager()->extractPluginId($blockData)) {
-      throw new \Exception('Invalid data handler plugin id.');
+    if (!($blockchainRequest = BlockchainRequest::wakeup($announceData))) {
+      throw new \Exception('Invalid data.');
     }
-    if (!$lastBlock = $this->blockchainService->getStorageService()->getLastBlock()) {
-      throw new \Exception('Missing generic block.');
+    $blockchainNode = $this->blockchainService->getNodeService()->load($blockchainRequest->getSelfParam());
+    if (!($blockchainNode)) {
+      throw new \Exception('Invalid data.');
     }
-    $block = BlockchainBlock::create();
-    $block->setPreviousHash($lastBlock->getHash());
-    $block->setData($blockData);
-    $block->setAuthor($this->blockchainService
-      ->getConfigService()->getBlockchainNodeId());
-    $block->setTimestamp(time());
-    $newNonce = $this->mine($block->getMiningString());
-    $block->setNonce($newNonce);
+    $endPoint = $blockchainNode->getEndPoint();
+    // todo here sync with endpoint
 
-    $block->save();
-    $this->blockchainService->getApiService()->announceAll([
-      BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),
-    ]);
   }
 
   /**

@@ -69,7 +69,7 @@ class BlockchainBlockForm extends ContentEntityForm {
     /* @var $entity \Drupal\blockchain\Entity\BlockchainBlockInterface */
     $entity = $this->entity;
     // Here we pass raw data.
-    $this->blockchainService->getQueueService()->addItem($entity->getData());
+    $this->blockchainService->getQueueService()->addBlockItem($entity->getData());
     // Set to queue (pool) and process it conditionally.
     //$status = parent::save($form, $form_state);
     $batch = [

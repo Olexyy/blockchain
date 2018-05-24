@@ -14,6 +14,8 @@ interface BlockchainApiServiceInterface {
 
   const API_SUBSCRIBE = '/blockchain/api/subscribe';
 
+  const API_ANNOUNCE = '/blockchain/api/announce';
+
   /**
    * Getter for current request.
    *
@@ -50,4 +52,13 @@ interface BlockchainApiServiceInterface {
    *   Parsed json params as response or null.
    */
   public function execute($url, array $params);
+
+  /**
+   * Announces changes.
+   *
+   * @param array $params
+   *   Required params.
+   */
+  public function announceAll(array $params);
+
 }

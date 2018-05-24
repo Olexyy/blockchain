@@ -41,3 +41,7 @@ blockchain.config:
     dataHandler:
       type: string
       label: 'Data handler for blockchain'
+    allowNotSecure:
+      type: boolean
+      label: 'Allows not secure blockchain nodes'
+

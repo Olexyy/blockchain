@@ -16,3 +16,6 @@ blockchain.blockchain_node.*:
     port:
       type: string
       label: 'Node port'
+    secure:
+      type: boolean
+      label: 'Is protocol secure'
