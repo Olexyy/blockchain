@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\blockchain\Functional;
 
-use Drupal\blockchain\Entity\BlockchainNode;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
@@ -185,8 +184,8 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
     $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
-    $nodeCount = count($this->blockchainService->getNodeService()->getList());
-    $this->assertEquals(1, $nodeCount, 'Blockchain node list not empty');
+    $nodeCount = $this->blockchainService->getNodeService()->getList();
+    $this->assertCount(1, $nodeCount, 'Blockchain node list not empty');
     // Cover 'already exists' use case. Use native request method here.
     $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
     $this->assertEquals(406, $response->getStatusCode());
@@ -206,6 +205,10 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
     $testLoad = $this->blockchainService->getNodeService()->load($blockchainNodeId);
     $this->assertInstanceOf(BlockchainNodeInterface::class, $testLoad, 'Blockchain node loaded');
+    $testLoad = $this->blockchainService->getNodeService()->load('NON_EXISTENT');
+    $this->assertEmpty($testLoad, 'Non existent Blockchain node not loaded');
+    $testLoad = $this->blockchainService->getNodeService()->exists('NON_EXISTENT');
+    $this->assertFalse($testLoad, 'Non existent Blockchain node not loaded');
   }
 
   /**
