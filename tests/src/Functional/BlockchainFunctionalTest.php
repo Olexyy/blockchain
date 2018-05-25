@@ -160,7 +160,16 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(401, $response->getStatusCode());
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Auth token invalid.', $response->getDetailsParam());
-    // TODO test not subscribed yet test case.
+    // Generate valid token
+    $authToken = $this->blockchainService->getConfigService()->tokenGenerate();
+    // Test not subscribed yet test case.
+    $response = $this->blockchainService->getApiService()->execute($this->blockchainAnnounceUrl, [
+      BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
+      BlockchainRequestInterface::PARAM_AUTH => $authToken,
+    ]);
+    $this->assertEquals(401, $response->getStatusCode());
+    $this->assertEquals('Unauthorized', $response->getMessageParam());
+    $this->assertEquals('Not subscribed yet.', $response->getDetailsParam());
     // Ensure we have blacklist filter mode.
     $blockchainFilterType = $this->blockchainService->getConfigService()->getBlockchainFilterType();
     $this->assertEquals($blockchainFilterType, BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST, 'Blockchain filter type is blacklist');
@@ -170,8 +179,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     // Ensure we included our ip in black list.
     $blacklist = $this->blockchainService->getConfigService()->getBlockchainFilterListAsArray();
     $this->assertEquals($this->getBlacklist(), $blacklist, 'Blacklist is equal to expected.');
-    // Generate valid token, so we cover check for blacklist.
-    $authToken = $this->blockchainService->getConfigService()->tokenGenerate();
+    // Cover check for blacklist.
     $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
       BlockchainRequestInterface::PARAM_AUTH => $authToken,
