@@ -261,10 +261,11 @@ class BlockchainFunctionalTest extends BrowserTestBase {
    */
   public function testBlockchainServiceAnnounce() {
 
-    // Cover method checking.
-    $this->drupalGet($this->blockchainAnnounceUrl);
-    $this->assertEquals(400, $this->getSession()->getStatusCode());
-    $this->assertContains('{"message":"Bad request","details":"Incorrect method."}', $this->getSession()->getPage()->getContent());
+    // Enable API.
+    $this->blockchainService->getConfigService()->setBlockchainType(BlockchainConfigServiceInterface::TYPE_MULTIPLE);
+    $type = $this->blockchainService->getConfigService()->getBlockchainType();
+    $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
+    // TO-DO: TEST CONTROLLER.
   }
 
   /**
