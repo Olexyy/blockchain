@@ -5,3 +5,11 @@ blockchain.subscribe:
   requirements:
     _method: 'POST'
     _access: 'TRUE'
+
+blockchain.announce:
+  path: '/blockchain/api/announce'
+  defaults:
+    _controller: \Drupal\blockchain\Controller\BlockchainController::announce
+  requirements:
+    _method: 'POST'
+    _access: 'TRUE'

@@ -3,6 +3,7 @@
 namespace Drupal\Tests\blockchain\Functional;
 
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
+use Drupal\blockchain\Service\BlockchainApiServiceInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
@@ -38,6 +39,13 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   protected $blockchainSubscribeUrl;
 
   /**
+   * Blockchain API announce Url.
+   *
+   * @var string
+   */
+  protected $blockchainAnnounceUrl;
+
+  /**
    * Local ip.
    *
    * @var string
@@ -67,7 +75,8 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->localIp = '127.0.0.1';
     $this->localPort = '80';
     $this->assertNotEmpty($this->baseUrl, 'Base url is set.');
-    $this->blockchainSubscribeUrl = $this->baseUrl . '/blockchain/api/subscribe';
+    $this->blockchainAnnounceUrl = $this->baseUrl . BlockchainApiServiceInterface::API_ANNOUNCE;
+    $this->blockchainSubscribeUrl = $this->baseUrl . BlockchainApiServiceInterface::API_SUBSCRIBE;
     $this->assertNotEmpty($this->blockchainSubscribeUrl, 'Blockchain subscribe API url is set.');
     $this->httpClient = $this->container->get('http_client');
     $this->assertInstanceOf(Client::class, $this->httpClient,
@@ -225,6 +234,17 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEmpty($testLoad, 'Non existent Blockchain node not loaded');
     $testLoad = $this->blockchainService->getNodeService()->exists('NON_EXISTENT');
     $this->assertFalse($testLoad, 'Non existent Blockchain node not loaded');
+  }
+
+  /**
+   * Tests that default values are correctly translated to UUIDs in config.
+   */
+  public function testBlockchainServiceAnnounce() {
+
+    // Cover method checking.
+    $this->drupalGet($this->blockchainAnnounceUrl);
+    $this->assertEquals(400, $this->getSession()->getStatusCode());
+    $this->assertContains('{"message":"Bad request","details":"Incorrect method."}', $this->getSession()->getPage()->getContent());
   }
 
   /**
