@@ -90,7 +90,6 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
     if (!$request->isSecure() && ! $this->configService->getAllowNotSecure()) {
 
       return BlockchainResponse::create()
-        ->set
         ->setIp($request->getClientIp())
         ->setPort($request->getPort())
         ->setSecure($request->isSecure())

@@ -81,11 +81,27 @@ class BlockchainFunctionalTest extends BrowserTestBase {
    * Tests that default values are correctly translated to UUIDs in config.
    */
   public function testBlockchainServiceSubscribe() {
-    // TODO ADD SECURITY...
+
     // Cover method checking.
     $this->drupalGet($this->blockchainSubscribeUrl);
     $this->assertEquals(400, $this->getSession()->getStatusCode());
     $this->assertContains('{"message":"Bad request","details":"Incorrect method."}', $this->getSession()->getPage()->getContent());
+    // Cover protocol schema.
+    $allowNotSecure = $this->blockchainService->getConfigService()->getAllowNotSecure();
+    $this->assertTrue($allowNotSecure, 'Secure protocol not required by default');
+    $allowNotSecure = FALSE;
+    $this->blockchainService->getConfigService()->setAllowNotSecure($allowNotSecure);
+    $allowNotSecure = $this->blockchainService->getConfigService()->getAllowNotSecure();
+    $this->assertFalse($allowNotSecure, 'Secure protocol is required now');
+    // Try to access with no incorrect protocol.
+    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, []);
+    $this->assertEquals(400, $response->getStatusCode());
+    $this->assertEquals('Bad request', $response->getMessageParam());
+    $this->assertEquals('Incorrect protocol.', $response->getDetailsParam());
+    $allowNotSecure = TRUE;
+    $this->blockchainService->getConfigService()->setAllowNotSecure($allowNotSecure);
+    $allowNotSecure = $this->blockchainService->getConfigService()->getAllowNotSecure();
+    $this->assertTrue($allowNotSecure, 'Secure protocol not required again');
     // Blockchain id is generated on first request, lets check it.
     $blockchainId = $this->blockchainService->getConfigService()->getBlockchainId();
     $this->assertNotEmpty($blockchainId, 'Blockchain id is generated.');
