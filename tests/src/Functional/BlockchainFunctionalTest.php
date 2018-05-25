@@ -87,10 +87,9 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   }
 
   /**
-   * Tests that default values are correctly translated to UUIDs in config.
+   * Tests validation handler for blockchain API.
    */
-  public function testBlockchainServiceSubscribe() {
-
+  public function testBlockchainApiValidation() {
     // Cover method checking.
     $this->drupalGet($this->blockchainSubscribeUrl);
     $this->assertEquals(400, $this->getSession()->getStatusCode());
@@ -224,16 +223,29 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(406, $response->getStatusCode());
     $this->assertEquals('Not acceptable', $response->getMessageParam());
     $this->assertEquals('Already in list.', $response->getDetailsParam());
-    // Finally delete node and try to create it via subscribe with response 200.
+    // Delete node.
     $this->blockchainService->getNodeService()->delete($blockchainNode);
     $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
     $this->assertFalse($blockchainNodeExists, 'Blockchain node not exists in list');
     $nodeCount = $this->blockchainService->getNodeService()->getList();
     $this->assertEmpty($nodeCount, 'Blockchain node list empty');
+  }
+
+  /**
+   * Tests that default values are correctly translated to UUIDs in config.
+   */
+  public function testBlockchainServiceSubscribe() {
+
+    // Enable API.
+    $this->blockchainService->getConfigService()->setBlockchainType(BlockchainConfigServiceInterface::TYPE_MULTIPLE);
+    $type = $this->blockchainService->getConfigService()->getBlockchainType();
+    $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
+    // Test subscribe method.
     $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
     $this->assertEquals(200, $response->getStatusCode());
     $this->assertEquals('Success', $response->getMessageParam());
     $this->assertEquals('Added to list.', $response->getDetailsParam());
+    $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
     $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
     $testLoad = $this->blockchainService->getNodeService()->load($blockchainNodeId);
