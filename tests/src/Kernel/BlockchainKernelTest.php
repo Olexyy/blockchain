@@ -5,7 +5,6 @@ namespace Drupal\Tests\blockchain\Kernel;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\KernelTests\KernelTestBase;
-use GuzzleHttp\Client;
 
 /**
  * Tests blockchain.
@@ -13,13 +12,6 @@ use GuzzleHttp\Client;
  * @group blockchain
  */
 class BlockchainKernelTest extends KernelTestBase {
-
-  /**
-   * Http client.
-   *
-   * @var Client
-   */
-  protected $httpClient;
 
   /**
    * Blockchain service.
@@ -41,13 +33,9 @@ class BlockchainKernelTest extends KernelTestBase {
   protected function setUp() {
 
     parent::setUp();
-    //$this->installConfig(['system']);
     $this->installConfig('blockchain');
     $this->installEntitySchema('blockchain_block');
     $this->installEntitySchema('blockchain_node');
-    $this->httpClient = $this->container->get('http_client');
-    $this->assertInstanceOf(Client::class, $this->httpClient,
-      'HTTP client instantiated.');
     $this->blockchainService = $this->container->get('blockchain.service');
     $this->assertInstanceOf(BlockchainServiceInterface::class, $this->blockchainService,
       'Blockchain service instantiated.');
@@ -58,6 +46,10 @@ class BlockchainKernelTest extends KernelTestBase {
    */
   public function testBlockchainService() {
 
+    // Implement tests:
+    //  - config;
+    //  - nodes;
+    //  - storage;
     $type = $this->blockchainService->getConfigService()->getBlockchainType();
     $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_SINGLE, 'Blockchain type is single');
   }
