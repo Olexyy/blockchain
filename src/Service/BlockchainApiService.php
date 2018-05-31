@@ -2,8 +2,10 @@
 
 namespace Drupal\blockchain\Service;
 
+use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
+use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -90,12 +92,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
    */
   public function executeSubscribe($baseUrl) {
 
-    $params = [
-      BlockchainRequestInterface::PARAM_SELF => $this->configService->getBlockchainNodeId(),
-    ];
-    if ($this->configService->isBlockchainAuth()) {
-      $params[BlockchainRequestInterface::PARAM_AUTH] = $this->configService->tokenGenerate();
-    }
+    $this->addRequiredParams($params);
 
     return $this->execute($baseUrl.static::API_SUBSCRIBE, $params);
   }
@@ -135,7 +132,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
 
     $message = $exception->getMessage();
     $parsed = explode('response:', $message);
-    // Try to pars json.
+    // Try to parse json.
     if (count($parsed) === 2 && ($jsonData = (array)json_decode(trim($parsed[1])))) {
       return $jsonData;
     }
@@ -150,19 +147,42 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function announceAll(array $params) {
+  public function executeAnnounce(array $params) {
 
-    $params[BlockchainRequestInterface::PARAM_SELF] = $this->configService->getBlockchainNodeId();
-    if ($this->configService->isBlockchainAuth()) {
-      $params[BlockchainRequestInterface::PARAM_AUTH] = $this->configService->tokenGenerate();
-    }
+    $this->addRequiredParams($params);
     $endPoints = [];
     foreach ($this->blockchainNodeService->getList(0, $this->blockchainNodeService->getCount()) as $node) {
-      $endPoints[$node->getEndPoint()] = $this->httpClient->postAsync($node->getEndPoint(), ['json' => $params]);
+      $endPoints[$node->getEndPoint()] = $this->httpClient->postAsync($node->getEndPoint().static::API_ANNOUNCE, ['json' => $params]);
     }
     // Don't care about results...
     // Wait for the requests to complete, even if some of them fail
     // LATER SOME LOGGING
     //$results = settle($endPoints)->wait();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeCount($url, BlockchainBlockInterface $blockchainBlock) {
+
+    $params = [];
+    $this->addRequiredParams($params);
+    $params[BlockchainRequestInterface::PARAM_PREVIOUS_HASH] = $blockchainBlock->getPreviousHash();
+    $params[BlockchainRequestInterface::PARAM_TIMESTAMP] = $blockchainBlock->getTimestamp();
+
+    return $this->execute($url.static::API_COUNT, $params);
+  }
+
+  /**
+   * Adds common required params to request params array.
+   *
+   * @param array $params
+   */
+  protected function addRequiredParams(array &$params) {
+
+    $params[BlockchainRequestInterface::PARAM_SELF] = $this->configService->getBlockchainNodeId();
+    if ($this->configService->isBlockchainAuth()) {
+      $params[BlockchainRequestInterface::PARAM_AUTH] = $this->configService->tokenGenerate();
+    }
   }
 }

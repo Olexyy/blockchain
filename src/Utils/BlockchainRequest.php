@@ -91,19 +91,38 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
 
     $params = [];
     if ($data = $request->getContent()) {
-      if ($jsonData = (array) json_decode($data)) {
+      if ($jsonData = (array) json_decode($data, TRUE)) {
 
         if (is_array($jsonData)) {
           foreach (static::PARAMS as $param) {
             if (isset($jsonData[$param]) && $value = $jsonData[$param]) {
-              $params[$param] = Xss::filter($value);
+              $params[$param] = $jsonData[$param];
             }
           }
         }
+        static::arrayXssRecursive($params);
       }
     }
 
     return $params;
+  }
+
+  /**
+   * Filters params by xss filter.
+   *
+   * @param array $params
+   *   Given params.
+   */
+  protected static function arrayXssRecursive(array &$params) {
+
+    foreach ($params as &$param) {
+      if (is_array($param)) {
+        static::arrayXssRecursive($param);
+      }
+      else {
+        $param = Xss::filter($param);
+      }
+    }
   }
 
   /**
@@ -137,6 +156,20 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   /**
    * {@inheritdoc}
    */
+  public function getPreviousHashParamParam() {
+    return $this->getParam(static::PARAM_PREVIOUS_HASH);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTimestampParam() {
+    return $this->getParam(static::PARAM_TIMESTAMP);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function hasAuthParam() {
     return !($this->getAuthParam() === NULL);
   }
@@ -160,6 +193,20 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    */
   public function hasBlocksParam() {
     return !($this->getBlocksParam() === NULL);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasTimestampParam() {
+    return !($this->getTimestampParam() === NULL);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasPreviousHashParam() {
+    return !($this->getPreviousHashParam() === NULL);
   }
 
   /**

@@ -15,12 +15,15 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
   const TYPE_ANNOUNCE = 'announce';
   const TYPE_GET_COUNT = 'count';
   const TYPE_GET_BLOCKS = 'blocks';
+
   const PARAM_AUTH = 'auth'; // hash of (self+bc_token)
   const PARAM_SELF = 'self';
-  const PARAM_COUNT = 'count';
   const PARAM_BLOCKS = 'blocks';
+  const PARAM_TIMESTAMP = 'timestamp';
+  const PARAM_PREVIOUS_HASH = 'previous_hash';
   const PARAMS = [
     self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT, self::PARAM_BLOCKS,
+    self::PARAM_TIMESTAMP, self::PARAM_PREVIOUS_HASH,
   ];
 
   /**
@@ -38,14 +41,6 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    *   Value.
    */
   public function getSelfParam();
-
-  /**
-   * Getter for param.
-   *
-   * @return string
-   *   Value.
-   */
-  public function getCountParam();
 
   /**
    * Getter for param.
@@ -144,7 +139,7 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    * @return bool
    *   Test result.
    */
-  public function hasCountParam();
+  public function hasBlocksParam();
 
   /**
    * Predicate.
@@ -152,7 +147,31 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    * @return bool
    *   Test result.
    */
-  public function hasBlocksParam();
+  public function hasTimestampParam();
+
+  /**
+   * Getter for timestamp property.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getTimestampParam();
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasPreviousHashParam();
+
+  /**
+   * Getter for previous hash property.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getPreviousHashParam();
 
   /**
    * Serializer.

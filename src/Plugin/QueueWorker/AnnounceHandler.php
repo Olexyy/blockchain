@@ -87,15 +87,24 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
       throw new \Exception('Missing announce data.');
     }
     if (!($blockchainRequest = BlockchainRequest::wakeup($announceData))) {
-      throw new \Exception('Invalid data.');
+      throw new \Exception('Invalid announce queue data.');
     }
     $blockchainNode = $this->blockchainService->getNodeService()->load($blockchainRequest->getSelfParam());
     if (!($blockchainNode)) {
-      throw new \Exception('Invalid data.');
+      throw new \Exception('Invalid announce request data.');
     }
     $endPoint = $blockchainNode->getEndPoint();
-    // todo here sync with endpoint
-
+    // Here we for now handle only not conflicting part.
+    // Plan to fetch to cache if are conflicts...
+    // LOCK for concurrent updates. FINALLY release.
+    // Aim is one update to be consistent.
+    $result = $this->blockchainService->getApiService()
+      ->executeCount($endPoint, $this->blockchainService->getStorageService()->getLastBlock());
+    while ($result->getCountParam() > $this->blockchainService->getStorageService()->getBlockCount()) {
+      $result = $this->blockchainService->getApiService()
+        ->executeSync($endPoint, $this->blockchainService->getStorageService()->getLastBlock());
+    }
+    // finally release block....
   }
 
   /**

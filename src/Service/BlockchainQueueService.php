@@ -166,6 +166,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
           $this->getAnnounceHandler()->releaseItem($item);
           break;
         } catch (\Exception $e) {
+          $this->getAnnounceHandler()->deleteItem($item);
           $this->getLogger()
             ->error($e->getMessage() . $e->getTraceAsString());
         }

@@ -5,6 +5,10 @@ namespace Drupal\blockchain\Utils;
 
 interface BlockchainHttpInterface {
 
+  const PARAM_INTERVAL = 'interval';
+  
+  const PARAM_COUNT = 'count';
+
   /**
    * Getter for param if exists.
    *
@@ -111,5 +115,60 @@ interface BlockchainHttpInterface {
    *   Endpoint.
    */
   public function getEndPoint();
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasCountParam();
+
+  /**
+   * Getter for param.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getCountParam();
+
+  /**
+   * Setter for param.
+   *
+   * @param string $value
+   *   Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setCountParam($value);
+
+
+  /**
+   * Getter for interval property.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getIntervalParam();
+
+  /**
+   * Setter for interval property.
+   *
+   * @param string $value
+   *   Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setIntervalParam($value);
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasIntervalParam();
 
 }

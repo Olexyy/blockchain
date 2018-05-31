@@ -83,4 +83,17 @@ interface BlockchainStorageServiceInterface {
    */
   public function save(BlockchainBlockInterface $block);
 
+  /**
+   * Finds block in storage. If found, gets count created after blocks.
+   *
+   * @param string $timestamp
+   *   Timestamp param.
+   * @param string $previousHash
+   *   Previous hash param.
+   *
+   * @return int
+   *   Number of blocks.
+   */
+  public function getBlocksInterval($timestamp, $previousHash);
+
 }

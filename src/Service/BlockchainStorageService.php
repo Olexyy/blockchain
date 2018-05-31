@@ -111,7 +111,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     $blockId = $this->getBlockStorage()
       ->getQuery()
       ->accessCheck(FALSE)
-      ->sort('id', 'DESC')
+      ->sort('timestamp', 'DESC')
       ->range(0,1)
       ->execute();
     if ($blockId) {
@@ -180,6 +180,30 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
         ->error($e->getMessage() . $e->getTraceAsString());
       return NULL;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlocksInterval($timestamp, $previousHash) {
+
+    $blockId = $this->getBlockStorage()
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('timestamp', $timestamp)
+      ->condition('previous_hash', $previousHash)
+      ->execute();
+
+    if (!$blockId) {
+      return 0;
+    }
+
+    return $this->getBlockStorage()
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('timestamp', $timestamp, '>')
+      ->count()
+      ->execute();
   }
 
 }

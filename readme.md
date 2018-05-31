@@ -42,9 +42,12 @@ ____Notes about blockchain implementation.____
   
   TODOS:
   - blockchain API service (protocol);
-    - subscribe: process OK
-    - subscribe: init and handle response -->
-  - blockchain API validate ~;
+    - subscribe: OK
+    - announce: ~
+    - count: ~ add to tests
+    - sync ->
+    - fetch ->
+  - blockchain API validate OK;
   - blockchain node management (service) OK;
   - list and admin management for blockchain OK;
   - business data as plugins (selected in settings) dynamic ~;
@@ -52,8 +55,13 @@ ____Notes about blockchain implementation.____
   - settings:
     - blacklist/whitelist OK;
     - use auth OK;
-  - blockchain response class
-  - possibility to assign blockchain id and node id if bc is empty
-  - HTTP/S + config
-  - announce all with promise https://github.com/guzzle/guzzle/issues/1481
+  - blockchain response class OK
+  - possibility to assign blockchain id and node id if bc is empty ~
+  - HTTP/S + config ~
+  - announce all with promise https://github.com/guzzle/guzzle/issues/1481 ~
   - optimize announce all
+  - ! locker service
+  - ! sync action
+  - ! fetch action
+  - ! cache service/extension
+  - ! handle conflicts

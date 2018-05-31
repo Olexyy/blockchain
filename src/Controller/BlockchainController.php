@@ -56,6 +56,7 @@ class BlockchainController extends ControllerBase {
    * Announce action.
    *
    * @return JsonResponse
+   *   Response by convention.
    */
   public function announce() {
 
@@ -129,6 +130,7 @@ class BlockchainController extends ControllerBase {
    * Subscribe action.
    *
    * @return JsonResponse
+   *   Response by convention.
    */
   public function subscribe() {
 
@@ -166,6 +168,55 @@ class BlockchainController extends ControllerBase {
           ->log($logger)
           ->toJsonResponse();
       }
+    }
+
+    return BlockchainResponse::create()
+      ->setIp($result->getIp())
+      ->setPort($result->getPort())
+      ->setSecure($result->isSecure())
+      ->setStatusCode(505)
+      ->setMessageParam('Server error')
+      ->setDetailsParam('Something unexpected happened.')
+      ->log($logger)
+      ->toJsonResponse();
+  }
+
+  /**
+   * Count action.
+   *
+   * @return JsonResponse
+   *   Response by convention.
+   */
+  public function count() {
+
+    $logger = $this->getLogger('blockchain.api');
+    $logger->info('Subscribe attempt initiated.');
+    $result = $this->validate(BlockchainRequestInterface::TYPE_GET_COUNT);
+    if ($result instanceof BlockchainResponseInterface) {
+
+      return $result->log($logger)->toJsonResponse();
+    }
+    elseif ($result instanceof BlockchainRequestInterface) {
+
+      $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
+      $interval = 0;
+      if ($result->hasTimestampParam() && $result->hasPreviousHashParam()) {
+        $interval = $this->blockchainService
+          ->getStorageService()
+          ->getBlocksInterval($result->getTimestampParam(), $result->getPreviousHashParam());
+      }
+
+      return BlockchainResponse::create()
+        ->setIp($result->getIp())
+        ->setPort($result->getPort())
+        ->setSecure($result->isSecure())
+        ->setStatusCode(200)
+        ->setMessageParam('Success')
+        ->setCountParam($blockCount)
+        ->setIntervalParam($interval)
+        ->setDetailsParam('Block count set.')
+        ->log($logger)
+        ->toJsonResponse();
     }
 
     return BlockchainResponse::create()

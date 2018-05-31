@@ -13,3 +13,10 @@ blockchain.announce:
   requirements:
     _method: 'POST'
     _access: 'TRUE'
+blockchain.count:
+  path: '/blockchain/api/count'
+  defaults:
+    _controller: \Drupal\blockchain\Controller\BlockchainController::count
+  requirements:
+    _method: 'POST'
+    _access: 'TRUE'

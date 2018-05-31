@@ -101,7 +101,7 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
     $block->setNonce($newNonce);
 
     $block->save();
-    $this->blockchainService->getApiService()->announceAll([
+    $this->blockchainService->getApiService()->executeAnnounce([
       BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),
     ]);
   }

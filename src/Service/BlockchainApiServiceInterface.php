@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\blockchain\Service;
+use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Utils\BlockchainResponseInterface;
 
 /**
@@ -15,6 +16,10 @@ interface BlockchainApiServiceInterface {
   const API_SUBSCRIBE = '/blockchain/api/subscribe';
 
   const API_ANNOUNCE = '/blockchain/api/announce';
+
+  const API_COUNT = '/blockchain/api/count';
+
+  const API_SYNC = '/blockchain/api/sync';
 
   /**
    * Getter for current request.
@@ -48,6 +53,7 @@ interface BlockchainApiServiceInterface {
    *   Full Url.
    * @param array $params
    *   Params to be passed.
+   *
    * @return BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
@@ -59,6 +65,19 @@ interface BlockchainApiServiceInterface {
    * @param array $params
    *   Required params.
    */
-  public function announceAll(array $params);
+  public function executeAnnounce(array $params);
+
+  /**
+   * Executes post request by given url with given params in json format.
+   *
+   * @param string $url
+   *   Full Url.
+   * @param BlockchainBlockInterface $blockchainBlock
+   *   Blockchain block.
+   *
+   * @return BlockchainResponseInterface|null
+   *   Parsed json params as response or null.
+   */
+  public function executeCount($url, BlockchainBlockInterface $blockchainBlock);
 
 }
