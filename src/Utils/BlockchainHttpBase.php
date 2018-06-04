@@ -171,23 +171,49 @@ abstract class BlockchainHttpBase implements BlockchainHttpInterface {
   /**
    * {@inheritdoc}
    */
-  public function getIntervalParam() {
-    return $this->getParam(static::PARAM_INTERVAL);
+  public function getExistsParam() {
+    return $this->getParam(static::PARAM_EXISTS);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function hasIntervalParam() {
-    return !($this->getIntervalParam() === NULL);
+  public function hasExistsParam() {
+    return !($this->getExistsParam() === NULL);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setIntervalParam($value) {
+  public function setExistsParam($value) {
 
-    $this->setParam(static::PARAM_INTERVAL, $value);
+    $this->setParam(static::PARAM_EXISTS, $value);
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlocksParam() {
+
+    return $this->getParam(static::PARAM_BLOCKS);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasBlocksParam() {
+
+    return !($this->getBlocksParam() === NULL);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlocksParam(array $value) {
+
+    $this->setParam(static::PARAM_BLOCKS, $value);
 
     return $this;
   }

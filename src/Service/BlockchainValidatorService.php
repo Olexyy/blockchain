@@ -2,6 +2,8 @@
 
 namespace Drupal\blockchain\Service;
 
+
+use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Utils\BlockchainRequest;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
@@ -59,6 +61,14 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
     }
 
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function blockIsValid(BlockchainBlockInterface $blockchainBlock, BlockchainBlockInterface $previousBlock) {
+
+    return $this->hashIsValid($blockchainBlock->getHash()) && $previousBlock->getHash() == $blockchainBlock->getPreviousHash();
   }
 
   /**

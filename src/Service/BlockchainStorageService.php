@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Service;
 
+
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
@@ -185,7 +186,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlocksInterval($timestamp, $previousHash) {
+  public function loadByTimestampAndHash($timestamp, $previousHash) {
 
     $blockId = $this->getBlockStorage()
       ->getQuery()
@@ -194,16 +195,63 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->condition('previous_hash', $previousHash)
       ->execute();
 
-    if (!$blockId) {
-      return 0;
-    }
+    return $this->getBlockStorage()->load($blockId);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function existsByTimestampAndHash($timestamp, $previousHash) {
+
+    return (bool) $this->loadByTimestampAndHash($timestamp, $previousHash);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlocksCountFrom(BlockchainBlockInterface $block) {
 
     return $this->getBlockStorage()
       ->getQuery()
       ->accessCheck(FALSE)
-      ->condition('timestamp', $timestamp, '>')
+      ->condition('timestamp', $block->getTimestamp(), '>')
       ->count()
       ->execute();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlocksFrom(BlockchainBlockInterface $block, $count) {
+
+    $results = [];
+    $blockIds = $this->getBlockStorage()
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('timestamp', $block->getTimestamp(), '>')
+      ->sort('timestamp')
+      ->range(0, $count)
+      ->execute();
+    foreach ($blockIds as $blockId) {
+      $results[]= $this->getBlockStorage()->load($blockId)->toArray();
+    }
+
+    return $results;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createFromArray(array $values) {
+
+    $block = BlockchainBlock::create([]);
+    foreach ($values as $key => $value) {
+      if (isset($block->$key)) {
+        $block->{$key} = $value;
+      }
+    }
+
+    return $block;
   }
 
 }

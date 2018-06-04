@@ -5,7 +5,6 @@ namespace Drupal\blockchain\Service;
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
-use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -163,20 +162,46 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function executeCount($url, BlockchainBlockInterface $blockchainBlock) {
+  public function executeCount($url) {
+
+    $params = [];
+    $this->addRequiredParams($params);
+
+    return $this->execute($url.static::API_COUNT, $params);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeFetch($url, BlockchainBlockInterface $blockchainBlock) {
 
     $params = [];
     $this->addRequiredParams($params);
     $params[BlockchainRequestInterface::PARAM_PREVIOUS_HASH] = $blockchainBlock->getPreviousHash();
     $params[BlockchainRequestInterface::PARAM_TIMESTAMP] = $blockchainBlock->getTimestamp();
 
-    return $this->execute($url.static::API_COUNT, $params);
+    return $this->execute($url.static::API_FETCH, $params);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executePull($url, BlockchainBlockInterface $blockchainBlock, $count) {
+
+    $params = [];
+    $this->addRequiredParams($params);
+    $params[BlockchainRequestInterface::PARAM_PREVIOUS_HASH] = $blockchainBlock->getPreviousHash();
+    $params[BlockchainRequestInterface::PARAM_TIMESTAMP] = $blockchainBlock->getTimestamp();
+    $params[BlockchainRequestInterface::PARAM_COUNT] = $count;
+
+    return $this->execute($url.static::API_PULL, $params);
   }
 
   /**
    * Adds common required params to request params array.
    *
    * @param array $params
+   *   Given params.
    */
   protected function addRequiredParams(array &$params) {
 

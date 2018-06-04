@@ -13,8 +13,9 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
 
   const TYPE_SUBSCRIBE = 'subscribe';
   const TYPE_ANNOUNCE = 'announce';
-  const TYPE_GET_COUNT = 'count';
-  const TYPE_GET_BLOCKS = 'blocks';
+  const TYPE_COUNT = 'count';
+  const TYPE_FETCH = 'fetch';
+  const TYPE_PULL = 'pull';
 
   const PARAM_AUTH = 'auth'; // hash of (self+bc_token)
   const PARAM_SELF = 'self';

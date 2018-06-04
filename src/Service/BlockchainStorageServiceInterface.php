@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Service;
 
+
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
 
@@ -86,14 +87,61 @@ interface BlockchainStorageServiceInterface {
   /**
    * Finds block in storage. If found, gets count created after blocks.
    *
+   * @param BlockchainBlockInterface $block
+   *   Given block.
+   *
+   * @return int
+   *   Number of blocks.
+   */
+  public function getBlocksCountFrom(BlockchainBlockInterface $block);
+
+  /**
+   * Defines whether block exists.
+   *
    * @param string $timestamp
    *   Timestamp param.
    * @param string $previousHash
    *   Previous hash param.
    *
-   * @return int
-   *   Number of blocks.
+   * @return bool
+   *   Test result.
    */
-  public function getBlocksInterval($timestamp, $previousHash);
+  public function existsByTimestampAndHash($timestamp, $previousHash);
+
+  /**
+   * Defines whether block exists.
+   *
+   * @param string $timestamp
+   *   Timestamp param.
+   * @param string $previousHash
+   *   Previous hash param.
+   *
+   * @return BlockchainBlockInterface|null
+   *   Block if any.
+   */
+  public function loadByTimestampAndHash($timestamp, $previousHash);
+
+  /**
+   * Getter for blocks next to given one.
+   *
+   * @param BlockchainBlockInterface $block
+   *   Given block.
+   * @param string|int $count
+   *   Numeric value - limit of blocks.
+   * @return array
+   *   Array of blocks as array.
+   */
+  public function getBlocksFrom(BlockchainBlockInterface $block, $count);
+
+  /**
+   * Factory method.
+   *
+   * @param array $values
+   *   Array of values.
+   *
+   * @return BlockchainBlockInterface
+   *   Blockchain block.
+   */
+  public function createFromArray(array $values);
 
 }

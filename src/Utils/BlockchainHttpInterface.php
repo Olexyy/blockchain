@@ -5,9 +5,11 @@ namespace Drupal\blockchain\Utils;
 
 interface BlockchainHttpInterface {
 
-  const PARAM_INTERVAL = 'interval';
+  const PARAM_EXISTS = 'exists';
   
   const PARAM_COUNT = 'count';
+
+  const PARAM_BLOCKS = 'blocks';
 
   /**
    * Getter for param if exists.
@@ -24,7 +26,7 @@ interface BlockchainHttpInterface {
    *
    * @param string $key
    *   Name of param.
-   * @param string $value
+   * @param mixed $value
    *   Value of param.
    *
    * @return $this
@@ -143,17 +145,16 @@ interface BlockchainHttpInterface {
    */
   public function setCountParam($value);
 
-
   /**
-   * Getter for interval property.
+   * Getter for exists property.
    *
    * @return string
    *   Value.
    */
-  public function getIntervalParam();
+  public function getExistsParam();
 
   /**
-   * Setter for interval property.
+   * Setter for exists property.
    *
    * @param string $value
    *   Given value.
@@ -161,7 +162,7 @@ interface BlockchainHttpInterface {
    * @return $this
    *   Chaining.
    */
-  public function setIntervalParam($value);
+  public function setExistsParam($value);
 
   /**
    * Predicate.
@@ -169,6 +170,33 @@ interface BlockchainHttpInterface {
    * @return bool
    *   Test result.
    */
-  public function hasIntervalParam();
+  public function hasExistsParam();
+
+  /**
+   * Getter for exists property.
+   *
+   * @return array
+   *   Value.
+   */
+  public function getBlocksParam();
+
+  /**
+   * Setter for exists property.
+   *
+   * @param array $value
+   *   Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlocksParam(array $value);
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasBlocksParam();
 
 }

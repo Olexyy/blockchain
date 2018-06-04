@@ -19,7 +19,9 @@ interface BlockchainApiServiceInterface {
 
   const API_COUNT = '/blockchain/api/count';
 
-  const API_SYNC = '/blockchain/api/sync';
+  const API_FETCH = '/blockchain/api/fetch';
+
+  const API_PULL = '/blockchain/api/pull';
 
   /**
    * Getter for current request.
@@ -72,12 +74,38 @@ interface BlockchainApiServiceInterface {
    *
    * @param string $url
    *   Full Url.
+   *
+   * @return BlockchainResponseInterface|null
+   *   Parsed json params as response or null.
+   */
+  public function executeCount($url);
+
+  /**
+   * Executes post request by given url with given params in json format.
+   *
+   * @param string $url
+   *   Full Url.
    * @param BlockchainBlockInterface $blockchainBlock
    *   Blockchain block.
    *
    * @return BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
-  public function executeCount($url, BlockchainBlockInterface $blockchainBlock);
+  public function executeFetch($url, BlockchainBlockInterface $blockchainBlock);
+
+  /**
+   * Executes post request by given url with given params in json format.
+   *
+   * @param string $url
+   *   Full Url.
+   * @param BlockchainBlockInterface $blockchainBlock
+   *   Blockchain block.
+   * @param $count
+   *   String count of blocks to be fetched.
+   *
+   * @return BlockchainResponseInterface|null
+   *   Parsed json params as response or null.
+   */
+  public function executePull($url, BlockchainBlockInterface $blockchainBlock, $count);
 
 }

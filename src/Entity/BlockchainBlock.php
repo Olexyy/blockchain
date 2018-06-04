@@ -184,7 +184,8 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
       $this->getPreviousHash().
       $this->getData().
       $this->getTimestamp().
-      $this->getNonce());
+      $this->getNonce()
+    );
   }
 
   /**

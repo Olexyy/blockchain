@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Controller;
 
+
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
@@ -190,21 +191,13 @@ class BlockchainController extends ControllerBase {
   public function count() {
 
     $logger = $this->getLogger('blockchain.api');
-    $logger->info('Subscribe attempt initiated.');
-    $result = $this->validate(BlockchainRequestInterface::TYPE_GET_COUNT);
+    $logger->info('Count attempt initiated.');
+    $result = $this->validate(BlockchainRequestInterface::TYPE_COUNT);
     if ($result instanceof BlockchainResponseInterface) {
 
       return $result->log($logger)->toJsonResponse();
     }
     elseif ($result instanceof BlockchainRequestInterface) {
-
-      $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
-      $interval = 0;
-      if ($result->hasTimestampParam() && $result->hasPreviousHashParam()) {
-        $interval = $this->blockchainService
-          ->getStorageService()
-          ->getBlocksInterval($result->getTimestampParam(), $result->getPreviousHashParam());
-      }
 
       return BlockchainResponse::create()
         ->setIp($result->getIp())
@@ -212,11 +205,144 @@ class BlockchainController extends ControllerBase {
         ->setSecure($result->isSecure())
         ->setStatusCode(200)
         ->setMessageParam('Success')
-        ->setCountParam($blockCount)
-        ->setIntervalParam($interval)
+        ->setCountParam($this->blockchainService->getStorageService()->getBlockCount())
         ->setDetailsParam('Block count set.')
         ->log($logger)
         ->toJsonResponse();
+    }
+
+    return BlockchainResponse::create()
+      ->setIp($result->getIp())
+      ->setPort($result->getPort())
+      ->setSecure($result->isSecure())
+      ->setStatusCode(505)
+      ->setMessageParam('Server error')
+      ->setDetailsParam('Something unexpected happened.')
+      ->log($logger)
+      ->toJsonResponse();
+  }
+
+  /**
+   * Fetch action.
+   *
+   * @return JsonResponse
+   *   Response by convention.
+   */
+  public function fetch() {
+
+    $logger = $this->getLogger('blockchain.api');
+    $logger->info('Subscribe attempt initiated.');
+    $result = $this->validate(BlockchainRequestInterface::TYPE_FETCH);
+    if ($result instanceof BlockchainResponseInterface) {
+
+      return $result->log($logger)->toJsonResponse();
+    }
+    elseif ($result instanceof BlockchainRequestInterface) {
+
+      if ($result->hasTimestampParam() && $result->hasPreviousHashParam()) {
+        if ($block = $this->blockchainService->getStorageService()
+          ->loadByTimestampAndHash($result->getTimestampParam(), $result->getPreviousHashParam())) {
+          $exists = TRUE;
+          $count = $this->blockchainService
+            ->getStorageService()
+            ->getBlocksCountFrom($block);
+        }
+        else {
+          $exists = FALSE;
+          $count = 0;
+        }
+
+        return BlockchainResponse::create()
+          ->setIp($result->getIp())
+          ->setPort($result->getPort())
+          ->setSecure($result->isSecure())
+          ->setStatusCode(200)
+          ->setMessageParam('Success')
+          ->setExistsParam($exists)
+          ->setCountParam($count)
+          ->setDetailsParam('Block '. $exists? 'exists' : 'not exists' .'.')
+          ->log($logger)
+          ->toJsonResponse();
+      }
+      else {
+
+        return BlockchainResponse::create()
+          ->setIp($result->getIp())
+          ->setPort($result->getPort())
+          ->setSecure($result->isSecure())
+          ->setStatusCode(400)
+          ->setMessageParam('Bad request')
+          ->setDetailsParam('No timestamp or/and previous hash param.')
+          ->log($logger)
+          ->toJsonResponse();
+      }
+    }
+
+    return BlockchainResponse::create()
+      ->setIp($result->getIp())
+      ->setPort($result->getPort())
+      ->setSecure($result->isSecure())
+      ->setStatusCode(505)
+      ->setMessageParam('Server error')
+      ->setDetailsParam('Something unexpected happened.')
+      ->log($logger)
+      ->toJsonResponse();
+  }
+
+  /**
+   * Pull action.
+   *
+   * @return JsonResponse
+   *   Response by convention.
+   */
+  public function pull() {
+
+    $logger = $this->getLogger('blockchain.api');
+    $logger->info('Pull attempt initiated.');
+    $result = $this->validate(BlockchainRequestInterface::TYPE_PULL);
+    if ($result instanceof BlockchainResponseInterface) {
+
+      return $result->log($logger)->toJsonResponse();
+    }
+    elseif ($result instanceof BlockchainRequestInterface) {
+
+      if ($result->hasCountParam() && $result->hasTimestampParam() && $result->hasPreviousHashParam()) {
+        if ($block = $this->blockchainService->getStorageService()
+          ->loadByTimestampAndHash($result->getTimestampParam(), $result->getPreviousHashParam())) {
+          $exists = TRUE;
+          $blocks = $this->blockchainService
+            ->getStorageService()
+            ->getBlocksFrom($block, $result->getCountParam());
+        }
+        else {
+          $exists = FALSE;
+          $blocks = [];
+        }
+
+        return BlockchainResponse::create()
+          ->setIp($result->getIp())
+          ->setPort($result->getPort())
+          ->setSecure($result->isSecure())
+          ->setStatusCode(200)
+          ->setMessageParam('Success')
+          ->setExistsParam($exists)
+          ->setBlocksParam($blocks)
+          ->setDetailsParam('Block '. $exists? 'exists' : 'not exists' .'.')
+          ->log($logger)
+          ->toJsonResponse();
+      }
+      else {
+
+        return BlockchainResponse::create()
+          ->setIp($result->getIp())
+          ->setPort($result->getPort())
+          ->setSecure($result->isSecure())
+          ->setStatusCode(400)
+          ->setMessageParam('Bad request')
+          ->setDetailsParam('No count or/and timestamp or/and previous hash param.')
+          ->log($logger)
+          ->toJsonResponse();
+      }
     }
 
     return BlockchainResponse::create()

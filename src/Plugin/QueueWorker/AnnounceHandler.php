@@ -2,8 +2,7 @@
 
 namespace Drupal\blockchain\Plugin\QueueWorker;
 
-use Drupal\blockchain\Entity\BlockchainBlock;
-use Drupal\blockchain\Plugin\BlockchainDataInterface;
+
 use Drupal\blockchain\Service\BlockchainQueueServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequest;
@@ -68,6 +67,7 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
    */
   public static function create(ContainerInterface $container, array
   $configuration, $plugin_id, $plugin_definition) {
+
     return new static(
       $configuration,
       $plugin_id,
@@ -81,6 +81,7 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function processItem($data) {
+
     $announceData = property_exists($data, BlockchainQueueServiceInterface::ANNOUNCE_QUEUE_ITEM) ?
       $data->{BlockchainQueueServiceInterface::ANNOUNCE_QUEUE_ITEM} : NULL;
     if (!$announceData) {
@@ -94,17 +95,38 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
       throw new \Exception('Invalid announce request data.');
     }
     $endPoint = $blockchainNode->getEndPoint();
-    // Here we for now handle only not conflicting part.
     // Plan to fetch to cache if are conflicts...
     // LOCK for concurrent updates. FINALLY release.
     // Aim is one update to be consistent.
     $result = $this->blockchainService->getApiService()
-      ->executeCount($endPoint, $this->blockchainService->getStorageService()->getLastBlock());
-    while ($result->getCountParam() > $this->blockchainService->getStorageService()->getBlockCount()) {
-      $result = $this->blockchainService->getApiService()
-        ->executeSync($endPoint, $this->blockchainService->getStorageService()->getLastBlock());
+      ->executeFetch($endPoint, $this->blockchainService->getStorageService()->getLastBlock());
+    if ($result->hasExistsParam() && $result->getExistsParam() && $result->hasCountParam()) {
+      $neededBlocks = $result->getCountParam();
+      $addedBlocks = 0;
+      $fetchLimit = 5; // --->>> Setting for blocks fetching count.
+      while ($neededBlocks > $addedBlocks) {
+        $result = $this->blockchainService->getApiService()
+          ->executePull($endPoint, $this->blockchainService->getStorageService()->getLastBlock(), $fetchLimit);
+        if ($result->hasBlocksParam()) {
+          foreach ($result->getBlocksParam() as $item) {
+            $block = $this->blockchainService->getStorageService()->createFromArray($item);
+            if ($this
+              ->blockchainService->getValidatorService()
+              ->blockIsValid($block, $this->blockchainService->getStorageService()->getLastBlock())) {
+              $block->save();
+            }
+            else {
+              throw new \Exception('Not valid block detected.');
+            }
+          }
+        }
+        $addedBlocks += $fetchLimit;
+      }
     }
-    // finally release block....
+    else {
+      // Implement search and cache logic...
+    }
+    // Finally release lock ...
   }
 
   /**

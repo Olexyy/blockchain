@@ -63,5 +63,7 @@ ____Notes about blockchain implementation.____
   - ! locker service
   - ! sync action
   - ! fetch action
-  - ! cache service/extension
+  - ! cache service/extension !!!SharedTempStore!!!
   - ! handle conflicts
+  - setting for pull block limit ->
+  - 
