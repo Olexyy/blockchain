@@ -20,3 +20,17 @@ blockchain.count:
   requirements:
     _method: 'POST'
     _access: 'TRUE'
+blockchain.pull:
+  path: '/blockchain/api/pull'
+  defaults:
+    _controller: \Drupal\blockchain\Controller\BlockchainController::pull
+  requirements:
+    _method: 'POST'
+    _access: 'TRUE'
+blockchain.fetch:
+  path: '/blockchain/api/fetch'
+  defaults:
+    _controller: \Drupal\blockchain\Controller\BlockchainController::fetch
+  requirements:
+    _method: 'POST'
+    _access: 'TRUE'
