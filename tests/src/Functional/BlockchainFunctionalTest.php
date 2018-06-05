@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\blockchain\Functional;
 
+use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainApiServiceInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
@@ -137,7 +138,6 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
     // Try to access with no 'self' param.
     $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, []);
-    $this->assertEquals('No self param.', $response->getDetailsParam());
     $this->assertEquals(400, $response->getStatusCode());
     $this->assertEquals('Bad request', $response->getMessageParam());
     $this->assertEquals('No self param.', $response->getDetailsParam());
@@ -266,7 +266,18 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->blockchainService->getConfigService()->setBlockchainType(BlockchainConfigServiceInterface::TYPE_MULTIPLE);
     $type = $this->blockchainService->getConfigService()->getBlockchainType();
     $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
-    // TO-DO: TEST CONTROLLER.
+    $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
+    $this->assertEmpty($blockCount, 'None blocks in storage yet.');
+    $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $genericBlock,'Generic block created.');
+    $this->blockchainService->getStorageService()->save($genericBlock);
+    $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
+    $this->assertNotEmpty($blockCount, 'Generic block added to storage.');
+    $nodesCount = $this->blockchainService->getNodeService()->getCount();
+    $this->assertEmpty($nodesCount, 'None blockchain nodes in list yet.');
+    $this->blockchainService->getApiService()->executeAnnounce([
+      BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount()
+    ]);
   }
 
   /**
