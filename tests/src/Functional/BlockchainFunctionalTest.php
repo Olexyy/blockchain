@@ -137,6 +137,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
     // Try to access with no 'self' param.
     $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, []);
+    $this->assertEquals('No self param.', $response->getDetailsParam());
     $this->assertEquals(400, $response->getStatusCode());
     $this->assertEquals('Bad request', $response->getMessageParam());
     $this->assertEquals('No self param.', $response->getDetailsParam());

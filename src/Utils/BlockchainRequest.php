@@ -156,7 +156,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   /**
    * {@inheritdoc}
    */
-  public function getPreviousHashParamParam() {
+  public function getPreviousHashParam() {
     return $this->getParam(static::PARAM_PREVIOUS_HASH);
   }
 
@@ -232,4 +232,5 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
 
     return unserialize($data);
   }
+
 }
