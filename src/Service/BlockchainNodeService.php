@@ -90,7 +90,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function create($id, $label, $ip, $port, $save = TRUE) {
+  public function create($id, $label, $ip, $port = NULL, $secure = NULL, $save = TRUE) {
 
     /** @var BlockchainNodeInterface $blockchainNode */
     $blockchainNode = $this->getStorage()->create();
@@ -98,6 +98,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
       ->setId($id)
       ->setLabel($label)
       ->setIp($ip)
+      ->setSecure($secure)
       ->setPort($port);
     try {
       if ($save) {
@@ -120,6 +121,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
       $request->getSelfParam(),
       $request->getSelfParam(),
       $request->getIp(),
+      $request->isSecure(),
       $request->getPort(), $save);
   }
 

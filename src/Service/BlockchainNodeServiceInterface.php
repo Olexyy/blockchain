@@ -73,13 +73,14 @@ interface BlockchainNodeServiceInterface {
    *   Client ip.
    * @param string $port
    *   Client port.
+   * @param null $secure
    * @param bool $save
    *   Flag defines saving action.
    *
    * @return BlockchainNodeInterface|null
    *   New entity if created.
    */
-  public function create($id, $label, $ip, $port, $save = TRUE);
+  public function create($id, $label, $ip, $port, $secure = NULL, $save = TRUE);
 
   /**
    * Factory method.

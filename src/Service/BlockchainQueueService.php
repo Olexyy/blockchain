@@ -156,17 +156,17 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   public function doAnnounceHandling($limit = 0, $leaseTime = 3600) {
 
     $i = 0;
-    while ($item = $this->getAnnounceHandler()->claimItem($leaseTime)) {
+    while ($item = $this->getAnnounceQueue()->claimItem($leaseTime)) {
       if (!$limit || $i < $limit) {
         try {
           $this->getAnnounceHandler()->processItem($item->data);
-          $this->getAnnounceHandler()->deleteItem($item);
+          $this->getAnnounceQueue()->deleteItem($item);
           $i++;
         } catch (SuspendQueueException $e) {
-          $this->getAnnounceHandler()->releaseItem($item);
+          $this->getAnnounceQueue()->releaseItem($item);
           break;
         } catch (\Exception $e) {
-          $this->getAnnounceHandler()->deleteItem($item);
+          $this->getAnnounceQueue()->deleteItem($item);
           $this->getLogger()
             ->error($e->getMessage() . $e->getTraceAsString());
         }

@@ -10,6 +10,7 @@ use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Tests\BrowserTestBase;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 /**
  * Tests blockchain.
@@ -282,12 +283,18 @@ class BlockchainFunctionalTest extends BrowserTestBase {
       BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount()
     ]);
     $this->assertEmpty($announceCount, 'Announce was related to none nodes.');
+    // Set announce handling to CRON (no immediate) processing.
+    $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
+    $this->assertEquals(BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE, $announceManagement, 'Announce management is immediate.');
+    $this->blockchainService->getConfigService()->setAnnounceManagement(BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON);
+    $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
+    $this->assertEquals(BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON, $announceManagement, 'Announce management set to CRON handled.');
     // Ensure we have no blockchain nodes.
     $nodeCount = count($this->blockchainService->getNodeService()->getList());
     $this->assertEmpty($nodeCount, 'Blockchain node list empty');
     // Ensure node list is not empty.
     $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
-    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->localIp, $this->localPort);
+    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->baseUrl, $this->localPort);
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
     $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
@@ -296,7 +303,18 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
       BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount()
     ]);
-    $this->assertEquals(1, $announceCount, 'Announce was related to one node.');
+    $this->assertCount(1, $announceCount, 'Announce was related to one node.');
+    $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
+    $this->assertEquals(406, current($announceCount)->getResponse()->getStatusCode(), 'Status code for announce response is 406.');
+    $this->assertEquals(0, $processedAnnounces, 'No announces were processed.');
+    // Try to emulate announce queue inclusion.
+    $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
+      BlockchainRequestInterface::PARAM_COUNT => 2
+    ]);
+    $this->assertCount(1, $announceCount, 'Announce was related to one node.');
+    $this->assertEquals(200, current($announceCount)->getStatusCode(), 'Status code for announce response is 200.');
+    $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
+    $this->assertEquals(0, $processedAnnounces, 'Announces were processed.');
   }
 
   /**

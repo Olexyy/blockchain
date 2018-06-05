@@ -62,6 +62,7 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
     $this->loggerFactory = $loggerFactory;
     $this->blockchainService = $blockchainService;
   }
+
   /**
    * {@inheritdoc}
    */

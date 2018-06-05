@@ -166,6 +166,7 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   public function getEndPoint() {
 
     $protocol = $this->isSecure()? 'https://' : 'http://';
+    $protocol = is_null($this->isSecure())? '' : $protocol;
     $port = $this->getPort()? ':'. $this->getPort() : '';
     return $protocol . $this->getIp() . $port;
   }

@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Service;
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Utils\BlockchainResponseInterface;
+use GuzzleHttp\Psr7\Response;
 
 /**
  * Interface BlockchainApiServiceInterface.
@@ -66,6 +67,9 @@ interface BlockchainApiServiceInterface {
    *
    * @param array $params
    *   Required params.
+   *
+   * @return Response[]
+   *   Array of responses if any.
    */
   public function executeAnnounce(array $params);
 

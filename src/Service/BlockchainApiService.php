@@ -8,7 +8,6 @@ use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Promise\Promise;
 use function GuzzleHttp\Promise\settle;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -152,10 +151,20 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
     $this->addRequiredParams($params);
     $endPoints = [];
     foreach ($this->blockchainNodeService->getList(0, $this->blockchainNodeService->getCount()) as $node) {
-      $endPoints[$node->getEndPoint()] = $this->httpClient->postAsync($node->getEndPoint().static::API_ANNOUNCE, ['json' => $params]);
+      $endPoints[$node->getEndPoint().static::API_ANNOUNCE] = $this->httpClient->postAsync($node->getEndPoint().static::API_ANNOUNCE, ['json' => $params]);
     }
     $results = settle($endPoints)->wait();
-    return count($results);
+    $ep = [];
+    foreach ($results as $url => $result) {
+      if (isset($result['value'])) {
+        $ep[]= $result['value'];
+      }
+      else {
+        $ep[]= $result['reason'];
+      }
+    }
+
+    return $ep;
   }
 
   /**
