@@ -266,18 +266,37 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->blockchainService->getConfigService()->setBlockchainType(BlockchainConfigServiceInterface::TYPE_MULTIPLE);
     $type = $this->blockchainService->getConfigService()->getBlockchainType();
     $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
+    // Ensure none blocks in blockchain.
+    $this->assertFalse($this->blockchainService->getStorageService()->anyBlock(), 'Any block returns false');
     $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
     $this->assertEmpty($blockCount, 'None blocks in storage yet.');
     $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
     $this->assertInstanceOf(BlockchainBlockInterface::class, $genericBlock,'Generic block created.');
     $this->blockchainService->getStorageService()->save($genericBlock);
     $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
+    $this->assertTrue($this->blockchainService->getStorageService()->anyBlock(), 'Any block returns true');
     $this->assertNotEmpty($blockCount, 'Generic block added to storage.');
     $nodesCount = $this->blockchainService->getNodeService()->getCount();
     $this->assertEmpty($nodesCount, 'None blockchain nodes in list yet.');
-    $this->blockchainService->getApiService()->executeAnnounce([
+    $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
       BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount()
     ]);
+    $this->assertEmpty($announceCount, 'Announce was related to none nodes.');
+    // Ensure we have no blockchain nodes.
+    $nodeCount = count($this->blockchainService->getNodeService()->getList());
+    $this->assertEmpty($nodeCount, 'Blockchain node list empty');
+    // Ensure node list is not empty.
+    $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
+    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->localIp, $this->localPort);
+    $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
+    $nodeCount = $this->blockchainService->getNodeService()->getList();
+    $this->assertCount(1, $nodeCount, 'Blockchain node list not empty');
+    $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
+      BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount()
+    ]);
+    $this->assertEquals(1, $announceCount, 'Announce was related to one node.');
   }
 
   /**

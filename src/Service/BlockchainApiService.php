@@ -154,10 +154,8 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
     foreach ($this->blockchainNodeService->getList(0, $this->blockchainNodeService->getCount()) as $node) {
       $endPoints[$node->getEndPoint()] = $this->httpClient->postAsync($node->getEndPoint().static::API_ANNOUNCE, ['json' => $params]);
     }
-    // Don't care about results...
-    // Wait for the requests to complete, even if some of them fail
-    // LATER SOME LOGGING
-    //$results = settle($endPoints)->wait();
+    $results = settle($endPoints)->wait();
+    return count($results);
   }
 
   /**
