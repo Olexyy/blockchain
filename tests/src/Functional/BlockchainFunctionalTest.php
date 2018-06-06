@@ -10,7 +10,6 @@ use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Tests\BrowserTestBase;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 
 /**
  * Tests blockchain.
@@ -92,6 +91,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
    * Tests validation handler for blockchain API.
    */
   public function testBlockchainApiValidation() {
+
     // Cover method checking.
     $this->drupalGet($this->blockchainSubscribeUrl);
     $this->assertEquals(400, $this->getSession()->getStatusCode());
@@ -271,6 +271,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertFalse($this->blockchainService->getStorageService()->anyBlock(), 'Any block returns false');
     $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
     $this->assertEmpty($blockCount, 'None blocks in storage yet.');
+    // Create generic block and add it to blockchain.
     $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
     $this->assertInstanceOf(BlockchainBlockInterface::class, $genericBlock,'Generic block created.');
     $this->blockchainService->getStorageService()->save($genericBlock);
@@ -280,6 +281,11 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $lastBlock = $this->blockchainService->getStorageService()->getLastBlock();
     $this->assertInstanceOf(BlockchainBlockInterface::class, $lastBlock, 'Last block obtained');
     $this->assertEquals(1, $lastBlock->id(), 'Last block id obtained');
+    $blockByTimestampAndHash = $this->blockchainService->getStorageService()->loadByTimestampAndHash(
+      $lastBlock->getTimestamp(), $lastBlock->getPreviousHash()
+    );
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $blockByTimestampAndHash, 'Block by Timestamp and previous hash block obtained');
+    // Ensure no nodes in lit yet.
     $nodesCount = $this->blockchainService->getNodeService()->getCount();
     $this->assertEmpty($nodesCount, 'None blockchain nodes in list yet.');
     $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
@@ -292,10 +298,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->blockchainService->getConfigService()->setAnnounceManagement(BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON);
     $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
     $this->assertEquals(BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON, $announceManagement, 'Announce management set to CRON handled.');
-    // Ensure we have no blockchain nodes.
-    $nodeCount = count($this->blockchainService->getNodeService()->getList());
-    $this->assertEmpty($nodeCount, 'Blockchain node list empty');
-    // Ensure node list is not empty.
+    // Attach self to node list.
     $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
     $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->baseUrl, $this->localPort);
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
@@ -303,21 +306,26 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
     $nodeCount = $this->blockchainService->getNodeService()->getList();
     $this->assertCount(1, $nodeCount, 'Blockchain node list not empty');
+    // Repeat announce and ensure it was passed to self as node.
     $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
       BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount()
     ]);
     $this->assertCount(1, $announceCount, 'Announce was related to one node.');
-    $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
     $this->assertEquals(406, current($announceCount)->getResponse()->getStatusCode(), 'Status code for announce response is 406.');
+    $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
+    // Ensure no announces processed as it was 406 (Count of blocks equals).
     $this->assertEquals(0, $processedAnnounces, 'No announces were processed.');
-    // Try to emulate announce queue inclusion.
+    // Try to emulate announce queue inclusion by fake count of blocks 2.
     $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
       BlockchainRequestInterface::PARAM_COUNT => 2
     ]);
     $this->assertCount(1, $announceCount, 'Announce was related to one node.');
     $this->assertEquals(200, current($announceCount)->getStatusCode(), 'Status code for announce response is 200.');
+    // Ensure 1 announce was processed as it was 200 (Due to fake count '2').
     $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
     $this->assertEquals(1, $processedAnnounces, 'One announce was processed.');
+    // In this case item was processed but taken no action
+    // as Fetch should have found that count of blocks equal.
   }
 
   /**
