@@ -194,8 +194,11 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->condition('timestamp', $timestamp)
       ->condition('previous_hash', $previousHash)
       ->execute();
+    if ($blockId) {
+      return $this->getBlockStorage()->load(current($blockId));
+    }
 
-    return $this->getBlockStorage()->load($blockId);
+    return NULL;
   }
 
   /**

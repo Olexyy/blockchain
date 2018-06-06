@@ -19,7 +19,7 @@ services:
     arguments: ['@request_stack', '@http_client', '@logger.factory', '@blockchain.config', '@blockchain.node']
   blockchain.validator:
     class: Drupal\blockchain\Service\BlockchainValidatorService
-    arguments: ['@blockchain.config', '@blockchain.node']
+    arguments: ['@blockchain.config', '@blockchain.node', '@blockchain.storage']
   blockchain.service:
     class: Drupal\blockchain\Service\BlockchainService
     arguments:

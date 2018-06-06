@@ -277,6 +277,9 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
     $this->assertTrue($this->blockchainService->getStorageService()->anyBlock(), 'Any block returns true');
     $this->assertNotEmpty($blockCount, 'Generic block added to storage.');
+    $lastBlock = $this->blockchainService->getStorageService()->getLastBlock();
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $lastBlock, 'Last block obtained');
+    $this->assertEquals(1, $lastBlock->id(), 'Last block id obtained');
     $nodesCount = $this->blockchainService->getNodeService()->getCount();
     $this->assertEmpty($nodesCount, 'None blockchain nodes in list yet.');
     $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
@@ -314,7 +317,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertCount(1, $announceCount, 'Announce was related to one node.');
     $this->assertEquals(200, current($announceCount)->getStatusCode(), 'Status code for announce response is 200.');
     $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
-    $this->assertEquals(0, $processedAnnounces, 'Announces were processed.');
+    $this->assertEquals(1, $processedAnnounces, 'One announce was processed.');
   }
 
   /**

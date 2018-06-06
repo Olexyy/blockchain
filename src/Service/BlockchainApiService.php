@@ -115,6 +115,10 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
       return BlockchainResponse::create()
         ->setStatusCode($e->getCode())
         ->setParams($this->exceptionMessageToArray($e));
+    } catch (\Exception $e) {
+      $this->getLogger()
+        ->error($e->getCode() . $e->getMessage() . $e->getTraceAsString());
+      return BlockchainResponse::create();
     }
   }
 

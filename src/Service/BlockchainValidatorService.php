@@ -32,13 +32,21 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
   protected $blockchainNodeService;
 
   /**
+   * Blockchain storage service.
+   *
+   * @var BlockchainStorageServiceInterface
+   */
+  protected $blockchainStorageService;
+  /**
    * {@inheritdoc}
    */
   public function __construct(BlockchainConfigServiceInterface $blockchainSettingsService,
-                              BlockchainNodeServiceInterface $blockchainNodeService) {
+                              BlockchainNodeServiceInterface $blockchainNodeService,
+                              BlockchainStorageServiceInterface $blockchainStorageService) {
 
     $this->configService = $blockchainSettingsService;
     $this->blockchainNodeService = $blockchainNodeService;
+    $this->blockchainStorageService = $blockchainStorageService;
   }
 
   /**
@@ -66,9 +74,16 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
   /**
    * {@inheritdoc}
    */
-  public function blockIsValid(BlockchainBlockInterface $blockchainBlock, BlockchainBlockInterface $previousBlock) {
+  public function blockIsValid(BlockchainBlockInterface $blockchainBlock) {
 
-    return $this->hashIsValid($blockchainBlock->getHash()) && $previousBlock->getHash() == $blockchainBlock->getPreviousHash();
+    if (!$this->blockchainStorageService->anyBlock()) {
+      return TRUE;
+    }
+    else {
+      return $this->hashIsValid($blockchainBlock->getHash())
+        && $this->blockchainStorageService->getLastBlock()
+          ->getHash() == $blockchainBlock->getPreviousHash();
+    }
   }
 
   /**

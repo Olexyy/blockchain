@@ -61,12 +61,11 @@ interface BlockchainValidatorServiceInterface {
    *
    * @param BlockchainBlockInterface $blockchainBlock
    *   Blockchain block.
-   * @param BlockchainBlockInterface $previousBlock
-   *   Previous known block.
+   *
    * @return bool
    *
    *   Test result.
    */
-  public function blockIsValid(BlockchainBlockInterface $blockchainBlock, BlockchainBlockInterface $previousBlock);
+  public function blockIsValid(BlockchainBlockInterface $blockchainBlock);
 
 }

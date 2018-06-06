@@ -111,9 +111,9 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
         if ($result->hasBlocksParam()) {
           foreach ($result->getBlocksParam() as $item) {
             $block = $this->blockchainService->getStorageService()->createFromArray($item);
-            if ($this
-              ->blockchainService->getValidatorService()
-              ->blockIsValid($block, $this->blockchainService->getStorageService()->getLastBlock())) {
+            if ($this->blockchainService
+              ->getValidatorService()
+              ->blockIsValid($block)) {
               $block->save();
             }
             else {
