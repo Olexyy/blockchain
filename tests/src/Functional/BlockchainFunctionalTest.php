@@ -65,7 +65,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['blockchain'];
+  public static $modules = ['blockchain', 'blockchain_emulation'];
 
   /**
    * {@inheritdoc}
@@ -311,7 +311,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
       BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount()
     ]);
     $this->assertCount(1, $announceCount, 'Announce was related to one node.');
-    $this->assertEquals(406, current($announceCount)->getResponse()->getStatusCode(), 'Status code for announce response is 406.');
+    $this->assertEquals(406, current($announceCount)->getStatusCode(), 'Status code for announce response is 406.');
     $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
     // Ensure no announces processed as it was 406 (Count of blocks equals).
     $this->assertEquals(0, $processedAnnounces, 'No announces were processed.');

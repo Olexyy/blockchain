@@ -7,8 +7,10 @@ use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use function GuzzleHttp\Promise\settle;
+use GuzzleHttp\Psr7\Response;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -158,17 +160,17 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
       $endPoints[$node->getEndPoint().static::API_ANNOUNCE] = $this->httpClient->postAsync($node->getEndPoint().static::API_ANNOUNCE, ['json' => $params]);
     }
     $results = settle($endPoints)->wait();
-    $ep = [];
+    $responses = [];
     foreach ($results as $url => $result) {
-      if (isset($result['value'])) {
-        $ep[]= $result['value'];
+      if (isset($result['value']) && $result['value'] instanceof Response) {
+        $responses[]= $result['value'];
       }
-      else {
-        $ep[]= $result['reason'];
+      else if (isset($result['reason']) && method_exists($result['reason'],'getResponse')) {
+        $responses[]= $result['reason']->getResponse();
       }
     }
 
-    return $ep;
+    return $responses;
   }
 
   /**

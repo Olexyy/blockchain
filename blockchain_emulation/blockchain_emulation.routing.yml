@@ -1,0 +1,15 @@
+
+blockchain.emulation.pull:
+  path: '/blockchain/api/emulation/pull'
+  defaults:
+    _controller: \Drupal\blockchain_emulation\Controller\BlockchainEmulationController::pull
+  requirements:
+    _method: 'POST'
+    _access: 'TRUE'
+blockchain.emulation.fetch:
+  path: '/blockchain/api/emulation/fetch'
+  defaults:
+    _controller: \Drupal\blockchain_emulation\Controller\BlockchainEmulationController::fetch
+  requirements:
+    _method: 'POST'
+    _access: 'TRUE'
