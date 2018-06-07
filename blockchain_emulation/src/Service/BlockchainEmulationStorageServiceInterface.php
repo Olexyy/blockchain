@@ -33,6 +33,22 @@ interface BlockchainEmulationStorageServiceInterface {
   public function getBlockStorage();
 
   /**
+   * Adds block to storage.
+   *
+   * @param BlockchainBlockInterface $blockchainBlock
+   *   Block to add.
+   */
+  public function addToStorage(BlockchainBlockInterface $blockchainBlock);
+
+  /**
+   * Removes last block or defined in index.
+   *
+   * @param null|int $index
+   *   If defined, deletes by index.
+   */
+  public function removeFromStorage($index = NULL);
+
+  /**
    * Getter for blockchain blocks count.
    *
    * @return int
@@ -57,14 +73,6 @@ interface BlockchainEmulationStorageServiceInterface {
   public function getLastBlock();
 
   /**
-   * Getter for generic block.
-   *
-   * @return BlockchainBlockInterface
-   *   Given block.
-   */
-  function getGenericBlock();
-
-  /**
    * Getter for blockchain data handler.
    *
    * @param string|null $data
@@ -74,17 +82,6 @@ interface BlockchainEmulationStorageServiceInterface {
    *   Given handler.
    */
   public function getBlockDataHandler($data = NULL);
-
-  /**
-   * Save handler.
-   *
-   * @param BlockchainBlockInterface $block
-   *   Given block.
-   *
-   * @return mixed
-   *   Execution result.
-   */
-  public function save(BlockchainBlockInterface $block);
 
   /**
    * Finds block in storage. If found, gets count created after blocks.
@@ -147,18 +144,27 @@ interface BlockchainEmulationStorageServiceInterface {
   public function createFromArray(array $values);
 
   /**
+   * Adds given count of blocks.
    *
-   *
-   * @param $count
+   * @param int $count
    *   Count of blocks to add.
-   * @return mixed
    */
   public function addBlocks($count);
 
+  /**
+   * Removes given count of blocks.
+   *
+   * @param int $count
+   *   Count of blocks to remove.
+   */
   public function removeBlocks($count);
 
+  /**
+   * Sets given count of blocks.
+   *
+   * @param int $count
+   *   Sets given count of blocks.
+   */
   public function setBlocks($count);
-
-
 
 }

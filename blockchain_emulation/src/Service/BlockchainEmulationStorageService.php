@@ -9,8 +9,7 @@ use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainMinerServiceInterface;
-use Drupal\blockchain\Utils\Util;
-use Drupal\Component\Utility\Random;
+use Drupal\blockchain\Service\BlockchainStorageServiceInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\State\StateInterface;
@@ -65,6 +64,13 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
   protected $minerService;
 
   /**
+   * Blockchain storage service.
+   *
+   * @var BlockchainStorageServiceInterface
+   */
+  protected $blockchainStorageService;
+
+  /**
    * BlockchainStorageService constructor.
    *
    * @param EntityTypeManagerInterface $entityTypeManager
@@ -79,13 +85,16 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
    *   Drupal state.
    * @param BlockchainMinerServiceInterface $minerService
    *   Blockchain miner service.
+   * @param BlockchainStorageServiceInterface $blockchainStorageService
+   *   Blockchain storage service.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager,
                               LoggerChannelFactoryInterface $loggerFactory,
                               BlockchainConfigServiceInterface $blockchainSettingsService,
                               BlockchainDataManager $blockchainDataManager,
                               StateInterface $state,
-                              BlockchainMinerServiceInterface $minerService) {
+                              BlockchainMinerServiceInterface $minerService,
+                              BlockchainStorageServiceInterface $blockchainStorageService) {
 
     $this->entityTypeManager = $entityTypeManager;
     $this->loggerFactory = $loggerFactory;
@@ -93,6 +102,7 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
     $this->blockchainDataManager = $blockchainDataManager;
     $this->state = $state;
     $this->minerService = $minerService;
+    $this->blockchainStorageService = $blockchainStorageService;
   }
 
   /**
@@ -109,6 +119,32 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
   public function getBlockStorage() {
 
     return $this->state->get(static::STORAGE_NAMESPACE,  []);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addToStorage(BlockchainBlockInterface $blockchainBlock) {
+
+    $data = $this->getBlockStorage();
+    $data[]= $blockchainBlock;
+    $this->state->set(static::STORAGE_NAMESPACE,  $data);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeFromStorage($index = NULL) {
+
+    $data = $this->getBlockStorage();
+    if (is_numeric($index)) {
+      unset($data[$index]);
+      $data = array_values($data);
+    }
+    else {
+      array_pop($data);
+    }
+    $this->state->set(static::STORAGE_NAMESPACE,  $data);
   }
 
   /**
@@ -143,23 +179,6 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
   /**
    * {@inheritdoc}
    */
-  public function getGenericBlock() {
-
-    $rand = new Random();
-    $block = BlockchainBlock::create();
-    $block->setPreviousHash(Util::hash($rand->string()));
-    $block->setTimestamp(time());
-    $block->setNonce(mt_rand(0, 10000));
-    $block->setAuthor($this->configService->getBlockchainNodeId());
-    $dataHandler = $this->getBlockDataHandler('raw::' . $rand->string());
-    $block->setData($dataHandler->getRawData());
-
-    return $block;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getBlockDataHandler($data = NULL) {
 
     $pluginId = $this->configService->getConfig()->get('dataHandler');
@@ -177,16 +196,6 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
         ->error($e->getMessage() . $e->getTraceAsString());
       return NULL;
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function save(BlockchainBlockInterface $block) {
-
-    $this->getBlockStorage()[] = $block;
-
-    return TRUE;
   }
 
   /**
@@ -263,4 +272,45 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
     return $block;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function addBlocks($count) {
+
+    for ($i = 0; $i < $count; $i++) {
+      if ($this->getBlockCount()) {
+        $block = $this->blockchainStorageService->getRandomBlock(
+          $this->getLastBlock()->getHash()
+        );
+      }
+      else {
+        $block = $this->blockchainStorageService->getGenericBlock();
+      }
+      $this->addToStorage($block);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeBlocks($count) {
+
+    for ($i = 0; $i < $count; $i++) {
+      $this->removeFromStorage();
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlocks($count) {
+
+    $existingCount = $this->getBlockCount();
+    if ($existingCount > $count) {
+      $this->removeBlocks($existingCount - $count);
+    }
+    else if ($existingCount < $count) {
+      $this->addBlocks($count - $existingCount);
+    }
+  }
 }

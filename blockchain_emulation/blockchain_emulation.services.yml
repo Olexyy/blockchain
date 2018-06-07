@@ -8,3 +8,4 @@ services:
       -  '@blockchain.data.manager'
       -  '@state'
       -  '@blockchain.miner'
+      -  '@blockchain.storage'
