@@ -1,0 +1,9 @@
+services:
+  blockchain.emulation.storage:
+    class: Drupal\blockchain_emulation\Service\BlockchainEmulationStorageService
+    arguments:
+      -  '@entity_type.manager'
+      -  '@logger.factory'
+      -  '@blockchain.config'
+      -  '@blockchain.data.manager'
+      -  '@state'
