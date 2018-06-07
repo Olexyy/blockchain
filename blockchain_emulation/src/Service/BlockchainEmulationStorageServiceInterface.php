@@ -146,4 +146,19 @@ interface BlockchainEmulationStorageServiceInterface {
    */
   public function createFromArray(array $values);
 
+  /**
+   *
+   *
+   * @param $count
+   *   Count of blocks to add.
+   * @return mixed
+   */
+  public function addBlocks($count);
+
+  public function removeBlocks($count);
+
+  public function setBlocks($count);
+
+
+
 }

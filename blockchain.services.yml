@@ -20,6 +20,9 @@ services:
   blockchain.validator:
     class: Drupal\blockchain\Service\BlockchainValidatorService
     arguments: ['@blockchain.config', '@blockchain.node', '@blockchain.storage']
+  blockchain.miner:
+    class: Drupal\blockchain\Service\BlockchainMinerService
+    arguments: ['@blockchain.validator']
   blockchain.service:
     class: Drupal\blockchain\Service\BlockchainService
     arguments:
@@ -30,3 +33,4 @@ services:
       -  '@blockchain.api'
       -  '@blockchain.node'
       -  '@blockchain.validator'
+      -  '@blockchain.miner'

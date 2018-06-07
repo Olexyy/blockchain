@@ -8,6 +8,7 @@ use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
+use Drupal\blockchain\Service\BlockchainMinerServiceInterface;
 use Drupal\blockchain\Utils\Util;
 use Drupal\Component\Utility\Random;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -57,6 +58,13 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
   protected $state;
 
   /**
+   * Blockchain miner service.
+   *
+   * @var BlockchainMinerServiceInterface
+   */
+  protected $minerService;
+
+  /**
    * BlockchainStorageService constructor.
    *
    * @param EntityTypeManagerInterface $entityTypeManager
@@ -69,18 +77,22 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
    *   Blockchain data manager.
    * @param StateInterface $state
    *   Drupal state.
+   * @param BlockchainMinerServiceInterface $minerService
+   *   Blockchain miner service.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager,
                               LoggerChannelFactoryInterface $loggerFactory,
                               BlockchainConfigServiceInterface $blockchainSettingsService,
                               BlockchainDataManager $blockchainDataManager,
-                              StateInterface $state) {
+                              StateInterface $state,
+                              BlockchainMinerServiceInterface $minerService) {
 
     $this->entityTypeManager = $entityTypeManager;
     $this->loggerFactory = $loggerFactory;
     $this->configService = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
     $this->state = $state;
+    $this->minerService = $minerService;
   }
 
   /**

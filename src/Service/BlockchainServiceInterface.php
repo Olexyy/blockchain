@@ -77,4 +77,12 @@ interface BlockchainServiceInterface {
    */
   public function getValidatorService();
 
+  /**
+   * Getter for miner service.
+   *
+   * @return BlockchainMinerServiceInterface
+   *   Service object.
+   */
+  public function getMinerService();
+
 }

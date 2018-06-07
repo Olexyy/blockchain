@@ -4,10 +4,8 @@ namespace Drupal\blockchain\Plugin\QueueWorker;
 
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
-use Drupal\blockchain\Service\BlockchainApiServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
-use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
@@ -97,33 +95,11 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
     $block->setAuthor($this->blockchainService
       ->getConfigService()->getBlockchainNodeId());
     $block->setTimestamp(time());
-    $newNonce = $this->mine($block->getMiningString());
-    $block->setNonce($newNonce);
-
+    $this->blockchainService->getMinerService()->mineBlock($block);
     $block->save();
     $this->blockchainService->getApiService()->executeAnnounce([
       BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),
     ]);
   }
 
-  /**
-   * Mining procedure.
-   *
-   * @param string $miningString
-   *   Given value.
-   *
-   * @return string
-   */
-  protected function mine($miningString) {
-
-    $nonce = 0;
-    $result = Util::hash($miningString.$nonce);
-    $validator = $this->blockchainService->getValidatorService();
-    while (!$validator->hashIsValid($result)) {
-      $nonce++;
-      $result = Util::hash($miningString.$nonce);
-    }
-
-    return $nonce;
-  }
 }

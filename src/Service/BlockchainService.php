@@ -61,6 +61,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainValidatorService;
 
   /**
+   * Blockchain miner service.
+   *
+   * @var BlockchainMinerServiceInterface
+   */
+  protected $blockchainMinerService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -77,6 +84,8 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Given Blockchain Node service.
    * @param BlockchainValidatorServiceInterface $blockchainValidatorService
    *   Given Blockchain Validate service.
+   * @param BlockchainMinerServiceInterface $blockchainMinerService
+   *   Given Blockchain miner service.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
@@ -85,7 +94,8 @@ class BlockchainService implements BlockchainServiceInterface {
     BlockchainQueueServiceInterface $blockchainQueueService,
     BlockchainApiServiceInterface $blockchainApiService,
     BlockchainNodeServiceInterface $blockchainNodeService,
-    BlockchainValidatorServiceInterface $blockchainValidatorService) {
+    BlockchainValidatorServiceInterface $blockchainValidatorService,
+    BlockchainMinerServiceInterface $blockchainMinerService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
@@ -94,6 +104,7 @@ class BlockchainService implements BlockchainServiceInterface {
     $this->blockchainApiService = $blockchainApiService;
     $this->blockchainNodeService = $blockchainNodeService;
     $this->blockchainValidatorService = $blockchainValidatorService;
+    $this->blockchainMinerService = $blockchainMinerService;
   }
 
   /**
@@ -155,6 +166,14 @@ class BlockchainService implements BlockchainServiceInterface {
   public function getValidatorService() {
 
     return $this->blockchainValidatorService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMinerService() {
+
+    return $this->blockchainMinerService;
   }
 
 }

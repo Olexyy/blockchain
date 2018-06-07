@@ -7,3 +7,4 @@ services:
       -  '@blockchain.config'
       -  '@blockchain.data.manager'
       -  '@state'
+      -  '@blockchain.miner'

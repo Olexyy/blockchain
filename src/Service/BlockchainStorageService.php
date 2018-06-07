@@ -48,6 +48,13 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   protected $blockchainDataManager;
 
   /**
+   * Blockchain miner service.
+   *
+   * @var BlockchainMinerService
+   */
+  protected $blockchainMinerService;
+
+  /**
    * BlockchainStorageService constructor.
    *
    * @param EntityTypeManagerInterface $entityTypeManager
@@ -58,16 +65,20 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
    *   Blockchain config service.
    * @param BlockchainDataManager $blockchainDataManager
    *   Blockchain data manager.
+   * @param BlockchainMinerService $blockchainMinerService
+   *   Blockchain miner service.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager,
                               LoggerChannelFactoryInterface $loggerFactory,
                               BlockchainConfigServiceInterface $blockchainSettingsService,
-                              BlockchainDataManager $blockchainDataManager) {
+                              BlockchainDataManager $blockchainDataManager,
+                              BlockchainMinerService $blockchainMinerService) {
 
     $this->entityTypeManager = $entityTypeManager;
     $this->loggerFactory = $loggerFactory;
     $this->configService = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
+    $this->blockchainMinerService = $blockchainMinerService;
   }
 
   /**
@@ -136,13 +147,26 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   public function getGenericBlock() {
 
     $rand = new Random();
+    $block = $this->getRandomBlock(Util::hash($rand->string()), FALSE);
+    $block->setNonce(mt_rand(0, 10000));
+
+    return $block;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRandomBlock($previousHash, $doMining = TRUE) {
+
+    $rand = new Random();
     $block = BlockchainBlock::create();
     $block->setPreviousHash(Util::hash($rand->string()));
     $block->setTimestamp(time());
-    $block->setNonce(mt_rand(0, 10000));
     $block->setAuthor($this->configService->getBlockchainNodeId());
-    $dataHandler = $this->getBlockDataHandler('raw::' . $rand->string());
-    $block->setData($dataHandler->getRawData());
+    $block->setData('raw::' . $rand->string(mt_rand(7, 20)));
+    if ($doMining) {
+      $this->blockchainMinerService->mineBlock($block);
+    }
 
     return $block;
   }
