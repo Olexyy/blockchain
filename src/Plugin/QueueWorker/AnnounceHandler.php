@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Plugin\QueueWorker;
 
 
+use Drupal\blockchain\Service\BlockchainLockerServiceInterface;
 use Drupal\blockchain\Service\BlockchainQueueServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequest;
@@ -39,6 +40,13 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
   protected $blockchainService;
 
   /**
+   * Blockchain locker service.
+   *
+   * @var BlockchainLockerServiceInterface
+   */
+  protected $blockchainLockerService;
+
+  /**
    * Constructs a ImporterQueue worker.
    *
    * @param array $configuration
@@ -51,16 +59,20 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
    *   Logger factory.
    * @param BlockchainServiceInterface $blockchainService
    *   Blockchain service.
+   * @param BlockchainLockerServiceInterface $blockchainLockerService
+   *   Blockchain locker service.
    */
   public function __construct(array $configuration,
                               $plugin_id,
                               $plugin_definition,
                               LoggerChannelFactory $loggerFactory,
-                              BlockchainServiceInterface $blockchainService) {
+                              BlockchainServiceInterface $blockchainService,
+                              BlockchainLockerServiceInterface $blockchainLockerService) {
 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->loggerFactory = $loggerFactory;
     $this->blockchainService = $blockchainService;
+    $this->blockchainLockerService = $blockchainLockerService;
   }
 
   /**
@@ -74,7 +86,8 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
       $plugin_id,
       $plugin_definition,
       $container->get('logger.factory'),
-      $container->get('blockchain.service')
+      $container->get('blockchain.service'),
+      $container->get('@blockchain.locker')
     );
   }
 
