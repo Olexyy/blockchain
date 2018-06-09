@@ -85,4 +85,12 @@ interface BlockchainServiceInterface {
    */
   public function getMinerService();
 
+  /**
+   * Getter for locker service.
+   *
+   * @return BlockchainLockerServiceInterface
+   *   Service object.
+   */
+  public function getLockerService();
+
 }

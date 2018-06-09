@@ -68,6 +68,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainMinerService;
 
   /**
+   * Blockchain locker service.
+   *
+   * @var BlockchainLockerServiceInterface
+   */
+  protected $blockchainLockerService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -86,6 +93,8 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Given Blockchain Validate service.
    * @param BlockchainMinerServiceInterface $blockchainMinerService
    *   Given Blockchain miner service.
+   * @param BlockchainLockerServiceInterface $blockchainLockerService
+   *   Blockchain locker service.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
@@ -95,7 +104,8 @@ class BlockchainService implements BlockchainServiceInterface {
     BlockchainApiServiceInterface $blockchainApiService,
     BlockchainNodeServiceInterface $blockchainNodeService,
     BlockchainValidatorServiceInterface $blockchainValidatorService,
-    BlockchainMinerServiceInterface $blockchainMinerService) {
+    BlockchainMinerServiceInterface $blockchainMinerService,
+    BlockchainLockerServiceInterface $blockchainLockerService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
@@ -105,6 +115,7 @@ class BlockchainService implements BlockchainServiceInterface {
     $this->blockchainNodeService = $blockchainNodeService;
     $this->blockchainValidatorService = $blockchainValidatorService;
     $this->blockchainMinerService = $blockchainMinerService;
+    $this->blockchainLockerService = $blockchainLockerService;
   }
 
   /**
@@ -174,6 +185,14 @@ class BlockchainService implements BlockchainServiceInterface {
   public function getMinerService() {
 
     return $this->blockchainMinerService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLockerService() {
+
+    return $this->blockchainLockerService;
   }
 
 }

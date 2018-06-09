@@ -10,6 +10,8 @@ namespace Drupal\blockchain\Service;
  */
 interface BlockchainLockerServiceInterface {
 
+  const ANNOUNCE = 'blockchain_announce';
+
   /**
    * Tries to lock against given name.
    *
@@ -41,5 +43,29 @@ interface BlockchainLockerServiceInterface {
    *   Result.
    */
   public function wait($lockName, $timeout);
+
+  /**
+   * Tries to lock against given name.
+   *
+   * @return bool
+   *   Result.
+   */
+  public function lockAnnounce();
+
+  /**
+   * Releases lock by name.
+   */
+  public function releaseAnnounce();
+
+  /**
+   * Waits for lock to release given time.
+   *
+   * @param int $timeout
+   *   Timeout.
+   *
+   * @return bool
+   *   Result.
+   */
+  public function waitAnnounce($timeout);
 
 }

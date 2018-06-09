@@ -6,11 +6,13 @@ namespace Drupal\blockchain\Plugin\QueueWorker;
 use Drupal\blockchain\Service\BlockchainLockerServiceInterface;
 use Drupal\blockchain\Service\BlockchainQueueServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\blockchain\Utils\BlockchainLockerException;
 use Drupal\blockchain\Utils\BlockchainRequest;
 use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\Queue\SuspendQueueException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -40,13 +42,6 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
   protected $blockchainService;
 
   /**
-   * Blockchain locker service.
-   *
-   * @var BlockchainLockerServiceInterface
-   */
-  protected $blockchainLockerService;
-
-  /**
    * Constructs a ImporterQueue worker.
    *
    * @param array $configuration
@@ -59,20 +54,16 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
    *   Logger factory.
    * @param BlockchainServiceInterface $blockchainService
    *   Blockchain service.
-   * @param BlockchainLockerServiceInterface $blockchainLockerService
-   *   Blockchain locker service.
    */
   public function __construct(array $configuration,
                               $plugin_id,
                               $plugin_definition,
                               LoggerChannelFactory $loggerFactory,
-                              BlockchainServiceInterface $blockchainService,
-                              BlockchainLockerServiceInterface $blockchainLockerService) {
+                              BlockchainServiceInterface $blockchainService) {
 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->loggerFactory = $loggerFactory;
     $this->blockchainService = $blockchainService;
-    $this->blockchainLockerService = $blockchainLockerService;
   }
 
   /**
@@ -110,37 +101,42 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
     }
     $endPoint = $blockchainNode->getEndPoint();
     // Plan to fetch to cache if are conflicts...
-    // LOCK for concurrent updates. FINALLY release.
-    // Aim is one update to be consistent.
-    $result = $this->blockchainService->getApiService()
-      ->executeFetch($endPoint, $this->blockchainService->getStorageService()->getLastBlock());
-    if ($result->hasExistsParam() && $result->getExistsParam() && $result->hasCountParam()) {
-      $neededBlocks = $result->getCountParam();
-      $addedBlocks = 0;
-      $fetchLimit = 5; // --->>> Setting for blocks fetching count.
-      while ($neededBlocks > $addedBlocks) {
+    if ($this->blockchainService->getLockerService()->lockAnnounce()) {
+      try {
         $result = $this->blockchainService->getApiService()
-          ->executePull($endPoint, $this->blockchainService->getStorageService()->getLastBlock(), $fetchLimit);
-        if ($result->hasBlocksParam()) {
-          foreach ($result->getBlocksParam() as $item) {
-            $block = $this->blockchainService->getStorageService()->createFromArray($item);
-            if ($this->blockchainService
-              ->getValidatorService()
-              ->blockIsValid($block)) {
-              $block->save();
+          ->executeFetch($endPoint, $this->blockchainService->getStorageService()->getLastBlock());
+        if ($result->hasExistsParam() && $result->getExistsParam() && $result->hasCountParam()) {
+          $neededBlocks = $result->getCountParam();
+          $addedBlocks = 0;
+          $fetchLimit = 5; // --->>> Setting for blocks fetching count.
+          while ($neededBlocks > $addedBlocks) {
+            $result = $this->blockchainService->getApiService()
+              ->executePull($endPoint, $this->blockchainService->getStorageService()->getLastBlock(), $fetchLimit);
+            if ($result->hasBlocksParam()) {
+              foreach ($result->getBlocksParam() as $item) {
+                $block = $this->blockchainService->getStorageService()->createFromArray($item);
+                if ($this->blockchainService
+                  ->getValidatorService()
+                  ->blockIsValid($block)) {
+                  $block->save();
+                } else {
+                  throw new \Exception('Not valid block detected.');
+                }
+              }
             }
-            else {
-              throw new \Exception('Not valid block detected.');
-            }
+            $addedBlocks += $fetchLimit;
           }
+        } else {
+          // Implement search and cache logic...
         }
-        $addedBlocks += $fetchLimit;
+      } finally {
+        // Always release if any fail.
+        $this->blockchainService->getLockerService()->releaseAnnounce();
       }
     }
     else {
-      // Implement search and cache logic...
+      throw new SuspendQueueException('Announce handling locked');
     }
-    // Finally release lock ...
   }
 
   /**

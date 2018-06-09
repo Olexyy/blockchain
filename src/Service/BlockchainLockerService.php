@@ -48,17 +48,35 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
   }
 
   /**
-   * @param string $lockName
-   *   Lock name.
-   * @param int $timeout
-   *   Timeout.
-   *
-   * @return bool
-   *   Result.
+   * {@inheritdoc}
    */
   public function wait($lockName, $timeout) {
 
     return $this->lockBackend->wait($lockName, $timeout);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function lockAnnounce() {
+
+    return $this->lock(static::ANNOUNCE);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function releaseAnnounce() {
+
+    $this->lockBackend->release(static::ANNOUNCE);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function waitAnnounce($timeout) {
+
+    return $this->wait(static::ANNOUNCE, $timeout);
   }
 
 }

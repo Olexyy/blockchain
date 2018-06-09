@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
+use Drupal\blockchain\Utils\BlockchainLockerException;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
