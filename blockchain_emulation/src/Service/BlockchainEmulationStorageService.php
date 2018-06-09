@@ -282,6 +282,7 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
         $block = $this->blockchainStorageService->getRandomBlock(
           $this->getLastBlock()->getHash()
         );
+        $this->minerService->mineBlock($block);
       }
       else {
         $block = $this->blockchainStorageService->getGenericBlock();

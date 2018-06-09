@@ -67,13 +67,11 @@ interface BlockchainStorageServiceInterface {
    *
    * @param string $previousHash
    *   Previous hash to be set.
-   * @param bool $doMining
-   *   Flag defines if mining should be done.
    *
    * @return BlockchainBlockInterface
    *   Given block.
    */
-  public function getRandomBlock($previousHash, $doMining = TRUE);
+  public function getRandomBlock($previousHash);
 
   /**
    * Getter for blockchain data handler.

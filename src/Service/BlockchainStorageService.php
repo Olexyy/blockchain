@@ -48,13 +48,6 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   protected $blockchainDataManager;
 
   /**
-   * Blockchain miner service.
-   *
-   * @var BlockchainMinerService
-   */
-  protected $blockchainMinerService;
-
-  /**
    * BlockchainStorageService constructor.
    *
    * @param EntityTypeManagerInterface $entityTypeManager
@@ -65,20 +58,16 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
    *   Blockchain config service.
    * @param BlockchainDataManager $blockchainDataManager
    *   Blockchain data manager.
-   * @param BlockchainMinerService $blockchainMinerService
-   *   Blockchain miner service.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager,
                               LoggerChannelFactoryInterface $loggerFactory,
                               BlockchainConfigServiceInterface $blockchainSettingsService,
-                              BlockchainDataManager $blockchainDataManager,
-                              BlockchainMinerService $blockchainMinerService) {
+                              BlockchainDataManager $blockchainDataManager) {
 
     $this->entityTypeManager = $entityTypeManager;
     $this->loggerFactory = $loggerFactory;
     $this->configService = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
-    $this->blockchainMinerService = $blockchainMinerService;
   }
 
   /**
@@ -147,7 +136,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   public function getGenericBlock() {
 
     $rand = new Random();
-    $block = $this->getRandomBlock(Util::hash($rand->string()), FALSE);
+    $block = $this->getRandomBlock(Util::hash($rand->string()));
     $block->setNonce(mt_rand(0, 10000));
 
     return $block;
@@ -156,7 +145,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRandomBlock($previousHash, $doMining = TRUE) {
+  public function getRandomBlock($previousHash) {
 
     $rand = new Random();
     $block = BlockchainBlock::create();
@@ -164,9 +153,6 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     $block->setTimestamp(time());
     $block->setAuthor($this->configService->getBlockchainNodeId());
     $block->setData('raw::' . $rand->string(mt_rand(7, 20)));
-    if ($doMining) {
-      $this->blockchainMinerService->mineBlock($block);
-    }
 
     return $block;
   }

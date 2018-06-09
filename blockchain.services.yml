@@ -7,7 +7,11 @@ services:
     parent: default_plugin_manager
   blockchain.storage:
     class: Drupal\blockchain\Service\BlockchainStorageService
-    arguments: ['@entity_type.manager', '@logger.factory', '@blockchain.config', '@blockchain.data.manager']
+    arguments:
+      -  '@entity_type.manager'
+      -  '@logger.factory'
+      -  '@blockchain.config'
+      -  '@blockchain.data.manager'
   blockchain.queue:
     class: Drupal\blockchain\Service\BlockchainQueueService
     arguments: ['@queue', '@plugin.manager.queue_worker', '@logger.factory']
@@ -19,7 +23,12 @@ services:
     arguments: ['@lock']
   blockchain.api:
     class: Drupal\blockchain\Service\BlockchainApiService
-    arguments: ['@request_stack', '@http_client', '@logger.factory', '@blockchain.config', '@blockchain.node']
+    arguments:
+      -  '@request_stack'
+      -  '@http_client'
+      -  '@logger.factory'
+      -  '@blockchain.config'
+      -  '@blockchain.node'
   blockchain.validator:
     class: Drupal\blockchain\Service\BlockchainValidatorService
     arguments: ['@blockchain.config', '@blockchain.node', '@blockchain.storage']
@@ -37,3 +46,4 @@ services:
       -  '@blockchain.node'
       -  '@blockchain.validator'
       -  '@blockchain.miner'
+      -  '@blockchain.locker'

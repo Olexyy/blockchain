@@ -4,6 +4,7 @@ namespace Drupal\Tests\blockchain\Kernel;
 
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\blockchain_emulation\Service\BlockchainEmulationStorageServiceInterface;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -21,11 +22,18 @@ class BlockchainKernelTest extends KernelTestBase {
   protected $blockchainService;
 
   /**
+   * Emulation storage.
+   *
+   * @var BlockchainEmulationStorageServiceInterface
+   */
+  protected $blockchainEmulationStorage;
+
+  /**
    * Modules to install.
    *
    * @var array
    */
-  public static $modules = ['blockchain'];
+  public static $modules = ['blockchain', 'blockchain_emulation'];
 
   /**
    * {@inheritdoc}
@@ -39,6 +47,9 @@ class BlockchainKernelTest extends KernelTestBase {
     $this->blockchainService = $this->container->get('blockchain.service');
     $this->assertInstanceOf(BlockchainServiceInterface::class, $this->blockchainService,
       'Blockchain service instantiated.');
+    $this->blockchainEmulationStorage = $this->container->get('blockchain.emulation.storage');
+    $this->assertInstanceOf(BlockchainEmulationStorageServiceInterface::class, $this->blockchainEmulationStorage,
+      'Blockchain emulation storage instantiated.');
   }
 
   /**
@@ -52,6 +63,15 @@ class BlockchainKernelTest extends KernelTestBase {
     //  - storage;
     $type = $this->blockchainService->getConfigService()->getBlockchainType();
     $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_SINGLE, 'Blockchain type is single');
+  }
+
+  /**
+   * Test emulation storage.
+   */
+  public function testEmulationStorage() {
+
+    $count = $this->blockchainEmulationStorage->getBlockCount();
+    $this->assertEmpty($count, 'No blocks in storage');
   }
 
 }
