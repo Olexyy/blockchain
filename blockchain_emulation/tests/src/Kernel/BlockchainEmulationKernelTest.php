@@ -12,7 +12,7 @@ use Drupal\KernelTests\KernelTestBase;
  *
  * @group blockchain
  */
-class BlockchainKernelTest extends KernelTestBase {
+class BlockchainEmulationKernelTest extends KernelTestBase {
 
   /**
    * Blockchain service.
@@ -53,25 +53,21 @@ class BlockchainKernelTest extends KernelTestBase {
   }
 
   /**
-   * Tests that default values are correctly translated to UUIDs in config.
-   */
-  public function testBlockchainService() {
-
-    // Implement tests:
-    //  - config;
-    //  - nodes;
-    //  - storage;
-    $type = $this->blockchainService->getConfigService()->getBlockchainType();
-    $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_SINGLE, 'Blockchain type is single');
-  }
-
-  /**
    * Test emulation storage.
    */
   public function testEmulationStorage() {
 
     $count = $this->blockchainEmulationStorage->getBlockCount();
     $this->assertEmpty($count, 'No blocks in storage');
+    $this->assertFalse($this->blockchainEmulationStorage->anyBlock(), 'Any block not found');
+    $this->blockchainEmulationStorage->setBlocks(5);
+    $count = $this->blockchainEmulationStorage->getBlockCount();
+    $this->assertTrue($this->blockchainEmulationStorage->anyBlock(), 'Any block found');
+    $this->assertEquals(5, $count, 'Set count of blocks to 5');
+    $this->blockchainEmulationStorage->setBlocks(2);
+    $count = $this->blockchainEmulationStorage->getBlockCount();
+    $this->assertEquals(2, $count, 'Set count of blocks to 2');
+
   }
 
 }

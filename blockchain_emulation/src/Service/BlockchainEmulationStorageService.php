@@ -137,7 +137,7 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
   public function removeFromStorage($index = NULL) {
 
     $data = $this->getBlockStorage();
-    if (is_numeric($index)) {
+    if (is_numeric($index) && array_key_exists($index, $data)) {
       unset($data[$index]);
       $data = array_values($data);
     }
