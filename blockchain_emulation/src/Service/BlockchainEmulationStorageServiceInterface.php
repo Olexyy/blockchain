@@ -5,6 +5,7 @@ namespace Drupal\blockchain_emulation\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
+use Drupal\blockchain\Service\BlockchainValidatorServiceInterface;
 
 /**
  * Interface BlockchainEmulationStorageServiceInterface.
@@ -166,5 +167,12 @@ interface BlockchainEmulationStorageServiceInterface {
    *   Sets given count of blocks.
    */
   public function setBlocks($count);
+
+  /**
+   * Checks blocks in blockchain.
+   *
+   * @return bool
+   */
+  public function checkBlocks();
 
 }

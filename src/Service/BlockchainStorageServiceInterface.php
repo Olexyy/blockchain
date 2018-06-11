@@ -155,4 +155,15 @@ interface BlockchainStorageServiceInterface {
    */
   public function createFromArray(array $values);
 
+  /**
+   * Checks blocks in blockchain.
+   *
+   * @param null|int $offset
+   *   Offset.
+   * @param null|int $limit
+   *   Limit.
+   * @return bool
+   */
+  public function checkBlocks($offset = NULL, $limit = NULL);
+
 }

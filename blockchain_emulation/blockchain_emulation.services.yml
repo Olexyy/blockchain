@@ -9,3 +9,4 @@ services:
       -  '@state'
       -  '@blockchain.miner'
       -  '@blockchain.storage'
+      -  '@blockchain.validator'

@@ -57,15 +57,16 @@ interface BlockchainValidatorServiceInterface {
   public function validateRequest($type, Request $request);
 
   /**
-   * Validates block against blockchain.
+   * Validates block against validation rules and previous block if passed.
    *
    * @param BlockchainBlockInterface $blockchainBlock
    *   Blockchain block.
-   *
+   * @param BlockchainBlockInterface|null $previousBlock
+   *   Previous block.
    * @return bool
    *
    *   Test result.
    */
-  public function blockIsValid(BlockchainBlockInterface $blockchainBlock);
+  public function blockIsValid(BlockchainBlockInterface $blockchainBlock, BlockchainBlockInterface $previousBlock = NULL);
 
 }

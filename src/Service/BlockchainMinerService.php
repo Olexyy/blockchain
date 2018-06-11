@@ -34,13 +34,13 @@ class BlockchainMinerService implements BlockchainMinerServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function mine($miningString) {
+  public function mine($previousHash) {
 
     $nonce = 0;
-    $result = Util::hash($miningString.$nonce);
+    $result = Util::hash($previousHash . $nonce);
     while (!$this->blockchainValidatorService->hashIsValid($result)) {
       $nonce++;
-      $result = Util::hash($miningString.$nonce);
+      $result = Util::hash($previousHash . $nonce);
     }
 
     return $nonce;
@@ -51,8 +51,8 @@ class BlockchainMinerService implements BlockchainMinerServiceInterface {
    */
   public function mineBlock(BlockchainBlockInterface $blockchainBlock) {
 
-    $newNonce = $this->mine($blockchainBlock->getMiningString());
-    $blockchainBlock->setNonce($newNonce);
+    $nonce = $this->mine($blockchainBlock->getPreviousHash());
+    $blockchainBlock->setNonce($nonce);
   }
 
 }

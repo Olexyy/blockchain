@@ -4,6 +4,7 @@ namespace Drupal\Tests\blockchain\Kernel;
 
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\blockchain\Utils\Util;
 use Drupal\blockchain_emulation\Service\BlockchainEmulationStorageServiceInterface;
 use Drupal\KernelTests\KernelTestBase;
 
@@ -67,7 +68,13 @@ class BlockchainEmulationKernelTest extends KernelTestBase {
     $this->blockchainEmulationStorage->setBlocks(2);
     $count = $this->blockchainEmulationStorage->getBlockCount();
     $this->assertEquals(2, $count, 'Set count of blocks to 2');
-
+    $this->blockchainEmulationStorage->setBlocks(20);
+    $count = $this->blockchainEmulationStorage->getBlockCount();
+    $this->assertEquals(20, $count, 'Set count of blocks to 20');
+    $checkLast = $this->blockchainService->getValidatorService()->blockIsValid($this->blockchainEmulationStorage->getLastBlock());
+    $this->assertTrue($checkLast, 'Last block is valid');
+    $validationResult = $this->blockchainEmulationStorage->checkBlocks();
+    $this->assertTrue($validationResult, 'Blocks in chain are valid');
   }
 
 }

@@ -48,6 +48,20 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   protected $blockchainDataManager;
 
   /**
+   * Blockchain validator.
+   *
+   * @var BlockchainValidatorServiceInterface
+   */
+  protected $blockchainValidatorService;
+
+  /**
+   * Blockchain miner service.
+   *
+   * @var BlockchainMinerServiceInterface
+   */
+  protected $blockchainMinerService;
+
+  /**
    * BlockchainStorageService constructor.
    *
    * @param EntityTypeManagerInterface $entityTypeManager
@@ -58,16 +72,24 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
    *   Blockchain config service.
    * @param BlockchainDataManager $blockchainDataManager
    *   Blockchain data manager.
+   * @param BlockchainValidatorServiceInterface $blockchainValidatorService
+   *   Blockchain validator.
+   * @param BlockchainMinerServiceInterface $blockchainMinerService
+   *   Blockchain miner service.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager,
                               LoggerChannelFactoryInterface $loggerFactory,
                               BlockchainConfigServiceInterface $blockchainSettingsService,
-                              BlockchainDataManager $blockchainDataManager) {
+                              BlockchainDataManager $blockchainDataManager,
+                              BlockchainValidatorServiceInterface $blockchainValidatorService,
+                              BlockchainMinerServiceInterface $blockchainMinerService) {
 
     $this->entityTypeManager = $entityTypeManager;
     $this->loggerFactory = $loggerFactory;
     $this->configService = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
+    $this->blockchainValidatorService = $blockchainValidatorService;
+    $this->blockchainMinerService = $blockchainMinerService;
   }
 
   /**
@@ -135,9 +157,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
    */
   public function getGenericBlock() {
 
-    $rand = new Random();
-    $block = $this->getRandomBlock(Util::hash($rand->string()));
-    $block->setNonce(mt_rand(0, 10000));
+    $block = $this->getRandomBlock();
 
     return $block;
   }
@@ -145,14 +165,18 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRandomBlock($previousHash) {
+  public function getRandomBlock($previousHash = NULL) {
 
     $rand = new Random();
+    if (!$previousHash) {
+      $previousHash = Util::hash($rand->string());
+    }
     $block = BlockchainBlock::create();
-    $block->setPreviousHash(Util::hash($rand->string()));
+    $block->setPreviousHash($previousHash);
     $block->setTimestamp(time());
     $block->setAuthor($this->configService->getBlockchainNodeId());
     $block->setData('raw::' . $rand->string(mt_rand(7, 20)));
+    $this->blockchainMinerService->mineBlock($block);
 
     return $block;
   }
@@ -265,6 +289,29 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     }
 
     return $block;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkBlocks($offset = NULL, $limit = NULL) {
+
+    $blockIds = $this->getBlockStorage()
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->range($offset, $limit);
+
+    $previousBlock = NULL;
+    foreach ($blockIds as $blockId) {
+      $block = BlockchainBlock::load($blockId);
+      if (!$this->blockchainValidatorService->blockIsValid($block, $previousBlock)) {
+
+        return FALSE;
+      }
+      $previousBlock = $block;
+    }
+
+    return TRUE;
   }
 
 }

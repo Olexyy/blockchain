@@ -188,16 +188,4 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
     );
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getMiningString() {
-
-    return
-      $this->getAuthor().
-      $this->getPreviousHash().
-      $this->getData().
-      $this->getTimestamp();
-  }
-
 }

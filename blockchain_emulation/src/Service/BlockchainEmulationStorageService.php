@@ -10,6 +10,7 @@ use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainMinerServiceInterface;
 use Drupal\blockchain\Service\BlockchainStorageServiceInterface;
+use Drupal\blockchain\Service\BlockchainValidatorServiceInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\State\StateInterface;
@@ -71,6 +72,13 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
   protected $blockchainStorageService;
 
   /**
+   * Blockchain validator.
+   *
+   * @var BlockchainValidatorServiceInterface
+   */
+  public $blockchainValidatorService;
+
+  /**
    * BlockchainStorageService constructor.
    *
    * @param EntityTypeManagerInterface $entityTypeManager
@@ -87,6 +95,8 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
    *   Blockchain miner service.
    * @param BlockchainStorageServiceInterface $blockchainStorageService
    *   Blockchain storage service.
+   * @param BlockchainValidatorServiceInterface $blockchainValidatorService
+   *   Blockchain validator.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager,
                               LoggerChannelFactoryInterface $loggerFactory,
@@ -94,7 +104,8 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
                               BlockchainDataManager $blockchainDataManager,
                               StateInterface $state,
                               BlockchainMinerServiceInterface $minerService,
-                              BlockchainStorageServiceInterface $blockchainStorageService) {
+                              BlockchainStorageServiceInterface $blockchainStorageService,
+                              BlockchainValidatorServiceInterface $blockchainValidatorService) {
 
     $this->entityTypeManager = $entityTypeManager;
     $this->loggerFactory = $loggerFactory;
@@ -103,6 +114,7 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
     $this->state = $state;
     $this->minerService = $minerService;
     $this->blockchainStorageService = $blockchainStorageService;
+    $this->blockchainValidatorService = $blockchainValidatorService;
   }
 
   /**
@@ -139,11 +151,11 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
     $data = $this->getBlockStorage();
     if (is_numeric($index) && array_key_exists($index, $data)) {
       unset($data[$index]);
-      $data = array_values($data);
     }
     else {
       array_pop($data);
     }
+    $data = array_values($data);
     $this->state->set(static::STORAGE_NAMESPACE,  $data);
   }
 
@@ -282,7 +294,6 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
         $block = $this->blockchainStorageService->getRandomBlock(
           $this->getLastBlock()->getHash()
         );
-        $this->minerService->mineBlock($block);
       }
       else {
         $block = $this->blockchainStorageService->getGenericBlock();
@@ -314,4 +325,22 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
       $this->addBlocks($count - $existingCount);
     }
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkBlocks() {
+
+    $previousBlock = NULL;
+    foreach ($this->getBlockStorage() as $blockchainBlock) {
+      if (!$this->blockchainValidatorService->blockIsValid($blockchainBlock, $previousBlock)) {
+
+        return FALSE;
+      }
+      $previousBlock = $blockchainBlock;
+    }
+
+    return TRUE;
+  }
+
 }

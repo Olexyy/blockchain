@@ -32,21 +32,13 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
   protected $blockchainNodeService;
 
   /**
-   * Blockchain storage service.
-   *
-   * @var BlockchainStorageServiceInterface
-   */
-  protected $blockchainStorageService;
-  /**
    * {@inheritdoc}
    */
   public function __construct(BlockchainConfigServiceInterface $blockchainSettingsService,
-                              BlockchainNodeServiceInterface $blockchainNodeService,
-                              BlockchainStorageServiceInterface $blockchainStorageService) {
+                              BlockchainNodeServiceInterface $blockchainNodeService) {
 
     $this->configService = $blockchainSettingsService;
     $this->blockchainNodeService = $blockchainNodeService;
-    $this->blockchainStorageService = $blockchainStorageService;
   }
 
   /**
@@ -59,11 +51,13 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
     $length = strlen($powExpression);
     if ($powPosition === BlockchainConfigServiceInterface::POW_POSITION_START) {
       if (substr($hash, 0, $length) === $powExpression) {
+
         return TRUE;
       }
     }
     else {
       if (substr($hash, -$length) === $powExpression) {
+
         return TRUE;
       }
     }
@@ -74,16 +68,16 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
   /**
    * {@inheritdoc}
    */
-  public function blockIsValid(BlockchainBlockInterface $blockchainBlock) {
+  public function blockIsValid(BlockchainBlockInterface $blockchainBlock, BlockchainBlockInterface $previousBlock = NULL) {
 
-    if (!$this->blockchainStorageService->anyBlock()) {
-      return TRUE;
+    $hashString = Util::hash($blockchainBlock->getPreviousHash() . $blockchainBlock->getNonce());
+    if (!$previousBlock) {
+
+      return $this->hashIsValid($hashString);
     }
-    else {
-      return $this->hashIsValid($blockchainBlock->getHash())
-        && $this->blockchainStorageService->getLastBlock()
-          ->getHash() == $blockchainBlock->getPreviousHash();
-    }
+
+    return $previousBlock->getHash() == $blockchainBlock->getPreviousHash() &&
+      $this->hashIsValid($hashString);
   }
 
   /**

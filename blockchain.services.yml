@@ -12,6 +12,8 @@ services:
       -  '@logger.factory'
       -  '@blockchain.config'
       -  '@blockchain.data.manager'
+      -  '@blockchain.validator'
+      -  '@blockchain.miner'
   blockchain.queue:
     class: Drupal\blockchain\Service\BlockchainQueueService
     arguments: ['@queue', '@plugin.manager.queue_worker', '@logger.factory']
@@ -31,7 +33,7 @@ services:
       -  '@blockchain.node'
   blockchain.validator:
     class: Drupal\blockchain\Service\BlockchainValidatorService
-    arguments: ['@blockchain.config', '@blockchain.node', '@blockchain.storage']
+    arguments: ['@blockchain.config', '@blockchain.node']
   blockchain.miner:
     class: Drupal\blockchain\Service\BlockchainMinerService
     arguments: ['@blockchain.validator']

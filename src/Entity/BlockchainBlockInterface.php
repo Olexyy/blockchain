@@ -126,12 +126,4 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    */
   public function getHash();
 
-  /**
-   * Getter for block string.
-   *
-   * @return string
-   *   String for hash mining.
-   */
-  public function getMiningString();
-
 }
