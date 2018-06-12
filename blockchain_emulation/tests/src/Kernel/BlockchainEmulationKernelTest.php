@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\blockchain\Kernel;
 
+use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\Util;
@@ -75,6 +76,17 @@ class BlockchainEmulationKernelTest extends KernelTestBase {
     $this->assertTrue($checkLast, 'Last block is valid');
     $validationResult = $this->blockchainEmulationStorage->checkBlocks();
     $this->assertTrue($validationResult, 'Blocks in chain are valid');
+    $lastBlock = $this->blockchainEmulationStorage->getLastBlock();
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $lastBlock, 'Last block obtained');
+    $foundLastBlock = $this->blockchainEmulationStorage->loadByTimestampAndHash($lastBlock->getTimestamp(), $lastBlock->getPreviousHash());
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $foundLastBlock, 'Block found by timestamp and hash');
+    $existsByTimestampAndHash = $this->blockchainEmulationStorage->existsByTimestampAndHash($lastBlock->getTimestamp(), $lastBlock->getPreviousHash());
+    $this->assertTrue($existsByTimestampAndHash, 'Defined existence by timestamp and hash');
+    $blocks = $this->blockchainEmulationStorage->getBlocksFrom($lastBlock, 100);
+    $this->assertEmpty($blocks, 'No blocks loaded');
+    $firstBlock = $this->blockchainEmulationStorage->getBlockStorage()[0];
+    $blocks = $this->blockchainEmulationStorage->getBlocksFrom($firstBlock, 100);
+    $this->assertCount(19, $blocks, 'Loaded 19 blocks');
   }
 
 }

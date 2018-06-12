@@ -26,6 +26,13 @@ class BlockchainController extends ControllerBase {
   protected $blockchainService;
 
   /**
+   * Blockchain block storage service.
+   *
+   * @var \Drupal\blockchain\Service\BlockchainStorageServiceInterface
+   */
+  protected $blockchainBlockStorage;
+
+  /**
    * Request stack.
    *
    * @var RequestStack
@@ -51,6 +58,7 @@ class BlockchainController extends ControllerBase {
 
     $this->blockchainService = $blockchainService;
     $this->requestStack = $requestStack;
+    $this->blockchainBlockStorage = $blockchainService->getStorageService();
   }
 
   /**
@@ -70,7 +78,7 @@ class BlockchainController extends ControllerBase {
     }
     elseif ($result instanceof BlockchainRequestInterface) {
       if ($result->hasCountParam()) {
-        $ownBlockCount = $this->blockchainService->getStorageService()->getBlockCount();
+        $ownBlockCount = $this->blockchainBlockStorage->getBlockCount();
         if ($ownBlockCount < $result->getCountParam()) {
           $this->blockchainService->getQueueService()->addAnnounceItem($result->sleep());
           $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
@@ -205,7 +213,7 @@ class BlockchainController extends ControllerBase {
         ->setSecure($result->isSecure())
         ->setStatusCode(200)
         ->setMessageParam('Success')
-        ->setCountParam($this->blockchainService->getStorageService()->getBlockCount())
+        ->setCountParam($this->blockchainBlockStorage->getBlockCount())
         ->setDetailsParam('Block count set.')
         ->log($logger)
         ->toJsonResponse();
@@ -240,11 +248,10 @@ class BlockchainController extends ControllerBase {
     elseif ($result instanceof BlockchainRequestInterface) {
 
       if ($result->hasTimestampParam() && $result->hasPreviousHashParam()) {
-        if ($block = $this->blockchainService->getStorageService()
+        if ($block = $this->blockchainBlockStorage
           ->loadByTimestampAndHash($result->getTimestampParam(), $result->getPreviousHashParam())) {
           $exists = TRUE;
-          $count = $this->blockchainService
-            ->getStorageService()
+          $count = $this->blockchainBlockStorage
             ->getBlocksCountFrom($block);
         }
         else {
@@ -307,11 +314,10 @@ class BlockchainController extends ControllerBase {
     elseif ($result instanceof BlockchainRequestInterface) {
 
       if ($result->hasCountParam() && $result->hasTimestampParam() && $result->hasPreviousHashParam()) {
-        if ($block = $this->blockchainService->getStorageService()
+        if ($block = $this->blockchainBlockStorage
           ->loadByTimestampAndHash($result->getTimestampParam(), $result->getPreviousHashParam())) {
           $exists = TRUE;
-          $blocks = $this->blockchainService
-            ->getStorageService()
+          $blocks = $this->blockchainBlockStorage
             ->getBlocksFrom($block, $result->getCountParam());
         }
         else {
