@@ -112,4 +112,12 @@ interface BlockchainApiServiceInterface {
    */
   public function executePull($url, BlockchainBlockInterface $blockchainBlock, $count);
 
+  /**
+   * Adds common required params to request params array.
+   *
+   * @param array $params
+   *   Given params.
+   */
+  public function addRequiredParams(array &$params);
+
 }

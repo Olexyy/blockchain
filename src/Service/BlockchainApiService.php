@@ -212,12 +212,9 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   }
 
   /**
-   * Adds common required params to request params array.
-   *
-   * @param array $params
-   *   Given params.
+   * {@inheritdoc}
    */
-  protected function addRequiredParams(array &$params) {
+  public function addRequiredParams(array &$params) {
 
     $params[BlockchainRequestInterface::PARAM_SELF] = $this->configService->getBlockchainNodeId();
     if ($this->configService->isBlockchainAuth()) {

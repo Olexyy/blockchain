@@ -299,6 +299,8 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
         $block = $this->blockchainStorageService->getGenericBlock();
       }
       $this->addToStorage($block);
+      // Emulate timestamp.
+      sleep(1);
     }
   }
 

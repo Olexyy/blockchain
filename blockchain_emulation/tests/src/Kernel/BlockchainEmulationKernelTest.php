@@ -1,11 +1,9 @@
 <?php
 
-namespace Drupal\Tests\blockchain\Kernel;
+namespace Drupal\Tests\blockchain_emulation\Kernel;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
-use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
-use Drupal\blockchain\Utils\Util;
 use Drupal\blockchain_emulation\Service\BlockchainEmulationStorageServiceInterface;
 use Drupal\KernelTests\KernelTestBase;
 
@@ -85,6 +83,7 @@ class BlockchainEmulationKernelTest extends KernelTestBase {
     $blocks = $this->blockchainEmulationStorage->getBlocksFrom($lastBlock, 100);
     $this->assertEmpty($blocks, 'No blocks loaded');
     $firstBlock = $this->blockchainEmulationStorage->getBlockStorage()[0];
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $firstBlock, 'First block obtained');
     $blocks = $this->blockchainEmulationStorage->getBlocksFrom($firstBlock, 100);
     $this->assertCount(19, $blocks, 'Loaded 19 blocks');
   }
