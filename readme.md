@@ -66,4 +66,4 @@ ____Notes about blockchain implementation.____
   - ! cache service/extension !!!SharedTempStore!!!
   - ! handle conflicts
   - setting for pull block limit ->
-  - 
+  - emulation for blockchain nodes ->

@@ -135,6 +135,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->getQuery()
       ->accessCheck(FALSE)
       ->sort('timestamp', 'DESC')
+      ->sort('id', 'DESC')
       ->range(0,1)
       ->execute();
     if ($blockId) {
@@ -252,6 +253,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->getQuery()
       ->accessCheck(FALSE)
       ->condition('timestamp', $block->getTimestamp(), '>')
+      ->sort('id',  $block->id(), '>')
       ->count()
       ->execute();
   }
@@ -267,6 +269,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->accessCheck(FALSE)
       ->condition('timestamp', $block->getTimestamp(), '>')
       ->sort('timestamp')
+      ->sort('id')
       ->range(0, $count)
       ->execute();
     foreach ($blockIds as $blockId) {
@@ -299,16 +302,51 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function checkBlocks($offset = NULL, $limit = NULL) {
+  public function getBlocks($offset = NULL, $limit = NULL, $asArray = FALSE) {
 
     $blockIds = $this->getBlockStorage()
       ->getQuery()
       ->accessCheck(FALSE)
       ->range($offset, $limit)
       ->execute();
+    /** @var BlockchainBlock[] $blocks*/
     $blocks = BlockchainBlock::loadMultiple($blockIds);
+    if ($asArray) {
+      foreach ($blocks as &$block) {
+        $block = $block->toArray();
+      }
+    }
+
+    return $blocks;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkBlocks($offset = NULL, $limit = NULL) {
+
+    $blocks = $this->getBlocks($offset, $limit);
 
     return $this->blockchainValidatorService->validateBlocks($blocks);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFirstBlock() {
+
+    $blockId = $this->getBlockStorage()
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->sort('timestamp')
+      ->sort('id')
+      ->range(0,1)
+      ->execute();
+    if ($blockId) {
+      return BlockchainBlock::load(current($blockId));
+    }
+
+    return NULL;
   }
 
 }

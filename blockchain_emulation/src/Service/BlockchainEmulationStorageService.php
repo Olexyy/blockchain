@@ -122,7 +122,7 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
    */
   public function getLogger() {
 
-    return $this->loggerFactory->get(static::LOGGER_CHANNEL);
+    return $this->loggerFactory->get(static::LOGGER_CHANNEL_EMULATION);
   }
 
   /**
@@ -279,14 +279,7 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
    */
   public function createFromArray(array $values) {
 
-    $block = BlockchainBlock::create([]);
-    foreach ($values as $key => $value) {
-      if (isset($block->$key)) {
-        $block->{$key} = $value;
-      }
-    }
-
-    return $block;
+    return $this->blockchainStorageService->createFromArray($values);
   }
 
   /**
@@ -336,7 +329,7 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
   /**
    * {@inheritdoc}
    */
-  public function checkBlocks() {
+  public function checkBlocks($offset = NULL, $limit = NULL) {
 
     $previousBlock = NULL;
     foreach ($this->getBlockStorage() as $blockchainBlock) {
@@ -350,4 +343,64 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
     return TRUE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  function getGenericBlock() {
+
+    return $this->blockchainStorageService->getGenericBlock();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRandomBlock($previousHash) {
+
+    return $this->blockchainStorageService->getRandomBlock($previousHash);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save(BlockchainBlockInterface $block) {
+
+    $this->addToStorage($block);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFirstBlock() {
+
+    if ($this->getBlockCount()) {
+      return $this->getBlockStorage()[0];
+    }
+
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlocks($offset = NULL, $limit = NULL ,$asArray = FALSE) {
+
+    $results = [];
+    foreach ($this->getBlockStorage() as $index => $block) {
+      if ($offset) {
+        $offset--;
+        continue;
+      }
+      $results[]= $block;
+      if ($limit && count($results) == $limit) {
+        break;
+      }
+    }
+    if ($asArray) {
+      foreach ($results as &$result) {
+        $result = $result->toArray();
+      }
+    }
+
+    return $results;
+  }
 }

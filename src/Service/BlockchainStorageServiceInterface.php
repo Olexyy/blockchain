@@ -169,8 +169,33 @@ interface BlockchainStorageServiceInterface {
    *   Offset.
    * @param null|int $limit
    *   Limit.
+   *
    * @return bool
+   *   Test result.
    */
   public function checkBlocks($offset = NULL, $limit = NULL);
+
+  /**
+   * Getter for first block.
+   *
+   * @return BlockchainBlockInterface|\Drupal\Core\Entity\EntityInterface|null
+   *   Block if any.
+   */
+  public function getFirstBlock();
+
+  /**
+   * Getter for blocks.
+   *
+   * @param null|int $offset
+   *   Offset.
+   * @param null|int $limit
+   *   Limit.
+   * @param bool $asArray
+   *   Defines output format.
+   *
+   * @return BlockchainBlockInterface[]|array
+   *   Blocks if any.
+   */
+  public function getBlocks($offset = NULL, $limit = NULL, $asArray = FALSE);
 
 }

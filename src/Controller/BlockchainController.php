@@ -277,8 +277,10 @@ class BlockchainController extends ControllerBase {
           ->setIp($result->getIp())
           ->setPort($result->getPort())
           ->setSecure($result->isSecure())
-          ->setStatusCode(400)
-          ->setMessageParam('Bad request')
+          ->setStatusCode(200)
+          ->setExistsParam(FALSE)
+          ->setCountParam($this->blockchainBlockStorage->getBlockCount())
+          ->setMessageParam('Downgraded to count response')
           ->setDetailsParam('No timestamp or/and previous hash param.')
           ->log($logger)
           ->toJsonResponse();
@@ -313,29 +315,46 @@ class BlockchainController extends ControllerBase {
     }
     elseif ($result instanceof BlockchainRequestInterface) {
 
-      if ($result->hasCountParam() && $result->hasTimestampParam() && $result->hasPreviousHashParam()) {
-        if ($block = $this->blockchainBlockStorage
-          ->loadByTimestampAndHash($result->getTimestampParam(), $result->getPreviousHashParam())) {
-          $exists = TRUE;
-          $blocks = $this->blockchainBlockStorage
-            ->getBlocksFrom($block, $result->getCountParam());
+      if ($result->hasCountParam()) {
+        if ($result->hasTimestampParam() && $result->hasPreviousHashParam()) {
+          if ($block = $this->blockchainBlockStorage
+            ->loadByTimestampAndHash($result->getTimestampParam(), $result->getPreviousHashParam())) {
+            $exists = TRUE;
+            $blocks = $this->blockchainBlockStorage
+              ->getBlocksFrom($block, $result->getCountParam());
+          } else {
+            $exists = FALSE;
+            $blocks = [];
+          }
+
+          return BlockchainResponse::create()
+            ->setIp($result->getIp())
+            ->setPort($result->getPort())
+            ->setSecure($result->isSecure())
+            ->setStatusCode(200)
+            ->setMessageParam('Success')
+            ->setExistsParam($exists)
+            ->setBlocksParam($blocks)
+            ->setDetailsParam('Block ' . $exists ? 'exists' : 'not exists' . '.')
+            ->log($logger)
+            ->toJsonResponse();
         }
         else {
-          $exists = FALSE;
-          $blocks = [];
-        }
+          $blocks = $this->blockchainBlockStorage
+            ->getBlocks(0, $result->getCountParam(), TRUE);
 
-        return BlockchainResponse::create()
-          ->setIp($result->getIp())
-          ->setPort($result->getPort())
-          ->setSecure($result->isSecure())
-          ->setStatusCode(200)
-          ->setMessageParam('Success')
-          ->setExistsParam($exists)
-          ->setBlocksParam($blocks)
-          ->setDetailsParam('Block '. $exists? 'exists' : 'not exists' .'.')
-          ->log($logger)
-          ->toJsonResponse();
+          return BlockchainResponse::create()
+            ->setIp($result->getIp())
+            ->setPort($result->getPort())
+            ->setSecure($result->isSecure())
+            ->setStatusCode(200)
+            ->setMessageParam('Success')
+            ->setExistsParam(FALSE)
+            ->setBlocksParam($blocks)
+            ->setDetailsParam('Returning results starting form generic.')
+            ->log($logger)
+            ->toJsonResponse();
+        }
       }
       else {
 
