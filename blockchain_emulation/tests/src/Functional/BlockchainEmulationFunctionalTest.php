@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\blockchain_emulation\Functional;
 
+use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainApiServiceInterface;
@@ -135,7 +136,38 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $exists = $result->getExistsParam();
     $this->assertTrue($exists, 'Block exists');
     $count = $result->getCountParam();
-    $this->assertEquals(4, $count, 'Returned 5 blocks');
+    $this->assertEquals(4, $count, 'Returned count');
+    // Execute pull to emulation blockchain.
+    $params = [
+      BlockchainRequestInterface::PARAM_PREVIOUS_HASH => $firstBlock->getPreviousHash(),
+      BlockchainRequestInterface::PARAM_TIMESTAMP => $firstBlock->getTimestamp(),
+      BlockchainRequestInterface::PARAM_COUNT => 4,
+    ];
+    $this->blockchainService->getApiService()->addRequiredParams($params);
+    $result = $this->blockchainService->getApiService()->execute($this->baseUrl . '/blockchain/api/emulation/pull', $params);
+    $code = $result->getStatusCode();
+    $this->assertEquals(200, $code, 'Response ok');
+    $exists = $result->getExistsParam();
+    $this->assertTrue($exists, 'Block exists');
+    $blocks = $result->getBlocksParam();
+    $this->assertCount(4, $blocks, 'Returned 4 blocks');
+    $instantiatedBlocks = [$firstBlock];
+    foreach ($blocks as $key => $block) {
+      $instantiatedBlocks[$key+1]= $this->blockchainService->getStorageService()->createFromArray($block);
+      $this->assertInstanceOf(BlockchainBlockInterface::class, $instantiatedBlocks[$key+1], 'BLock import ok');
+    }
+    $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
+    $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
+    $this->assertTrue($valid, 'Collected blocks are valid');
   }
 
+  /**
+   * Writes data to console.
+   *
+   * @param $data
+   */
+  protected function consoleOut($data) {
+    fwrite(STDOUT, print_r($data, TRUE));
+  }
 }
+

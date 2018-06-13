@@ -259,7 +259,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlocksFrom(BlockchainBlockInterface $block, $count) {
+  public function getBlocksFrom(BlockchainBlockInterface $block, $count, $asArray = TRUE) {
 
     $results = [];
     $blockIds = $this->getBlockStorage()
@@ -270,7 +270,12 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->range(0, $count)
       ->execute();
     foreach ($blockIds as $blockId) {
-      $results[]= $this->getBlockStorage()->load($blockId)->toArray();
+      if ($asArray) {
+        $results[] = $this->getBlockStorage()->load($blockId)->toArray();
+      }
+      else {
+        $results[] = $this->getBlockStorage()->load($blockId);
+      }
     }
 
     return $results;
@@ -284,7 +289,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     $block = BlockchainBlock::create([]);
     foreach ($values as $key => $value) {
       if (isset($block->$key)) {
-        $block->{$key} = $value;
+        $block->set($key, $value);
       }
     }
 
@@ -299,19 +304,11 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     $blockIds = $this->getBlockStorage()
       ->getQuery()
       ->accessCheck(FALSE)
-      ->range($offset, $limit);
+      ->range($offset, $limit)
+      ->execute();
+    $blocks = BlockchainBlock::loadMultiple($blockIds);
 
-    $previousBlock = NULL;
-    foreach ($blockIds as $blockId) {
-      $block = BlockchainBlock::load($blockId);
-      if (!$this->blockchainValidatorService->blockIsValid($block, $previousBlock)) {
-
-        return FALSE;
-      }
-      $previousBlock = $block;
-    }
-
-    return TRUE;
+    return $this->blockchainValidatorService->validateBlocks($blocks);
   }
 
 }

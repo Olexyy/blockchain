@@ -252,13 +252,18 @@ class BlockchainEmulationStorageService implements BlockchainEmulationStorageSer
   /**
    * {@inheritdoc}
    */
-  public function getBlocksFrom(BlockchainBlockInterface $block, $count) {
+  public function getBlocksFrom(BlockchainBlockInterface $block, $count, $asArray = TRUE) {
 
     $results = [];
     $fetched = 0;
     foreach ($this->getBlockStorage() as $blockchainBlock) {
       if ($blockchainBlock->getTimestamp() > $block->getTimestamp()) {
-        $results[]= $block;
+        if ($asArray) {
+          $results[]= $blockchainBlock->toArray();
+        }
+        else {
+          $results[]= $blockchainBlock;
+        }
         $fetched++;
       }
       if ($fetched == $count) {

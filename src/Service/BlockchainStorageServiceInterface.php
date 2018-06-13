@@ -139,10 +139,13 @@ interface BlockchainStorageServiceInterface {
    *   Given block.
    * @param string|int $count
    *   Numeric value - limit of blocks.
-   * @return array
+   * @param bool $asArray
+   *   Flag defines output format.
+   *
+   * @return array|BlockchainBlockInterface[]
    *   Array of blocks as array.
    */
-  public function getBlocksFrom(BlockchainBlockInterface $block, $count);
+  public function getBlocksFrom(BlockchainBlockInterface $block, $count, $asArray = TRUE);
 
   /**
    * Factory method.
@@ -156,7 +159,11 @@ interface BlockchainStorageServiceInterface {
   public function createFromArray(array $values);
 
   /**
-   * Checks blocks in blockchain.
+   * Checks existing blocks in blockchain.
+   *
+   * Note that first bloc is checked only by nonce.
+   * So if firs is not generic, previous block should
+   * be fetched and checked.
    *
    * @param null|int $offset
    *   Offset.

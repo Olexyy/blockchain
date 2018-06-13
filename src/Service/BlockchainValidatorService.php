@@ -201,4 +201,21 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
     return $blockchainRequest;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function validateBlocks(array $blocks) {
+
+    $previousBlock = NULL;
+    foreach ($blocks as $block) {
+      if (!$this->blockIsValid($block, $previousBlock)) {
+
+        return FALSE;
+      }
+      $previousBlock = $block;
+    }
+
+    return TRUE;
+  }
+
 }

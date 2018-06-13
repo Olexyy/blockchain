@@ -128,10 +128,13 @@ interface BlockchainEmulationStorageServiceInterface {
    *   Given block.
    * @param string|int $count
    *   Numeric value - limit of blocks.
-   * @return array
+   * @param bool $asArray
+   *   Flag defines output format.
+   *
+   * @return array|BlockchainBlockInterface[]
    *   Array of blocks as array.
    */
-  public function getBlocksFrom(BlockchainBlockInterface $block, $count);
+  public function getBlocksFrom(BlockchainBlockInterface $block, $count, $asArray = TRUE);
 
   /**
    * Factory method.

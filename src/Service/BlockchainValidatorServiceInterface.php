@@ -69,4 +69,19 @@ interface BlockchainValidatorServiceInterface {
    */
   public function blockIsValid(BlockchainBlockInterface $blockchainBlock, BlockchainBlockInterface $previousBlock = NULL);
 
+  /**
+   * Validates blocks in given array.
+   *
+   * Note that first block in array is validated only by nonce.
+   * To validate blocks in existing database use BlockchainStorage
+   * method checkBlocks().
+   *
+   * @param array|BlockchainBlockInterface[] $blocks
+   *   Given blocks.
+   *
+   * @return bool
+   *   Execution result.
+   */
+  public function validateBlocks(array $blocks);
+
 }

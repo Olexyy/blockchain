@@ -91,7 +91,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
 
     $params = [];
     if ($data = $request->getContent()) {
-      if ($jsonData = (array) json_decode($data, TRUE)) {
+      if ($jsonData = json_decode($data, TRUE)) {
 
         if (is_array($jsonData)) {
           foreach (static::PARAMS as $param) {
