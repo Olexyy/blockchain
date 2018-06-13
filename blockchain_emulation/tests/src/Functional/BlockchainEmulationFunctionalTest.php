@@ -122,6 +122,20 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertEquals(200, $code, 'Response ok');
     $count = $result->getCountParam();
     $this->assertEquals(5, $count, 'Returned 5 blocks');
+    $firstBlock = $this->blockchainEmulationStorage->getBlockStorage()[0];
+    // Execute fetch to emulation blockchain.
+    $params = [
+      BlockchainRequestInterface::PARAM_PREVIOUS_HASH => $firstBlock->getPreviousHash(),
+      BlockchainRequestInterface::PARAM_TIMESTAMP => $firstBlock->getTimestamp(),
+    ];
+    $this->blockchainService->getApiService()->addRequiredParams($params);
+    $result = $this->blockchainService->getApiService()->execute($this->baseUrl . '/blockchain/api/emulation/fetch', $params);
+    $code = $result->getStatusCode();
+    $this->assertEquals(200, $code, 'Response ok');
+    $exists = $result->getExistsParam();
+    $this->assertTrue($exists, 'Block exists');
+    $count = $result->getCountParam();
+    $this->assertEquals(4, $count, 'Returned 5 blocks');
   }
 
 }

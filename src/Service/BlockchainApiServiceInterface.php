@@ -95,7 +95,7 @@ interface BlockchainApiServiceInterface {
    * @return BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
-  public function executeFetch($url, BlockchainBlockInterface $blockchainBlock);
+  public function executeFetch($url, BlockchainBlockInterface $blockchainBlock = NULL);
 
   /**
    * Executes post request by given url with given params in json format.
