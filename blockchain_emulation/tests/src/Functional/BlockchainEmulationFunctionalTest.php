@@ -95,14 +95,6 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->blockchainEmulationStorage = $this->container->get('blockchain.emulation.storage');
     $this->assertInstanceOf(BlockchainEmulationStorageServiceInterface::class, $this->blockchainEmulationStorage,
       'Blockchain emulation storage instantiated.');
-
-  }
-
-  /**
-   * Tests validation handler for blockchain API.
-   */
-  public function testEmulationStorageApiCalls() {
-
     // Enable API.
     $this->blockchainService->getConfigService()->setBlockchainType(BlockchainConfigServiceInterface::TYPE_MULTIPLE);
     $type = $this->blockchainService->getConfigService()->getBlockchainType();
@@ -115,7 +107,13 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
     $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->baseUrl, $this->localPort);
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
-    // Execute COUNT to emulation blockchain.
+  }
+
+  /**
+   * Tests emulation storage API COUNT.
+   */
+  public function testEmulationStorageApiCount() {
+
     $params = [];
     $this->blockchainService->getApiService()->addRequiredParams($params);
     $result = $this->blockchainService->getApiService()->execute($this->baseUrl . '/blockchain/api/emulation/count', $params);
@@ -123,8 +121,14 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertEquals(200, $code, 'Response ok');
     $count = $result->getCountParam();
     $this->assertEquals(5, $count, 'Returned 5 blocks');
+  }
+
+  /**
+   * Tests emulation storage API FETCH.
+   */
+  public function testEmulationStorageApiFetch() {
+
     $firstBlock = $this->blockchainEmulationStorage->getBlockStorage()[0];
-    // Execute FETCH to emulation blockchain.
     $params = [
       BlockchainRequestInterface::PARAM_PREVIOUS_HASH => $firstBlock->getPreviousHash(),
       BlockchainRequestInterface::PARAM_TIMESTAMP => $firstBlock->getTimestamp(),
@@ -147,7 +151,14 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertFalse($exists, 'Block not exists');
     $count = $result->getCountParam();
     $this->assertEquals(5, $count, 'Returned total count');
-    // Execute PULL to emulation blockchain.
+  }
+
+  /**
+   * Tests emulation storage API PULL.
+   */
+  public function testEmulationStorageApiPull() {
+
+    $firstBlock = $this->blockchainEmulationStorage->getBlockStorage()[0];
     $params = [
       BlockchainRequestInterface::PARAM_PREVIOUS_HASH => $firstBlock->getPreviousHash(),
       BlockchainRequestInterface::PARAM_TIMESTAMP => $firstBlock->getTimestamp(),
@@ -188,7 +199,7 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
     $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
     $this->assertTrue($valid, 'Collected blocks are valid');
-    // Simulate batch PULL from scratch;
+    // Simulate batch PULL from scratch.
     $params = [
       BlockchainRequestInterface::PARAM_COUNT => 1,
     ];
