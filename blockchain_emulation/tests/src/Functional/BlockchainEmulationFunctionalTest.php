@@ -188,6 +188,40 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
     $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
     $this->assertTrue($valid, 'Collected blocks are valid');
+    // Simulate batch PULL from scratch;
+    $params = [
+      BlockchainRequestInterface::PARAM_COUNT => 1,
+    ];
+    $this->blockchainService->getApiService()->addRequiredParams($params);
+    $result = $this->blockchainService->getApiService()->execute($this->baseUrl . '/blockchain/api/emulation/pull', $params);
+    $code = $result->getStatusCode();
+    $this->assertEquals(200, $code, 'Response ok');
+    $exists = $result->getExistsParam();
+    $this->assertFalse($exists, 'Block not exists');
+    $blocks = $result->getBlocksParam();
+    $this->assertCount(1, $blocks, 'Returned 1 block');
+    $currentBlock = $this->blockchainEmulationStorage->createFromArray($blocks[0]);
+    $syncBocks[]= $currentBlock;
+    for ($i = 0; $i < 4; $i++) {
+      $params = [
+        BlockchainRequestInterface::PARAM_COUNT => 1,
+        BlockchainRequestInterface::PARAM_PREVIOUS_HASH => $currentBlock->getPreviousHash(),
+        BlockchainRequestInterface::PARAM_TIMESTAMP => $currentBlock->getTimestamp(),
+      ];
+      $this->blockchainService->getApiService()->addRequiredParams($params);
+      $result = $this->blockchainService->getApiService()->execute($this->baseUrl . '/blockchain/api/emulation/pull', $params);
+      $code = $result->getStatusCode();
+      $this->assertEquals(200, $code, 'Response ok');
+      $exists = $result->getExistsParam();
+      $this->assertTrue($exists, 'Block exists');
+      $blocks = $result->getBlocksParam();
+      $this->assertCount(1, $blocks, 'Returned 1 block');
+      $currentBlock = $this->blockchainEmulationStorage->createFromArray($blocks[0]);
+      $syncBocks[]= $currentBlock;
+    }
+    $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
+    $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
+    $this->assertTrue($valid, 'Collected blocks are valid');
   }
 
   /**
