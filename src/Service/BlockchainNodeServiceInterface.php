@@ -30,7 +30,7 @@ interface BlockchainNodeServiceInterface {
    * @return BlockchainNodeInterface[]
    *   Array of entities.
    */
-  public function getList($offset = 0, $limit = 10);
+  public function getList($offset = NULL, $limit = NULL);
 
   /**
    * Count query.
@@ -105,5 +105,16 @@ interface BlockchainNodeServiceInterface {
    *   Execution result.
    */
   public function delete(BlockchainNodeInterface $blockchainNode);
+
+  /**
+   * Save handler.
+   *
+   * @param BlockchainNodeInterface $blockchainNode
+   *   Given entity.
+   *
+   * @return bool
+   *   Execution result.
+   */
+  public function save(BlockchainNodeInterface $blockchainNode);
 
 }

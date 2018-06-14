@@ -55,11 +55,11 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   protected $label;
 
   /**
-   * The Blockchain Node ip address.
+   * The Blockchain Node ip/host address.
    *
    * @var string
    */
-  protected $ip;
+  protected $address;
 
   /**
    * The Blockchain Node port.
@@ -100,15 +100,15 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   /**
    * {@inheritdoc}
    */
-  public function getIp() {
-    return $this->ip;
+  public function getAddress() {
+    return $this->address;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setIp($ip) {
-    $this->ip = $ip;
+  public function setAddress($address) {
+    $this->address = $address;
     return $this;
   }
 
@@ -168,7 +168,8 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
     $protocol = $this->isSecure()? 'https://' : 'http://';
     $protocol = is_null($this->isSecure())? '' : $protocol;
     $port = $this->getPort()? ':'. $this->getPort() : '';
-    return $protocol . $this->getIp() . $port;
+
+    return $protocol . $this->getAddress() . $port;
   }
 
 }

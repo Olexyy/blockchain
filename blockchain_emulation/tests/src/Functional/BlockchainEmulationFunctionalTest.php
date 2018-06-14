@@ -2,13 +2,13 @@
 
 namespace Drupal\Tests\blockchain_emulation\Functional;
 
-use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainApiServiceInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
+use Drupal\blockchain_emulation\Service\BlockchainEmulationNodeServiceInterface;
 use Drupal\blockchain_emulation\Service\BlockchainEmulationStorageServiceInterface;
 use Drupal\Tests\BrowserTestBase;
 use GuzzleHttp\Client;
@@ -35,9 +35,18 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
   protected $blockchainService;
 
   /**
+   * Injected service.
+   *
    * @var BlockchainEmulationStorageServiceInterface
    */
   protected $blockchainEmulationStorage;
+
+  /**
+   * Injected service.
+   *
+   * @var BlockchainEmulationNodeServiceInterface
+   */
+  protected $blockchainEmulationNodeService;
 
   /**
    * Blockchain API subscribe Url.
@@ -107,6 +116,10 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
     $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->baseUrl, $this->localPort);
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
+    // Blockchain emulation node service.
+    $this->blockchainEmulationNodeService = $this->container->get('blockchain.emulation.node');
+    $this->assertInstanceOf(BlockchainEmulationNodeServiceInterface::class, $this->blockchainEmulationNodeService,
+      'Blockchain emulation node service instantiated.');
   }
 
   /**
@@ -233,6 +246,16 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
     $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
     $this->assertTrue($valid, 'Collected blocks are valid');
+  }
+
+  /**
+   * Covers basic blockchain emulation node storage functionality
+   */
+  public function testEmulationNodeStorage() {
+
+    $count = $this->blockchainEmulationNodeService->getCount();
+    $this->assertEmpty($count, 'No nodes yet.');
+
   }
 
   /**

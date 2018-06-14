@@ -37,9 +37,9 @@ class BlockchainNodeForm extends EntityForm {
     ];
     $form['ip'] = [
       '#type' => 'textfield',
-      '#default_value' => $blockchain_node->getIp(),
+      '#default_value' => $blockchain_node->getAddress(),
       '#title' => $this->t('Ip address'),
-      '#description' => $this->t("Ip address for the Blockchain Node."),
+      '#description' => $this->t("Ip/host address for the Blockchain Node."),
       '#required' => TRUE,
     ];
 

@@ -48,7 +48,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getList($offset = 0, $limit = 10) {
+  public function getList($offset = NULL, $limit = NULL) {
 
     $list = $this->getStorage()
       ->getQuery()
@@ -97,7 +97,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
     $blockchainNode
       ->setId($id)
       ->setLabel($label)
-      ->setIp($ip)
+      ->setAddress($ip)
       ->setSecure($secure)
       ->setPort($port);
     try {
@@ -138,4 +138,16 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function save(BlockchainNodeInterface $blockchainNode) {
+    try {
+      $this->getStorage()->save($blockchainNode);
+      return TRUE;
+    }
+    catch (\Exception $exception) {
+      return FALSE;
+    }
+  }
 }

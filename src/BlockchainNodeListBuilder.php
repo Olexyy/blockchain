@@ -18,7 +18,7 @@ class BlockchainNodeListBuilder extends ConfigEntityListBuilder {
 
     $header['id'] = $this->t('Id');
     $header['label'] = $this->t('Label');
-    $header['ip'] = $this->t('Ip');
+    $header['endpoint'] = $this->t('Endpoint');
 
     return $header + parent::buildHeader();
   }
@@ -31,7 +31,7 @@ class BlockchainNodeListBuilder extends ConfigEntityListBuilder {
     /** @var BlockchainNodeInterface $entity */
     $row['id'] = $entity->id();
     $row['label'] = $entity->label();
-    $row['ip'] = $entity->getIp();
+    $row['endpoint'] = $entity->getEndPoint();
 
     return $row + parent::buildRow($entity);
   }

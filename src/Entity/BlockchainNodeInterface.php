@@ -23,18 +23,18 @@ interface BlockchainNodeInterface extends ConfigEntityInterface {
    * @return string
    *   Value.
    */
-  public function getIp();
+  public function getAddress();
 
   /**
-   * Setter for ip address.
+   * Setter for ip/host address.
    *
-   * @param string $ip
-   *   Given ip address.
+   * @param string $address
+   *   Given ip/host address.
    *
    * @return $this
    *   Chaining.
    */
-  public function setIp($ip);
+  public function setAddress($address);
 
   /**
    * Getter for id.

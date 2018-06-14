@@ -10,3 +10,6 @@ services:
       -  '@blockchain.miner'
       -  '@blockchain.storage'
       -  '@blockchain.validator'
+  blockchain.emulation.node:
+    class: Drupal\blockchain_emulation\Service\BlockchainEmulationNodeService
+    arguments: ['@entity_type.manager', '@blockchain.node', '@state', '@uuid']
