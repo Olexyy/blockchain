@@ -4,6 +4,7 @@ namespace Drupal\blockchain\Service;
 
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
+use Drupal\blockchain\Utils\BlockchainRequest;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,15 +47,15 @@ interface BlockchainValidatorServiceInterface {
    * and returns JsonResponse in case of fail or BlockchainRequest
    * in case if request is valid.
    *
-   * @param string $type
-   *   Type of operation.
-   *
+   * @param BlockchainRequestInterface $blockchainRequest
+   *   Request object.
    * @param Request $request
    *   Request object.
+   *
    * @return BlockchainResponseInterface|BlockchainRequestInterface
    *   Execution result.
    */
-  public function validateRequest($type, Request $request);
+  public function validateRequest(BlockchainRequestInterface $blockchainRequest, Request $request);
 
   /**
    * Validates block against validation rules and previous block if passed.

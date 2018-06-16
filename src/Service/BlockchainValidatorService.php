@@ -90,10 +90,14 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
     return Util::hash($blockchainId.$self) === $auth;
   }
 
+  public function validateRequestContext($type) {
+
+  }
+
   /**
    * {@inheritdoc}
    */
-  public function validateRequest($type, Request $request) {
+  public function validateRequest(BlockchainRequestInterface $blockchainRequest, Request $request) {
 
     $configService = $this->configService;
     if ($request->getMethod() !== Request::METHOD_POST) {
@@ -106,7 +110,17 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('Incorrect method.');
     }
-    if (!$request->isSecure() && ! $this->configService->getAllowNotSecure()) {
+    if (!$blockchainRequest->hasTypeParam()) {
+
+      return BlockchainResponse::create()
+        ->setIp($request->getClientIp())
+        ->setPort($request->getPort())
+        ->setSecure($request->isSecure())
+        ->setStatusCode(400)
+        ->setMessageParam('Bad request')
+        ->setDetailsParam('Missing type param.');
+    }
+    if (!$request->isSecure() && !$this->configService->getAllowNotSecure()) {
 
       return BlockchainResponse::create()
         ->setIp($request->getClientIp())
@@ -126,7 +140,6 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Forbidden')
         ->setDetailsParam('Access to this resource is restricted.');
     }
-    $blockchainRequest = BlockchainRequest::createFromRequest($request, $type);
     if (!$blockchainRequest->hasSelfParam()) {
 
       return BlockchainResponse::create()
@@ -159,7 +172,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
           ->setDetailsParam('Auth token invalid.');
       }
     }
-    if ($blockchainRequest->getType() !== BlockchainRequestInterface::TYPE_SUBSCRIBE) {
+    if ($blockchainRequest->getRequestType() !== BlockchainRequestInterface::TYPE_SUBSCRIBE) {
       if (!$blockchainNode = $this->blockchainNodeService->load($blockchainRequest->getSelfParam())) {
 
         return BlockchainResponse::create()

@@ -29,9 +29,8 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $params, $type, $ip) {
+  public function __construct(array $params, $ip) {
 
-    $this->type = $type;
     $this->params = $params;
     $this->ip = $ip;
   }
@@ -57,7 +56,15 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   /**
    * {@inheritdoc}
    */
-  public function getType() {
+  public function setRequestType($type) {
+
+    return $this->type = $type;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRequestType() {
 
     return $this->type;
   }
@@ -65,17 +72,17 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   /**
    * {@inheritdoc}
    */
-  public function create(array $params, $type, $ip) {
+  public function create(array $params, $ip) {
 
-    return new static($params, $type, $ip);
+    return new static($params, $ip);
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function createFromRequest(Request $request, $type) {
+  public static function createFromRequest(Request $request) {
 
-    return new static(static::parseRequest($request), $type, $request->getClientIp());
+    return new static(static::parseRequest($request), $request->getClientIp());
   }
 
   /**

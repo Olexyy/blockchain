@@ -52,22 +52,31 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
   /**
    * Getter for type property.
    *
+   * @param string $type
+   *   Given type.
    * @return string
    *   Value.
    */
-  public function getType();
+  public function setRequestType($type);
+
+
+  /**
+   * Getter for type property.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getRequestType();
 
   /**
    * BlockchainRequestInterface constructor.
    *
    * @param array $params
    *   Params.
-   * @param string $type
-   *   Type.
    * @param string $ip
    *   Client ip.
    */
-  public function __construct(array $params, $type, $ip);
+  public function __construct(array $params, $ip);
 
   /**
    * Setter for is valid property.
@@ -93,28 +102,24 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    *
    * @param array $params
    *   Params.
-   * @param string $type
-   *   Type.
    * @param string $ip
    *   Client ip.
    *
    * @return static
    *   This object.
    */
-  public function create(array $params, $type, $ip);
+  public function create(array $params, $ip);
 
   /**
    * BlockchainRequestInterface constructor.
    *
    * @param Request $request
    *   Request.
-   * @param string $type
-   *   Type.
    *
    * @return static
    *   This object.
    */
-  public static function createFromRequest(Request $request, $type);
+  public static function createFromRequest(Request $request);
 
   /**
    * Predicate.

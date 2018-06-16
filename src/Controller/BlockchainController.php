@@ -5,12 +5,14 @@ namespace Drupal\blockchain\Controller;
 
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\blockchain\Utils\BlockchainRequest;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -37,7 +39,21 @@ class BlockchainController extends ControllerBase {
    *
    * @var RequestStack
    */
-  protected $requestStack;
+  protected $request;
+
+  /**
+   * Parsed blockchain request.
+   *
+   * @var BlockchainRequestInterface
+   */
+  protected $blockchainRequest;
+
+  /**
+   * Validation result.
+   *
+   * @var BlockchainRequestInterface|BlockchainResponseInterface
+   */
+  protected $validationResult;
 
   /**
    * {@inheritdoc}
@@ -57,8 +73,13 @@ class BlockchainController extends ControllerBase {
                               RequestStack $requestStack) {
 
     $this->blockchainService = $blockchainService;
-    $this->requestStack = $requestStack;
     $this->blockchainBlockStorage = $blockchainService->getStorageService();
+    $this->request = $requestStack->getCurrentRequest();
+    $this->blockchainRequest = BlockchainRequest::createFromRequest($this->request);
+    $this->blockchainRequest->setRequestType($this->getRequestType($this->request));
+    $this->validationResult = $this->validate($this->validationResult, $this->request);
+    $this->blockchainService->getConfigService()
+      ->setBlockchainConfig($this->validationResult->getTypeParam());
   }
 
   /**
@@ -71,7 +92,7 @@ class BlockchainController extends ControllerBase {
 
     $logger = $this->getLogger('blockchain.api');
     $logger->info('Announce attempt initiated.');
-    $result = $this->validate(BlockchainRequestInterface::TYPE_ANNOUNCE);
+    $result = $this->validationResult;
     if ($result instanceof BlockchainResponseInterface) {
 
       return $result->log($logger)->toJsonResponse();
@@ -145,7 +166,7 @@ class BlockchainController extends ControllerBase {
 
     $logger = $this->getLogger('blockchain.api');
     $logger->info('Subscribe attempt initiated.');
-    $result = $this->validate(BlockchainRequestInterface::TYPE_SUBSCRIBE);
+    $result = $this->validationResult;
     if ($result instanceof BlockchainResponseInterface) {
 
       return $result->log($logger)->toJsonResponse();
@@ -200,7 +221,7 @@ class BlockchainController extends ControllerBase {
 
     $logger = $this->getLogger('blockchain.api');
     $logger->info('Count attempt initiated.');
-    $result = $this->validate(BlockchainRequestInterface::TYPE_COUNT);
+    $result = $this->validationResult;
     if ($result instanceof BlockchainResponseInterface) {
 
       return $result->log($logger)->toJsonResponse();
@@ -240,7 +261,7 @@ class BlockchainController extends ControllerBase {
 
     $logger = $this->getLogger('blockchain.api');
     $logger->info('Subscribe attempt initiated.');
-    $result = $this->validate(BlockchainRequestInterface::TYPE_FETCH);
+    $result = $this->validationResult;
     if ($result instanceof BlockchainResponseInterface) {
 
       return $result->log($logger)->toJsonResponse();
@@ -308,7 +329,7 @@ class BlockchainController extends ControllerBase {
 
     $logger = $this->getLogger('blockchain.api');
     $logger->info('Pull attempt initiated.');
-    $result = $this->validate(BlockchainRequestInterface::TYPE_PULL);
+    $result = $this->validationResult;
     if ($result instanceof BlockchainResponseInterface) {
 
       return $result->log($logger)->toJsonResponse();
@@ -388,17 +409,41 @@ class BlockchainController extends ControllerBase {
    * and returns JsonResponse in case of fail or BlockchainRequest
    * in case if request is valid.
    *
-   * @param string $type
-   *   Type of operation.
+   * @param BlockchainRequestInterface $blockchainRequest
+   *   Blockchain request.
+   * @param Request $request
+   *   Request.
    *
    * @return BlockchainResponseInterface|BlockchainRequestInterface
    *   Execution result.
    */
-  public function validate($type) {
+  public function validate(BlockchainRequestInterface $blockchainRequest, Request $request) {
 
     return $this->blockchainService
       ->getValidatorService()
-      ->validateRequest($type, $this->requestStack->getCurrentRequest());
+      ->validateRequest($blockchainRequest, $request);
+  }
+
+  /**
+   * Getter for request type.
+   *
+   * @param Request $request
+   *   Given request.
+   *
+   * @return null|string
+   *   Name of request method.
+   */
+  public function getRequestType(Request $request) {
+
+    if ($route = $request->attributes->get('_route')) {
+      if (($parts = explode('.', $route) === 2)) {
+        if ($parts[0] == 'blockchain') {
+          return $parts[1];
+        }
+      }
+    }
+
+    return NULL;
   }
 
 }

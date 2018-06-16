@@ -11,6 +11,8 @@ interface BlockchainHttpInterface {
 
   const PARAM_BLOCKS = 'blocks';
 
+  const PARAM_TYPE = 'type';
+
   /**
    * Getter for param if exists.
    *
@@ -198,5 +200,32 @@ interface BlockchainHttpInterface {
    *   Test result.
    */
   public function hasBlocksParam();
+
+  /**
+   * Getter for exists property.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getTypeParam();
+
+  /**
+   * Setter for exists property.
+   *
+   * @param string $value
+   *   Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setTypeParam($value);
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasTypeParam();
 
 }
