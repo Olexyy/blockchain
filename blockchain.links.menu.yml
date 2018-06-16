@@ -20,3 +20,12 @@ entity.blockchain_block.collection:
   description: 'Blockchain Blocks entities collection'
   parent: blockchain_block.settings
   weight: 100
+
+# Blockchain config menu items definition
+entity.blockchain_config.collection:
+  title: 'Blockchain config'
+  route_name: entity.blockchain_config.collection
+  description: 'List Blockchain config (bundles)'
+  parent: system.admin_structure
+  weight: 99
+

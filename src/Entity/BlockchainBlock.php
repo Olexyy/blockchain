@@ -40,7 +40,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     "add-form" = "/blockchain_block/add",
  *     "collection" = "/admin/structure/blockchain_block/collection",
  *   },
- *   field_ui_base_route = "blockchain_block.settings"
+ *   field_ui_base_route = "blockchain_block.settings",
+ *   blockchain_entity = TRUE,
  * )
  */
 class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterface {

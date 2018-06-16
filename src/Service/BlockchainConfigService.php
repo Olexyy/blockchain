@@ -2,6 +2,8 @@
 
 namespace Drupal\blockchain\Service;
 
+use Drupal\blockchain\Entity\BlockchainConfig;
+use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Utils\Util;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -35,6 +37,8 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    * @var ConfigFactoryInterface
    */
   protected $configFactory;
+
+  protected static $blockchainConfig;
 
   /**
    * BlockchainConfigServiceInterface constructor.
@@ -424,6 +428,40 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   public function tokenGenerate() {
 
     return Util::hash($this->getBlockchainId().$this->getBlockchainNodeId());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainConfig($blockchainConfig) {
+
+    if ($blockchainConfig instanceof BlockchainConfigInterface) {
+      static::$blockchainConfig = $blockchainConfig;
+
+      return TRUE;
+    }
+    elseif (is_string($blockchainConfig)) {
+      if ($blockchainConfig = BlockchainConfig::load(static::$blockchainConfig)) {
+        static::$blockchainConfig = $blockchainConfig;
+
+        return TRUE;
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainConfig() {
+
+    if (static::$blockchainConfig) {
+
+      return static::$blockchainConfig;
+    }
+
+    return NULL;
   }
 
 }

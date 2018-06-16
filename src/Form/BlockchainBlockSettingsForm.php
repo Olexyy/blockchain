@@ -4,6 +4,7 @@ namespace Drupal\blockchain\Form;
 
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -24,14 +25,22 @@ class BlockchainBlockSettingsForm extends FormBase {
   protected $blockchainService;
 
   /**
+   * @var EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * BlockchainBlockSettingsForm constructor.
    *
    * @param BlockchainServiceInterface $blockchainService
    *   Blockchain service.
+   * @param EntityTypeManagerInterface $entityTypeManager
    */
-  public function __construct(BlockchainServiceInterface $blockchainService) {
+  public function __construct(BlockchainServiceInterface $blockchainService,
+                              EntityTypeManagerInterface $entityTypeManager) {
 
     $this->blockchainService = $blockchainService;
+    $this->entityTypeManager = $entityTypeManager;
   }
 
   /**
@@ -40,7 +49,8 @@ class BlockchainBlockSettingsForm extends FormBase {
   public static function create(ContainerInterface $container) {
 
     return new static(
-      $container->get('blockchain.service')
+      $container->get('blockchain.service'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -51,6 +61,7 @@ class BlockchainBlockSettingsForm extends FormBase {
    *   The unique string identifying the form.
    */
   public function getFormId() {
+
     return 'blockchain_block_settings';
   }
 
@@ -102,6 +113,7 @@ class BlockchainBlockSettingsForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
+    $definitions = $this->entityTypeManager->getDefinitions();
     $blockchainType = $this->blockchainService->getConfigService()->getBlockchainType();
     $poolManagement = $this->blockchainService->getConfigService()->getPoolManagement();
     $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();

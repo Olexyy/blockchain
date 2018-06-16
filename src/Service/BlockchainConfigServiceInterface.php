@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Service;
 
+use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\Core\Config\Config;
 
 /**
@@ -330,5 +331,27 @@ interface BlockchainConfigServiceInterface {
    *   Chaining.
    */
   public function setAllowNotSecure($allowNotSecure);
+
+  /**
+   * Setter for blockchain config.
+   *
+   * After this action service is aware of blockchain type and
+   * settings to use.
+   *
+   * @param BlockchainConfigInterface|string $blockchainConfig
+   *   Blockchain config of id.
+   *
+   * @return bool
+   *   Execution result.
+   */
+  public function setBlockchainConfig($blockchainConfig);
+
+  /**
+   * Getter for blockchain config.
+   *
+   * @return BlockchainConfigInterface|null
+   *   Returns config entity if any.
+   */
+  public function getBlockchainConfig();
 
 }
