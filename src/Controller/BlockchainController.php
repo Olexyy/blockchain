@@ -77,7 +77,7 @@ class BlockchainController extends ControllerBase {
     $this->request = $requestStack->getCurrentRequest();
     $this->blockchainRequest = BlockchainRequest::createFromRequest($this->request);
     $this->blockchainRequest->setRequestType($this->getRequestType($this->request));
-    $this->validationResult = $this->validate($this->validationResult, $this->request);
+    $this->validationResult = $this->validate($this->blockchainRequest, $this->request);
     $this->blockchainService->getConfigService()
       ->setBlockchainConfig($this->validationResult->getTypeParam());
   }
@@ -436,8 +436,8 @@ class BlockchainController extends ControllerBase {
   public function getRequestType(Request $request) {
 
     if ($route = $request->attributes->get('_route')) {
-      if (($parts = explode('.', $route) === 2)) {
-        if ($parts[0] == 'blockchain') {
+      if ($parts = explode('.', $route)) {
+        if (count($parts) === 2 &&$parts[0] == 'blockchain') {
           return $parts[1];
         }
       }
