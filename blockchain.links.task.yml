@@ -4,6 +4,12 @@ blockchain_block.settings_tab:
   title: 'Settings'
   base_route: blockchain_block.settings
 
+blockchain_block.blockchain_config:
+  route_name: entity.blockchain_config.collection
+  title: 'Blockchain configs'
+  base_route: blockchain_block.settings
+  weight: 9
+
 blockchain_block.blockchain_node:
   route_name: entity.blockchain_node.collection
   title: 'Blockchain nodes'

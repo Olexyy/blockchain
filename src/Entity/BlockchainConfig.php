@@ -14,7 +14,6 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\blockchain\BlockchainConfigListBuilder",
  *     "form" = {
- *       "add" = "Drupal\blockchain\Form\BlockchainConfigForm",
  *       "edit" = "Drupal\blockchain\Form\BlockchainConfigForm",
  *       "delete" = "Drupal\blockchain\Form\BlockchainConfigDeleteForm"
  *     },
@@ -31,7 +30,6 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/blockchain_config/{blockchain_config}",
- *     "add-form" = "/admin/structure/blockchain_config/add",
  *     "edit-form" = "/admin/structure/blockchain_config/{blockchain_config}/edit",
  *     "delete-form" = "/admin/structure/blockchain_config/{blockchain_config}/delete",
  *     "collection" = "/admin/structure/blockchain_config"
@@ -154,7 +152,7 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   /**
    * @return mixed
    */
-  public function getisAuth()
+  public function getIsAuth()
   {
     return $this->isAuth;
   }
@@ -346,6 +344,42 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   public function setAllowNotSecure($allowNotSecure)
   {
     $this->allowNotSecure = $allowNotSecure;
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
+
+  /**
+   * @param string $id
+   * @return BlockchainConfig
+   */
+  public function setId($id)
+  {
+    $this->id = $id;
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getLabel()
+  {
+    return $this->label;
+  }
+
+  /**
+   * @param string $label
+   * @return BlockchainConfig
+   */
+  public function setLabel($label)
+  {
+    $this->label = $label;
     return $this;
   }
 

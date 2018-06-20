@@ -344,7 +344,7 @@ interface BlockchainConfigServiceInterface {
    * @return bool
    *   Execution result.
    */
-  public function setBlockchainConfig($blockchainConfig);
+  public function setCurrentBlockchainConfig($blockchainConfig);
 
   /**
    * Getter for blockchain config.
@@ -352,6 +352,6 @@ interface BlockchainConfigServiceInterface {
    * @return BlockchainConfigInterface|null
    *   Returns config entity if any.
    */
-  public function getBlockchainConfig();
+  public function getCurrentBlockchainConfig();
 
 }

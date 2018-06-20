@@ -106,10 +106,13 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   public function getBlockStorage() {
 
     try {
-      return $this->entityTypeManager->getStorage('blockchain_block');
+      $type = $this->configService->getCurrentBlockchainConfig()->id();
+
+      return $this->entityTypeManager->getStorage($type);
     } catch (\Exception $e) {
       $this->getLogger()
         ->error($e->getMessage() . $e->getTraceAsString());
+
       return NULL;
     }
   }

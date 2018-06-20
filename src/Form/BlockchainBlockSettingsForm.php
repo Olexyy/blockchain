@@ -113,7 +113,7 @@ class BlockchainBlockSettingsForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $definitions = $this->entityTypeManager->getDefinitions();
+    $this->blockchainService->getConfigService()->setCurrentBlockchainConfig('blockchain_block');
     $blockchainType = $this->blockchainService->getConfigService()->getBlockchainType();
     $poolManagement = $this->blockchainService->getConfigService()->getPoolManagement();
     $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();

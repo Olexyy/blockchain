@@ -8,10 +8,3 @@ entity.blockchain_node.add_form:
   title: 'Add Blockchain Node'
   appears_on:
     - entity.blockchain_node.collection
-
-entity.blockchain_config.add_form:
-  route_name: entity.blockchain_config.add_form
-  title: 'Add Blockchain config'
-  appears_on:
-    - entity.blockchain_config.collection
-

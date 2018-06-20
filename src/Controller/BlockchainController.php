@@ -12,7 +12,6 @@ use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -75,11 +74,15 @@ class BlockchainController extends ControllerBase {
     $this->blockchainService = $blockchainService;
     $this->blockchainBlockStorage = $blockchainService->getStorageService();
     $this->request = $requestStack->getCurrentRequest();
+    $this->init();
+  }
+
+  public function init() {
     $this->blockchainRequest = BlockchainRequest::createFromRequest($this->request);
-    $this->blockchainRequest->setRequestType($this->getRequestType($this->request));
-    $this->validationResult = $this->validate($this->blockchainRequest, $this->request);
+    $this->blockchainRequest->setRequestType($this->getRequestType());
+    $this->validationResult = $this->validate($this->blockchainRequest);
     $this->blockchainService->getConfigService()
-      ->setBlockchainConfig($this->validationResult->getTypeParam());
+      ->setCurrentBlockchainConfig($this->validationResult->getTypeParam());
   }
 
   /**
@@ -411,33 +414,29 @@ class BlockchainController extends ControllerBase {
    *
    * @param BlockchainRequestInterface $blockchainRequest
    *   Blockchain request.
-   * @param Request $request
-   *   Request.
    *
    * @return BlockchainResponseInterface|BlockchainRequestInterface
    *   Execution result.
    */
-  public function validate(BlockchainRequestInterface $blockchainRequest, Request $request) {
+  public function validate(BlockchainRequestInterface $blockchainRequest) {
 
     return $this->blockchainService
       ->getValidatorService()
-      ->validateRequest($blockchainRequest, $request);
+      ->validateRequest($blockchainRequest, $this->request);
   }
 
   /**
    * Getter for request type.
    *
-   * @param Request $request
-   *   Given request.
-   *
    * @return null|string
    *   Name of request method.
    */
-  public function getRequestType(Request $request) {
+  public function getRequestType() {
 
-    if ($route = $request->attributes->get('_route')) {
+    if ($route = $this->request->attributes->get('_route')) {
       if ($parts = explode('.', $route)) {
         if (count($parts) === 2 &&$parts[0] == 'blockchain') {
+
           return $parts[1];
         }
       }

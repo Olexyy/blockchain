@@ -7,6 +7,7 @@ use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Utils\Util;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\State\StateInterface;
 
 
@@ -38,6 +39,18 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   protected $configFactory;
 
+  /**
+   * Entity type manager.
+   *
+   * @var EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Blockchain config context.
+   *
+   * @var BlockchainConfigInterface $blockchainConfig
+   */
   protected static $blockchainConfig;
 
   /**
@@ -47,11 +60,13 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function __construct(UuidInterface $uuid,
                               StateInterface $state,
-                              ConfigFactoryInterface $configFactory) {
+                              ConfigFactoryInterface $configFactory,
+                              EntityTypeManagerInterface $entityTypeManager) {
 
     $this->uuid = $uuid;
     $this->state = $state;
     $this->configFactory = $configFactory;
+    $this->entityTypeManager = $entityTypeManager;
   }
 
   /**
@@ -433,7 +448,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function setBlockchainConfig($blockchainConfig) {
+  public function setCurrentBlockchainConfig($blockchainConfig) {
 
     if ($blockchainConfig instanceof BlockchainConfigInterface) {
       static::$blockchainConfig = $blockchainConfig;
@@ -441,10 +456,20 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
       return TRUE;
     }
     elseif (is_string($blockchainConfig)) {
-      if ($blockchainConfig = BlockchainConfig::load(static::$blockchainConfig)) {
-        static::$blockchainConfig = $blockchainConfig;
+      if ($blockchainConfigEntity = BlockchainConfig::load($blockchainConfig)) {
+        static::$blockchainConfig = $blockchainConfigEntity;
 
         return TRUE;
+      }
+      else {
+        $blockchainEntityTypes = $this->getBlockchainEntityTypes();
+        if (in_array($blockchainConfig, $blockchainEntityTypes)) {
+          $blockchainConfigEntity = $this->getDefaultBlockchainConfig($blockchainConfig);
+          $blockchainConfigEntity->save();
+          static::$blockchainConfig = $blockchainConfigEntity;
+
+          return TRUE;
+        }
       }
     }
 
@@ -454,7 +479,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlockchainConfig() {
+  public function getCurrentBlockchainConfig() {
 
     if (static::$blockchainConfig) {
 
@@ -462,6 +487,50 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
     }
 
     return NULL;
+  }
+
+  /**
+   * Creates config with default settings for entity id.
+   *
+   * @param string $entityTypeId
+   *    Entity type id.
+   *
+   * @return BlockchainConfig|\Drupal\Core\Entity\EntityInterface
+   */
+  public function getDefaultBlockchainConfig($entityTypeId) {
+
+    $blockchainConfig = BlockchainConfig::create([]);
+    $blockchainConfig->setId($entityTypeId);
+    $blockchainConfig->setLabel($entityTypeId);
+    $blockchainConfig->setBlockchainId($this->generateId());
+    $blockchainConfig->setNodeId($this->generateId());
+    $blockchainConfig->setType(static::TYPE_SINGLE);
+    $blockchainConfig->setIsAuth(FALSE);
+    $blockchainConfig->setAllowNotSecure(TRUE);
+    $blockchainConfig->setAnnounceManagement(static::ANNOUNCE_MANAGEMENT_IMMEDIATE);
+    $blockchainConfig->setPoolManagement(static::POOL_MANAGEMENT_MANUAL);
+    $blockchainConfig->setDataHandler('raw');
+    $blockchainConfig->setPowPosition(static::POW_POSITION_START);
+    $blockchainConfig->setPowExpression('00');
+    $blockchainConfig->setIntervalPool(static::INTERVAL_DEFAULT);
+    $blockchainConfig->setIntervalAnnounce(static::INTERVAL_DEFAULT);
+    $blockchainConfig->setFilterType(static::FILTER_TYPE_BLACKLIST);
+
+    return $blockchainConfig;
+  }
+
+  public function getBlockchainEntityTypes() {
+
+    $blockchainEntityTypes = [];
+    foreach ($this->entityTypeManager->getDefinitions() as $definition) {
+      if ($additional = $definition->get('additional')) {
+        if (isset($additional['blockchain_entity']) && $additional['blockchain_entity']) {
+          $blockchainEntityTypes[]= $definition->id();
+        }
+      }
+    }
+
+    return $blockchainEntityTypes;
   }
 
 }

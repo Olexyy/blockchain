@@ -1,7 +1,7 @@
 services:
   blockchain.config:
     class: Drupal\blockchain\Service\BlockchainConfigService
-    arguments: ['@uuid','@state','@config.factory']
+    arguments: ['@uuid','@state','@config.factory','@entity_type.manager']
   blockchain.data.manager:
     class: Drupal\blockchain\Plugin\BlockchainDataManager
     parent: default_plugin_manager
