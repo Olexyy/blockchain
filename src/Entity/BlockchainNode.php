@@ -79,6 +79,7 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * {@inheritdoc}
    */
   public static function entityTypeId() {
+
     return 'blockchain_node';
   }
 
@@ -86,7 +87,9 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * {@inheritdoc}
    */
   public function setId($id) {
+
     $this->id = $id;
+
     return $this;
   }
 
@@ -94,6 +97,7 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * {@inheritdoc}
    */
   public function getId() {
+
     $this->id;
   }
 
@@ -101,6 +105,7 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * {@inheritdoc}
    */
   public function getAddress() {
+
     return $this->address;
   }
 
@@ -108,7 +113,9 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * {@inheritdoc}
    */
   public function setAddress($address) {
+
     $this->address = $address;
+
     return $this;
   }
 
@@ -116,6 +123,7 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * {@inheritdoc}
    */
   public function getLabel() {
+
     return $this->label;
   }
 
@@ -123,7 +131,9 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * {@inheritdoc}
    */
   public function setLabel($label) {
+
     $this->label = $label;
+
     return $this;
   }
 
@@ -131,6 +141,7 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * {@inheritdoc}
    */
   public function getPort() {
+
     return $this->port;
   }
 
@@ -138,7 +149,9 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    * {@inheritdoc}
    */
   public function setPort($port) {
+
     $this->port = $port;
+
     return $this;
   }
 

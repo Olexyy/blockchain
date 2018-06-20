@@ -12,26 +12,6 @@ use Drupal\Core\Config\Config;
  */
 interface BlockchainConfigServiceInterface {
 
-  const TYPE_SINGLE = 'single';
-  const TYPE_MULTIPLE = 'multiple';
-  const POOL_MANAGEMENT_MANUAL = 'manual';
-  const POOL_MANAGEMENT_CRON = 'cron';
-  const ANNOUNCE_MANAGEMENT_CRON = 'cron';
-  const ANNOUNCE_MANAGEMENT_IMMEDIATE = 'immediate';
-  const INTERVAL_DEFAULT = 60 * 10;
-  const POW_POSITION_START = 'start';
-  const POW_POSITION_END = 'end';
-  const POW_EXPRESSION = '00';
-  const DATA_HANDLER = 'simple';
-  const FILTER_TYPE_BLACKLIST = 'blacklist';
-  const FILTER_TYPE_WHITELIST = 'whitelist';
-  const KEYS = [
-    'blockchainType', 'blockchainId', 'blockchainNodeId', 'poolManagement',
-    'announceManagement', 'intervalPool', 'intervalAnnounce', 'powPosition',
-    'powExpression', 'dataHandler', 'blockchainAuth', 'blockchainFilterType',
-    'blockchainFilterList', 'allowNotSecure',
-  ];
-
   /**
    * Getter for unique identifier.
    *
@@ -376,6 +356,17 @@ interface BlockchainConfigServiceInterface {
   public function save(BlockchainConfigInterface $blockchainConfig);
 
   /**
+   * Predicate defines if config exists.
+   *
+   * @param string $blockchainConfigId
+   *   Given id.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function exists($blockchainConfigId);
+
+  /**
    * Helper to get blockchain entity types.
    *
    * @return array|string[]
@@ -385,7 +376,18 @@ interface BlockchainConfigServiceInterface {
 
   /**
    * Handler to discover and save blockchain configs.
+   *
+   * @return int
+   *   Count of discovered configs.
    */
   public function discoverBlockchainConfigs();
+
+  /**
+   * Handler to get list of blockchain configs.
+   *
+   * @return BlockchainConfigInterface[]|array
+   *   Array of entities if any.
+   */
+  public function getList();
 
 }

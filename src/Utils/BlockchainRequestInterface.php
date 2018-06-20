@@ -22,7 +22,7 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
   const PARAM_PREVIOUS_HASH = 'previous_hash';
   const PARAMS = [
     self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT, self::PARAM_BLOCKS,
-    self::PARAM_TIMESTAMP, self::PARAM_PREVIOUS_HASH,
+    self::PARAM_TIMESTAMP, self::PARAM_PREVIOUS_HASH, self::PARAM_TYPE
   ];
 
   /**

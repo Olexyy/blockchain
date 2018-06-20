@@ -10,9 +10,9 @@ blockchain.blockchain_node.*:
       label: 'Label'
     uuid:
       type: string
-    ip:
+    address:
       type: string
-      label: 'Node ip'
+      label: 'Node address/ip'
     port:
       type: string
       label: 'Node port'

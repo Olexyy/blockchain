@@ -538,17 +538,17 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
     $blockchainConfig->setLabel($entityTypeId);
     $blockchainConfig->setBlockchainId($this->generateId());
     $blockchainConfig->setNodeId($this->generateId());
-    $blockchainConfig->setType(static::TYPE_SINGLE);
+    $blockchainConfig->setType(BlockchainConfigInterface::TYPE_SINGLE);
     $blockchainConfig->setIsAuth(FALSE);
     $blockchainConfig->setAllowNotSecure(TRUE);
-    $blockchainConfig->setAnnounceManagement(static::ANNOUNCE_MANAGEMENT_IMMEDIATE);
-    $blockchainConfig->setPoolManagement(static::POOL_MANAGEMENT_MANUAL);
+    $blockchainConfig->setAnnounceManagement(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE);
+    $blockchainConfig->setPoolManagement(BlockchainConfigInterface::POOL_MANAGEMENT_MANUAL);
     $blockchainConfig->setDataHandler('raw');
-    $blockchainConfig->setPowPosition(static::POW_POSITION_START);
+    $blockchainConfig->setPowPosition(BlockchainConfigInterface::POW_POSITION_START);
     $blockchainConfig->setPowExpression('00');
-    $blockchainConfig->setIntervalPool(static::INTERVAL_DEFAULT);
-    $blockchainConfig->setIntervalAnnounce(static::INTERVAL_DEFAULT);
-    $blockchainConfig->setFilterType(static::FILTER_TYPE_BLACKLIST);
+    $blockchainConfig->setIntervalPool(BlockchainConfigInterface::INTERVAL_DEFAULT);
+    $blockchainConfig->setIntervalAnnounce(BlockchainConfigInterface::INTERVAL_DEFAULT);
+    $blockchainConfig->setFilterType(BlockchainConfigInterface::FILTER_TYPE_BLACKLIST);
 
     return $blockchainConfig;
   }
@@ -557,12 +557,18 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    * {@inheritdoc}
    */
   public function discoverBlockchainConfigs() {
+
+    $count = 0;
     foreach ($this->getBlockchainEntityTypes() as $blockchainEntityType) {
       if (!$this->exists($blockchainEntityType)) {
         $blockchainConfig = $this->getDefaultBlockchainConfig($blockchainEntityType);
-        $this->save($blockchainConfig);
+        if ($this->save($blockchainConfig)) {
+          $count++;
+        }
       }
     }
+
+    return $count;
   }
 
   /**
@@ -600,17 +606,19 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   }
 
   /**
-   * Predicate defines if config exists.
-   *
-   * @param string $blockchainConfigId
-   *   Given id.
-   *
-   * @return bool
-   *   Test result.
+   * {@inheritdoc}
    */
   public function exists($blockchainConfigId) {
 
     return (bool) BlockchainConfig::load($blockchainConfigId);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getList() {
+
+    return BlockchainConfig::loadMultiple();
   }
 
 }

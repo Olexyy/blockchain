@@ -4,7 +4,7 @@ namespace Drupal\blockchain\Service;
 
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
-use Drupal\blockchain\Utils\BlockchainRequest;
+use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\blockchain\Utils\Util;
@@ -49,7 +49,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
     $powPosition = $this->configService->getPowPosition();
     $powExpression = $this->configService->getPowExpression();
     $length = strlen($powExpression);
-    if ($powPosition === BlockchainConfigServiceInterface::POW_POSITION_START) {
+    if ($powPosition === BlockchainConfigInterface::POW_POSITION_START) {
       if (substr($hash, 0, $length) === $powExpression) {
 
         return TRUE;
@@ -120,6 +120,16 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('Missing type param.');
     }
+    if (!$this->configService->exists($blockchainRequest->getTypeParam())) {
+
+      return BlockchainResponse::create()
+        ->setIp($request->getClientIp())
+        ->setPort($request->getPort())
+        ->setSecure($request->isSecure())
+        ->setStatusCode(400)
+        ->setMessageParam('Bad request')
+        ->setDetailsParam('Invalid type param.');
+    }
     if (!$request->isSecure() && !$this->configService->getAllowNotSecure()) {
 
       return BlockchainResponse::create()
@@ -130,7 +140,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('Incorrect protocol.');
     }
-    if ($configService->getBlockchainType() === BlockchainConfigServiceInterface::TYPE_SINGLE) {
+    if ($configService->getBlockchainType() === BlockchainConfigInterface::TYPE_SINGLE) {
 
       return BlockchainResponse::create()
         ->setIp($request->getClientIp())
@@ -185,7 +195,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
       }
     }
     if ($filterList = $configService->getBlockchainFilterListAsArray()) {
-      if ($configService->getBlockchainFilterType() === BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST) {
+      if ($configService->getBlockchainFilterType() === BlockchainConfigInterface::FILTER_TYPE_BLACKLIST) {
         if (in_array($blockchainRequest->getIp(), $filterList)) {
 
           return BlockchainResponse::create()

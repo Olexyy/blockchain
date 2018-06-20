@@ -69,7 +69,7 @@ interface BlockchainNodeServiceInterface {
    *   Should be unique.
    * @param string $label
    *   Can be same as label.
-   * @param string $ip
+   * @param string $address
    *   Client ip.
    * @param string $port
    *   Client port.
@@ -80,7 +80,7 @@ interface BlockchainNodeServiceInterface {
    * @return BlockchainNodeInterface|null
    *   New entity if created.
    */
-  public function create($id, $label, $ip, $port, $secure = NULL, $save = TRUE);
+  public function create($id, $label, $address, $port = NULL, $secure = NULL, $save = TRUE);
 
   /**
    * Factory method.
