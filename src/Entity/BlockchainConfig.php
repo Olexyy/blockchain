@@ -73,30 +73,85 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
    */
   protected $type;
 
+  /**
+   * Is auth used.
+   *
+   * @var bool
+   */
   protected $isAuth;
 
+  /**
+   * Address filter type.
+   *
+   * @var string
+   */
   protected $filterType;
 
+  /**
+   * Address filter list.
+   *
+   * @var string
+   */
   protected $filterList;
 
+  /**
+   * Type of pool management.
+   *
+   * @var string
+   */
   protected $poolManagement;
 
+  /**
+   * TYpe of announce management.
+   *
+   * @var string
+   */
   protected $announceManagement;
 
+  /**
+   * Pool management interval.
+   *
+   * @var string
+   */
   protected $intervalPool;
 
+  /**
+   * Announce management interval.
+   *
+   * @var string
+   */
   protected $intervalAnnounce;
 
+  /**
+   * POW position.
+   *
+   * @var string
+   */
   protected $powPosition;
 
+  /**
+   * POW expression
+   *
+   * @var string
+   */
   protected $powExpression;
 
+  /**
+   * Data handler id.
+   *
+   * @var string
+   */
   protected $dataHandler;
 
+  /**
+   * Allow not secure prorocol schema.
+   *
+   * @var bool
+   */
   protected $allowNotSecure;
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
   public function getBlockchainId() {
 
@@ -104,282 +159,282 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   }
 
   /**
-   * @param mixed $blockchainId
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setBlockchainId($blockchainId)
-  {
+  public function setBlockchainId($blockchainId) {
+
     $this->blockchainId = $blockchainId;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getNodeId()
-  {
+  public function getNodeId() {
+
     return $this->nodeId;
   }
 
   /**
-   * @param mixed $nodeId
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setNodeId($nodeId)
-  {
+  public function setNodeId($nodeId) {
+
     $this->nodeId = $nodeId;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getType()
-  {
+  public function getType() {
+
     return $this->type;
   }
 
   /**
-   * @param mixed $type
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setType($type)
-  {
+  public function setType($type) {
+
     $this->type = $type;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getIsAuth()
-  {
+  public function getIsAuth() {
+
     return $this->isAuth;
   }
 
   /**
-   * @param mixed $isAuth
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setIsAuth($isAuth)
-  {
+  public function setIsAuth($isAuth) {
+
     $this->isAuth = $isAuth;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getFilterType()
-  {
+  public function getFilterType() {
+
     return $this->filterType;
   }
 
   /**
-   * @param mixed $filterType
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setFilterType($filterType)
-  {
+  public function setFilterType($filterType) {
+
     $this->filterType = $filterType;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getFilterList()
-  {
+  public function getFilterList() {
+
     return $this->filterList;
   }
 
   /**
-   * @param mixed $filterList
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setFilterList($filterList)
-  {
+  public function setFilterList($filterList) {
+
     $this->filterList = $filterList;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getPoolManagement()
-  {
+  public function getPoolManagement() {
+
     return $this->poolManagement;
   }
 
   /**
-   * @param mixed $poolManagement
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setPoolManagement($poolManagement)
-  {
+  public function setPoolManagement($poolManagement) {
+
     $this->poolManagement = $poolManagement;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getAnnounceManagement()
-  {
+  public function getAnnounceManagement() {
+
     return $this->announceManagement;
   }
 
   /**
-   * @param mixed $announceManagement
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setAnnounceManagement($announceManagement)
-  {
+  public function setAnnounceManagement($announceManagement) {
+
     $this->announceManagement = $announceManagement;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getIntervalPool()
-  {
+  public function getIntervalPool() {
+
     return $this->intervalPool;
   }
 
   /**
-   * @param mixed $intervalPool
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setIntervalPool($intervalPool)
-  {
+  public function setIntervalPool($intervalPool) {
+
     $this->intervalPool = $intervalPool;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getIntervalAnnounce()
-  {
+  public function getIntervalAnnounce() {
+
     return $this->intervalAnnounce;
   }
 
   /**
-   * @param mixed $intervalAnnounce
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setIntervalAnnounce($intervalAnnounce)
-  {
+  public function setIntervalAnnounce($intervalAnnounce) {
+
     $this->intervalAnnounce = $intervalAnnounce;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getPowPosition()
-  {
+  public function getPowPosition() {
+
     return $this->powPosition;
   }
 
   /**
-   * @param mixed $powPosition
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setPowPosition($powPosition)
-  {
+  public function setPowPosition($powPosition) {
+
     $this->powPosition = $powPosition;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getPowExpression()
-  {
+  public function getPowExpression() {
+
     return $this->powExpression;
   }
 
   /**
-   * @param mixed $powExpression
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setPowExpression($powExpression)
-  {
+  public function setPowExpression($powExpression) {
+
     $this->powExpression = $powExpression;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getDataHandler()
-  {
+  public function getDataHandler() {
+
     return $this->dataHandler;
   }
 
   /**
-   * @param mixed $dataHandler
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setDataHandler($dataHandler)
-  {
+  public function setDataHandler($dataHandler) {
+
     $this->dataHandler = $dataHandler;
+
     return $this;
   }
 
   /**
-   * @return mixed
+   * {@inheritdoc}
    */
-  public function getAllowNotSecure()
-  {
+  public function getAllowNotSecure() {
+
     return $this->allowNotSecure;
   }
 
   /**
-   * @param mixed $allowNotSecure
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setAllowNotSecure($allowNotSecure)
-  {
+  public function setAllowNotSecure($allowNotSecure) {
+
     $this->allowNotSecure = $allowNotSecure;
+
     return $this;
   }
 
   /**
-   * @return string
+   * {@inheritdoc}
    */
-  public function getId()
-  {
+  public function getId() {
+
     return $this->id;
   }
 
   /**
-   * @param string $id
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setId($id)
-  {
+  public function setId($id) {
+
     $this->id = $id;
+
     return $this;
   }
 
   /**
-   * @return string
+   * {@inheritdoc}
    */
-  public function getLabel()
-  {
+  public function getLabel() {
+
     return $this->label;
   }
 
   /**
-   * @param string $label
-   * @return BlockchainConfig
+   * {@inheritdoc}
    */
-  public function setLabel($label)
-  {
+  public function setLabel($label) {
+
     $this->label = $label;
+
     return $this;
   }
 
