@@ -354,4 +354,38 @@ interface BlockchainConfigServiceInterface {
    */
   public function getCurrentBlockchainConfig();
 
+  /**
+   * Creates config with default settings for entity id.
+   *
+   * @param string $entityTypeId
+   *    Entity type id.
+   *
+   * @return BlockchainConfigInterface|\Drupal\Core\Entity\EntityInterface
+   */
+  public function getDefaultBlockchainConfig($entityTypeId);
+
+  /**
+   * Save handler.
+   *
+   * @param BlockchainConfigInterface $blockchainConfig
+   *   Given entity.
+   *
+   * @return bool
+   *   Execution result.
+   */
+  public function save(BlockchainConfigInterface $blockchainConfig);
+
+  /**
+   * Helper to get blockchain entity types.
+   *
+   * @return array|string[]
+   *   Array of entity type ids.
+   */
+  public function getBlockchainEntityTypes();
+
+  /**
+   * Handler to discover and save blockchain configs.
+   */
+  public function discoverBlockchainConfigs();
+
 }
