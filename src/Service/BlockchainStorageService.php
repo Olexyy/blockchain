@@ -106,7 +106,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   public function getBlockStorage() {
 
     try {
-      $type = $this->configService->getCurrentBlockchainConfig()->id();
+      $type = $this->configService->getCurrentConfig()->id();
 
       return $this->entityTypeManager->getStorage($type);
     } catch (\Exception $e) {
@@ -178,7 +178,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     $block = BlockchainBlock::create();
     $block->setPreviousHash($previousHash);
     $block->setTimestamp(time());
-    $block->setAuthor($this->configService->getBlockchainNodeId());
+    $block->setAuthor($this->configService->getCurrentConfig()->getNodeId());
     $block->setData('raw::' . $rand->string(mt_rand(7, 20)));
     $this->blockchainMinerService->mineBlock($block);
 

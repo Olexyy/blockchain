@@ -77,10 +77,20 @@ class BlockchainBlockSettingsForm extends FormBase {
     $element = $form_state->getTriggeringElement();
     if ($element['#type'] == 'button') {
       if ($element['#context'] == 'regenerate_blockchain_id') {
-        $this->blockchainService->getConfigService()->setBlockchainId();
+        $this->blockchainService
+          ->getConfigService()
+          ->getCurrentConfig()
+          ->setBlockchainId(
+            $this->blockchainService->getConfigService()->generateId()
+          )->save();
       }
       elseif ($element['#context'] == 'regenerate_blockchain_node_id') {
-        $this->blockchainService->getConfigService()->setBlockchainNodeId();
+        $this->blockchainService
+          ->getConfigService()
+          ->getCurrentConfig()
+          ->setNodeId(
+            $this->blockchainService->getConfigService()->generateId()
+          )->save();
       }
       elseif ($element['#context'] == 'put_generic_block') {
         $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
@@ -88,13 +98,7 @@ class BlockchainBlockSettingsForm extends FormBase {
       }
     }
     else {
-      $config = $this->blockchainService->getConfigService()->getConfig(TRUE);
-      foreach (BlockchainConfigServiceInterface::KEYS as $key) {
-        if ($form_state->hasValue($key)) {
-          $config->set($key, $form_state->getValue($key));
-        }
-      }
-      $config->save();
+      // Nothing here... TODO this handler should be moved to entity form
     }
 
   }

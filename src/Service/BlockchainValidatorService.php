@@ -85,7 +85,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
    */
   public function authIsValid($self, $auth) {
 
-    $blockchainId = $this->configService->getBlockchainId();
+    $blockchainId = $this->configService->getCurrentConfig()->getBlockchainId();
 
     return Util::hash($blockchainId.$self) === $auth;
   }
@@ -132,8 +132,9 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
     }
 
     // Set blockchain config as it is validated.
+    // TODO DO IT NOT HERE
     $this->configService
-      ->setCurrentBlockchainConfig($blockchainRequest->getTypeParam());
+      ->setCurrentConfig($blockchainRequest->getTypeParam());
 
     if (!$request->isSecure() && !$this->configService->getAllowNotSecure()) {
 
@@ -145,7 +146,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('Incorrect protocol.');
     }
-    if ($configService->getBlockchainType() === BlockchainConfigInterface::TYPE_SINGLE) {
+    if ($configService->getCurrentConfig()->getType() === BlockchainConfigInterface::TYPE_SINGLE) {
 
       return BlockchainResponse::create()
         ->setIp($request->getClientIp())

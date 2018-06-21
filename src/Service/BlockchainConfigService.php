@@ -80,7 +80,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getConfig($editable = FALSE) {
+  public function getGlobalConfig($editable = FALSE) {
 
     if ($editable) {
       return $this->configFactory->getEditable('blockchain.config');
@@ -100,90 +100,9 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getBlockchainId() {
-
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
-
-      return $blockchainConfig->getBlockchainId();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlockchainNodeId() {
-
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
-
-      return $blockchainConfig->getNodeId();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setBlockchainId($blockchainId = NULL) {
-
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
-      $blockchainConfig->setBlockchainId($blockchainId);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setBlockchainNodeId($blockchainNodeId = NULL) {
-
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
-      $blockchainConfig->setBlockchainId($blockchainNodeId);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlockchainType() {
-
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
-
-      return $blockchainConfig->getType();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setBlockchainType($blockchainType) {
-
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
-      $blockchainConfig->setType($blockchainType);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getPoolManagement() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getPoolManagement();
     }
@@ -196,7 +115,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setPoolManagement($poolManagement) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setPoolManagement($poolManagement);
 
       return $this->save($blockchainConfig);
@@ -210,7 +129,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getAnnounceManagement() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getAnnounceManagement();
     }
@@ -223,7 +142,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setAnnounceManagement($announceManagement) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setAnnounceManagement($announceManagement);
 
       return $this->save($blockchainConfig);
@@ -237,7 +156,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getPowPosition() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getPowPosition();
     }
@@ -250,7 +169,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setPowPosition($powPosition) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setPowPosition($powPosition);
 
       return $this->save($blockchainConfig);
@@ -264,7 +183,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getPowExpression() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getPowExpression();
     }
@@ -277,7 +196,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setPowExpression($powExpression) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setPowExpression($powExpression);
 
       return $this->save($blockchainConfig);
@@ -291,7 +210,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getIntervalPool() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getIntervalPool();
     }
@@ -304,7 +223,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setIntervalPool($intervalPool) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setIntervalPool($intervalPool);
 
       return $this->save($blockchainConfig);
@@ -318,7 +237,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getIntervalAnnounce() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getIntervalAnnounce();
     }
@@ -331,7 +250,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setIntervalAnnounce($intervalAnnounce) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setIntervalAnnounce($intervalAnnounce);
 
       return $this->save($blockchainConfig);
@@ -345,7 +264,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function isBlockchainAuth() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getIsAuth();
     }
@@ -358,7 +277,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setBlockchainAuth($blockchainAuth) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setIsAuth($blockchainAuth);
 
       return $this->save($blockchainConfig);
@@ -372,7 +291,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getBlockchainFilterType() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getFilterType();
     }
@@ -385,7 +304,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setBlockchainFilterType($blockchainFilterType) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setFilterType($blockchainFilterType);
 
       return $this->save($blockchainConfig);
@@ -399,7 +318,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getBlockchainFilterList() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getFilterList();
     }
@@ -412,7 +331,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setBlockchainFilterList($blockchainFilterList) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setFilterList($blockchainFilterList);
 
       return $this->save($blockchainConfig);
@@ -426,7 +345,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getAllowNotSecure() {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
 
       return $blockchainConfig->getAllowNotSecure();
     }
@@ -439,7 +358,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function setAllowNotSecure($allowNotSecure) {
 
-    if ($blockchainConfig = $this->getCurrentBlockchainConfig()) {
+    if ($blockchainConfig = $this->getCurrentConfig()) {
       $blockchainConfig->setAllowNotSecure($allowNotSecure);
 
       return $this->save($blockchainConfig);
@@ -478,13 +397,13 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function tokenGenerate() {
 
-    return Util::hash($this->getBlockchainId().$this->getBlockchainNodeId());
+    return Util::hash($this->getCurrentConfig()->getBlockchainId().$this->getCurrentConfig()->getNodeId());
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setCurrentBlockchainConfig($blockchainConfig) {
+  public function setCurrentConfig($blockchainConfig) {
 
     if ($blockchainConfig instanceof BlockchainConfigInterface) {
       if (!$this->exists($blockchainConfig->id())) {
@@ -518,7 +437,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getCurrentBlockchainConfig() {
+  public function getCurrentConfig() {
 
     if (static::$blockchainConfig) {
 

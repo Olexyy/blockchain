@@ -22,7 +22,8 @@ class BlockchainConfigForm extends EntityForm {
     $form = parent::form($form, $form_state);
     /** @var BlockchainConfig $blockchainConfig */
     $blockchainConfig = $this->entity;
-    BlockchainService::instance()->getConfigService()->setCurrentBlockchainConfig($blockchainConfig->id());
+    // TODO INJECT THIS
+    BlockchainService::instance()->getConfigService()->setCurrentConfig($blockchainConfig->id());
     $anyBlock = BlockchainService::instance()->getStorageService()->anyBlock();
 
     $form['label'] = [

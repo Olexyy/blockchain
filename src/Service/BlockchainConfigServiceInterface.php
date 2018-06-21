@@ -28,7 +28,7 @@ interface BlockchainConfigServiceInterface {
    *
    * @return \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig|Config
    */
-  function getConfig($editable = FALSE);
+  function getGlobalConfig($editable = FALSE);
 
   /**
    * State values.
@@ -37,63 +37,6 @@ interface BlockchainConfigServiceInterface {
    *   Values for given state.
    */
   public function getState();
-
-  /**
-   * Getter for blockchain identifier.
-   *
-   * @return string
-   *   UUID.
-   */
-  public function getBlockchainId();
-
-  /**
-   * Setter for blockchain identifier.
-   *
-   * @param string|null $blockchain_id
-   *   Given UUID.
-   *
-   * @return $this
-   *   Chaining.
-   */
-  public function setBlockchainId($blockchain_id = NULL);
-
-  /**
-   * Getter for blockchain node identifier.
-   *
-   * @return string
-   *   UUID.
-   */
-  public function getBlockchainNodeId();
-
-  /**
-   * Setter for blockchain node identifier.
-   *
-   * @param string|null $blockchain_node_id
-   *   Given UUID.
-   *
-   * @return $this
-   *   Chaining.
-   */
-  public function setBlockchainNodeId($blockchain_node_id = NULL);
-
-  /**
-   * Getter for blockchain type.
-   *
-   * @return string
-   *   Blockchain type.
-   */
-  public function getBlockchainType();
-
-  /**
-   * Setter for blockchain type.
-   *
-   * @param string $blockchainType
-   *   Type.
-   *
-   * @return $this
-   *   Chaining.
-   */
-  public function setBlockchainType($blockchainType);
 
   /**
    * Getter for pool management.
@@ -324,7 +267,7 @@ interface BlockchainConfigServiceInterface {
    * @return bool
    *   Execution result.
    */
-  public function setCurrentBlockchainConfig($blockchainConfig);
+  public function setCurrentConfig($blockchainConfig);
 
   /**
    * Getter for blockchain config.
@@ -332,7 +275,7 @@ interface BlockchainConfigServiceInterface {
    * @return BlockchainConfigInterface|null
    *   Returns config entity if any.
    */
-  public function getCurrentBlockchainConfig();
+  public function getCurrentConfig();
 
   /**
    * Creates config with default settings for entity id.

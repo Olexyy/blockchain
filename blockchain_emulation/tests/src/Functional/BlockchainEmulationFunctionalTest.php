@@ -3,6 +3,7 @@
 namespace Drupal\Tests\blockchain_emulation\Functional;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
+use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainApiServiceInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
@@ -105,15 +106,15 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertInstanceOf(BlockchainEmulationStorageServiceInterface::class, $this->blockchainEmulationStorage,
       'Blockchain emulation storage instantiated.');
     // Enable API.
-    $this->blockchainService->getConfigService()->setBlockchainType(BlockchainConfigServiceInterface::TYPE_MULTIPLE);
-    $type = $this->blockchainService->getConfigService()->getBlockchainType();
-    $this->assertEquals($type, BlockchainConfigServiceInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setType(BlockchainConfigInterface::TYPE_MULTIPLE);
+    $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
+    $this->assertEquals($type, BlockchainConfigInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
     // Ensure none blocks in blockchain.
     $this->assertFalse($this->blockchainEmulationStorage->anyBlock(), 'Any block returns false');
     $this->blockchainEmulationStorage->setBlocks(5);
     $this->assertEquals(5, $this->blockchainEmulationStorage->getBlockCount(), 'Set 5 blocks to blockchain emulation.');
     // Attach self to node list.
-    $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
+    $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();
     $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->baseUrl, $this->localPort);
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
     // Blockchain emulation node service.

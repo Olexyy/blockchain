@@ -326,4 +326,12 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
    */
   public function setLabel($label);
 
+  /**
+   * Base method definition override.
+   *
+   * @return int
+   *   Execution result
+   */
+  public function save();
+
 }
