@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Controller;
 
 
+use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequest;
@@ -104,7 +105,7 @@ class BlockchainController extends ControllerBase {
         if ($ownBlockCount < $result->getCountParam()) {
           $this->blockchainService->getQueueService()->addAnnounceItem($result->sleep());
           $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
-          if ($announceManagement == BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE) {
+          if ($announceManagement == BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE) {
             $this->blockchainService->getQueueService()->doAnnounceHandling();
           }
 

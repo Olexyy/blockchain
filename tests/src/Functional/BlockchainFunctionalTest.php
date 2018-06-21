@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\blockchain\Functional;
 
+use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainApiServiceInterface;
@@ -261,7 +262,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   /**
    * Tests that default values are correctly translated to UUIDs in config.
    */
-  /*public function testBlockchainServiceSubscribe() {
+  public function testBlockchainServiceSubscribe() {
 
     // Enable API.
     $this->blockchainService->getConfigService()->setBlockchainType(BlockchainConfigInterface::TYPE_MULTIPLE);
@@ -282,11 +283,11 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $testLoad = $this->blockchainService->getNodeService()->exists('NON_EXISTENT');
     $this->assertFalse($testLoad, 'Non existent Blockchain node not loaded');
   }
-*/
+
   /**
    * Tests that default values are correctly translated to UUIDs in config.
    */
-  /*public function testBlockchainServiceAnnounce() {
+  public function testBlockchainServiceAnnounce() {
 
     // Enable API.
     $this->blockchainService->getConfigService()->setBlockchainType(BlockchainConfigInterface::TYPE_MULTIPLE);
@@ -325,7 +326,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_CRON, $announceManagement, 'Announce management set to CRON handled.');
     // Attach self to node list.
     $blockchainNodeId = $this->blockchainService->getConfigService()->getBlockchainNodeId();
-    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->localIp);
+    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->baseUrl);
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
     $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
@@ -349,9 +350,8 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     // Ensure 1 announce was processed as it was 200 (Due to fake count '2').
     $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
     $this->assertEquals(1, $processedAnnounces, 'One announce was processed.');
-    // In this case item was processed but taken no action
-    // as Fetch should have found that count of blocks equal.
-  }*/
+    // In this case item was processed but taken no action as Fetch should have found that count of blocks equals.
+  }
 
   /**
    * Getter for ips.

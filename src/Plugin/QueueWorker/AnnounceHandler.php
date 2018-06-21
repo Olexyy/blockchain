@@ -77,8 +77,7 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
       $plugin_id,
       $plugin_definition,
       $container->get('logger.factory'),
-      $container->get('blockchain.service'),
-      $container->get('@blockchain.locker')
+      $container->get('blockchain.service')
     );
   }
 

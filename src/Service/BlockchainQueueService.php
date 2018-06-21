@@ -134,8 +134,10 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
    */
   public function getAnnounceHandler() {
     try {
+
       return $this->queueWorkerManager->createInstance(static::ANNOUNCE_QUEUE_NAME);
     } catch (\Exception $exception) {
+
       return NULL;
     }
   }
