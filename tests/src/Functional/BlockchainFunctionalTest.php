@@ -319,10 +319,10 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     ]);
     $this->assertEmpty($announceCount, 'Announce was related to none nodes.');
     // Set announce handling to CRON (no immediate) processing.
-    $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
+    $announceManagement = $this->blockchainService->getConfigService()->getCurrentConfig()->getAnnounceManagement();
     $this->assertEquals(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE, $announceManagement, 'Announce management is immediate.');
-    $this->blockchainService->getConfigService()->setAnnounceManagement(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_CRON);
-    $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setAnnounceManagement(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_CRON)->save();
+    $announceManagement = $this->blockchainService->getConfigService()->getCurrentConfig()->getAnnounceManagement();
     $this->assertEquals(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_CRON, $announceManagement, 'Announce management set to CRON handled.');
     // Attach self to node list.
     $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();

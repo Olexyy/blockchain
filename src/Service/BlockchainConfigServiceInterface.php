@@ -39,52 +39,6 @@ interface BlockchainConfigServiceInterface {
   public function getState();
 
   /**
-   * Getter for pool management.
-   *
-   * @return string
-   *   Pool management.
-   */
-  public function getPoolManagement();
-
-  /**
-   * Setter for pool management.
-   *
-   * @param string $poolManagement
-   *   Type of poll management.
-   *
-   * @return $this
-   *   Chaining.
-   */
-  public function setPoolManagement($poolManagement);
-
-  /**
-   * Getter for announce management.
-   *
-   * @return string
-   *   Announce management.
-   */
-  public function getAnnounceManagement();
-
-  /**
-   * Setter for announce management.
-   *
-   * @param string $announceManagement
-   *   Type of announce management.
-   *
-   * @return $this
-   *   Chaining.
-   */
-  public function setAnnounceManagement($announceManagement);
-
-  /**
-   * Getter for POW position.
-   *
-   * @return string
-   *   POW position.
-   */
-  public function getPowPosition();
-
-  /**
    * Setter for POW position.
    *
    * @param string $powPosition

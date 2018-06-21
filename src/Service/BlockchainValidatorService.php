@@ -46,8 +46,8 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
    */
   public function hashIsValid($hash) {
 
-    $powPosition = $this->configService->getPowPosition();
-    $powExpression = $this->configService->getPowExpression();
+    $powPosition = $this->configService->getCurrentConfig()->getPowPosition();
+    $powExpression = $this->configService->getCurrentConfig()->getPowExpression();
     $length = strlen($powExpression);
     if ($powPosition === BlockchainConfigInterface::POW_POSITION_START) {
       if (substr($hash, 0, $length) === $powExpression) {

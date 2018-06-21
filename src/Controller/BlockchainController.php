@@ -104,7 +104,7 @@ class BlockchainController extends ControllerBase {
         $ownBlockCount = $this->blockchainBlockStorage->getBlockCount();
         if ($ownBlockCount < $result->getCountParam()) {
           $this->blockchainService->getQueueService()->addAnnounceItem($result->sleep());
-          $announceManagement = $this->blockchainService->getConfigService()->getAnnounceManagement();
+          $announceManagement = $this->blockchainService->getConfigService()->getCurrentConfig()->getAnnounceManagement();
           if ($announceManagement == BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE) {
             $this->blockchainService->getQueueService()->doAnnounceHandling();
           }

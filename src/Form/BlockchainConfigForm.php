@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Form;
 
 use Drupal\blockchain\Entity\BlockchainConfig;
+use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainService;
 use Drupal\Core\Entity\EntityForm;
@@ -64,8 +65,8 @@ class BlockchainConfigForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Blockchain type'),
       '#options' => [
-        BlockchainConfigServiceInterface::TYPE_SINGLE => $this->t('Single'),
-        BlockchainConfigServiceInterface::TYPE_MULTIPLE  => $this->t('Multiple'),
+        BlockchainConfigInterface::TYPE_SINGLE => $this->t('Single'),
+        BlockchainConfigInterface::TYPE_MULTIPLE  => $this->t('Multiple'),
       ],
       '#default_value' => $blockchainConfig->getType(),
       '#description' => $this->t('Single means only one node, thus one blockchain database.'),
@@ -79,7 +80,7 @@ class BlockchainConfigForm extends EntityForm {
       '#states' => [
         'visible' => [
           ':input[name="blockchainType"]' => [
-            'value' => BlockchainConfigServiceInterface::TYPE_MULTIPLE
+            'value' => BlockchainConfigInterface::TYPE_MULTIPLE
           ],
         ],
       ],
@@ -89,15 +90,15 @@ class BlockchainConfigForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Blockchain nodes filtering type'),
       '#options' => [
-        BlockchainConfigServiceInterface::FILTER_TYPE_BLACKLIST => $this->t('Blacklist'),
-        BlockchainConfigServiceInterface::FILTER_TYPE_WHITELIST => $this->t('Whitelist'),
+        BlockchainConfigInterface::FILTER_TYPE_BLACKLIST => $this->t('Blacklist'),
+        BlockchainConfigInterface::FILTER_TYPE_WHITELIST => $this->t('Whitelist'),
       ],
       '#default_value' => $blockchainConfig->getFilterType(),
       '#description' => $this->t('The way, blockchain nodes will be filtered.'),
       '#states' => [
         'visible' => [
           ':input[name="blockchainType"]' => [
-            'value' => BlockchainConfigServiceInterface::TYPE_MULTIPLE
+            'value' => BlockchainConfigInterface::TYPE_MULTIPLE
           ],
         ],
       ],
@@ -114,8 +115,8 @@ class BlockchainConfigForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Pool management'),
       '#options' => [
-        BlockchainConfigServiceInterface::POOL_MANAGEMENT_MANUAL => $this->t('Manual'),
-        BlockchainConfigServiceInterface::POOL_MANAGEMENT_CRON  => $this->t('CRON'),
+        BlockchainConfigInterface::POOL_MANAGEMENT_MANUAL => $this->t('Manual'),
+        BlockchainConfigInterface::POOL_MANAGEMENT_CRON  => $this->t('CRON'),
       ],
       '#default_value' => $blockchainConfig->getPoolManagement(),
       '#description' => $this->t('The way, pool queue will be managed.'),
@@ -131,7 +132,7 @@ class BlockchainConfigForm extends EntityForm {
       '#states' => [
         'visible' => [
           ':input[name="poolManagement"]' => [
-            'value' => BlockchainConfigServiceInterface::POOL_MANAGEMENT_CRON
+            'value' => BlockchainConfigInterface::POOL_MANAGEMENT_CRON
           ],
         ],
       ],
@@ -141,8 +142,8 @@ class BlockchainConfigForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Announce management'),
       '#options' => [
-        BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE => $this->t('Immediate'),
-        BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON  => $this->t('CRON'),
+        BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE => $this->t('Immediate'),
+        BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_CRON  => $this->t('CRON'),
       ],
       '#default_value' => $blockchainConfig->getAnnounceManagement(),
       '#description' => $this->t('The way, announce queue will be managed.'),
@@ -157,7 +158,7 @@ class BlockchainConfigForm extends EntityForm {
       '#description' => $this->t('Interval for announce management CRON job.'),
       '#states' => [
         'visible' => [
-          ':input[name="announceManagement"]' => ['value' => BlockchainConfigServiceInterface::ANNOUNCE_MANAGEMENT_CRON],
+          ':input[name="announceManagement"]' => ['value' => BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_CRON],
         ],
       ],
     ];
@@ -174,8 +175,8 @@ class BlockchainConfigForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Proof of work position'),
       '#options' => [
-        BlockchainConfigServiceInterface::POW_POSITION_START => $this->t('Start'),
-        BlockchainConfigServiceInterface::POW_POSITION_END  => $this->t('End'),
+        BlockchainConfigInterface::POW_POSITION_START => $this->t('Start'),
+        BlockchainConfigInterface::POW_POSITION_END  => $this->t('End'),
       ],
       '#default_value' => $blockchainConfig->getPowPosition(),
       '#description' => $this->t('Proof of work position in previous hash.'),
