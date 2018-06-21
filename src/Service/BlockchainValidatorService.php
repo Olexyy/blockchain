@@ -166,7 +166,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('No self param.');
     }
-    if ($configService->isBlockchainAuth()) {
+    if ($configService->getCurrentConfig()->getIsAuth()) {
       if (!$authToken = $blockchainRequest->getAuthParam()) {
 
         return BlockchainResponse::create()
@@ -201,7 +201,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
       }
     }
     if ($filterList = $configService->getBlockchainFilterListAsArray()) {
-      if ($configService->getBlockchainFilterType() === BlockchainConfigInterface::FILTER_TYPE_BLACKLIST) {
+      if ($configService->getCurrentConfig()->getFilterType() === BlockchainConfigInterface::FILTER_TYPE_BLACKLIST) {
         if (in_array($blockchainRequest->getIp(), $filterList)) {
 
           return BlockchainResponse::create()

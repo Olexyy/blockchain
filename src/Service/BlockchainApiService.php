@@ -220,7 +220,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
 
     $params[BlockchainRequestInterface::PARAM_SELF] = $this->configService->getCurrentConfig()->getNodeId();
     $params[BlockchainRequestInterface::PARAM_TYPE] = $this->configService->getCurrentConfig()->id();
-    if ($this->configService->isBlockchainAuth()) {
+    if ($this->configService->getCurrentConfig()->getIsAuth()) {
       $params[BlockchainRequestInterface::PARAM_AUTH] = $this->configService->tokenGenerate();
     }
   }

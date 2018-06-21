@@ -88,7 +88,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
       'Blockchain service instantiated.');
     $count = $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
     $this->assertEquals(1, $count, 'Discovered one config.');
-    $blockchainConfigs = $this->blockchainService->getConfigService()->getList();
+    $blockchainConfigs = $this->blockchainService->getConfigService()->getAllConfigs();
     $this->assertCount(1, $blockchainConfigs, 'Exists one config.');
     $isSet = $this->blockchainService->getConfigService()->setCurrentConfig(current($blockchainConfigs)->id());
     $this->assertTrue($isSet, 'Current config is set.');
@@ -145,7 +145,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
     $this->assertEquals($type, BlockchainConfigInterface::TYPE_SINGLE, 'Blockchain type is single');
     // Ensure Blockchain 'auth' is false by default.
-    $auth = $this->blockchainService->getConfigService()->isBlockchainAuth();
+    $auth = $this->blockchainService->getConfigService()->getCurrentConfig()->getIsAuth();
     $this->assertFalse($auth, 'Blockchain auth is disabled');
     // Cover API is restricted for 'single' type. Request is normal.
     $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
@@ -164,8 +164,8 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('Bad request', $response->getMessageParam());
     $this->assertEquals('No self param.', $response->getDetailsParam());
     // Enable auth.
-    $this->blockchainService->getConfigService()->setBlockchainAuth(TRUE);
-    $auth = $this->blockchainService->getConfigService()->isBlockchainAuth();
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setIsAuth(TRUE)->save();
+    $auth = $this->blockchainService->getConfigService()->getCurrentConfig()->getIsAuth();
     $this->assertTrue($auth, 'Blockchain auth is enabled');
     // Cover API is restricted for non 'auth' request.
     $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
@@ -196,9 +196,9 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Not subscribed yet.', $response->getDetailsParam());
     // Ensure we have blacklist filter mode.
-    $blockchainFilterType = $this->blockchainService->getConfigService()->getBlockchainFilterType();
+    $blockchainFilterType = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterType();
     $this->assertEquals($blockchainFilterType, BlockchainConfigInterface::FILTER_TYPE_BLACKLIST, 'Blockchain filter type is blacklist');
-    $blacklist = $this->blockchainService->getConfigService()->getBlockchainFilterList();
+    $blacklist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
     $this->assertEmpty($blacklist,'Blockchain blacklist is empty');
     $this->blockchainService->getConfigService()->setBlockchainFilterListAsArray($this->getBlacklist());
     // Ensure we included our ip in black list.
@@ -214,12 +214,12 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('Forbidden', $response->getMessageParam());
     $this->assertEquals('You are forbidden to access this resource.', $response->getDetailsParam());
     // Ensure we have whitelist filter mode.
-    $this->blockchainService->getConfigService()->setBlockchainFilterType(BlockchainConfigInterface::FILTER_TYPE_WHITELIST);
-    $blockchainFilterType = $this->blockchainService->getConfigService()->getBlockchainFilterType();
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setFilterType(BlockchainConfigInterface::FILTER_TYPE_WHITELIST)->save();
+    $blockchainFilterType = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterType();
     $this->assertEquals($blockchainFilterType, BlockchainConfigInterface::FILTER_TYPE_WHITELIST, 'Blockchain filter type is whitelist');
     // Ensure put ip is not in whitelist.
     $this->blockchainService->getConfigService()->setBlockchainFilterListAsArray($this->getWhitelist());
-    $whitelist = $this->blockchainService->getConfigService()->getBlockchainFilterList();
+    $whitelist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
     $this->assertNotContains($this->localIp, $whitelist, 'Whitelist does not have local ip address.');
     // Cover check for whitelist.
     $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
@@ -232,7 +232,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('You are forbidden to access this resource.', $response->getDetailsParam());
     // Lets reset this for further testing.
     $this->blockchainService->getConfigService()->setBlockchainFilterListAsArray([]);
-    $whitelist = $this->blockchainService->getConfigService()->getBlockchainFilterList();
+    $whitelist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
     $this->assertEmpty($whitelist, 'Whitelist is empty.');
     // Lets focus on Blockchain nodes. Ensure we have any.
     $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);

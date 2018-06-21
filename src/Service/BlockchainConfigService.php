@@ -100,182 +100,6 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function setPowPosition($powPosition) {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-      $blockchainConfig->setPowPosition($powPosition);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPowExpression() {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-
-      return $blockchainConfig->getPowExpression();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPowExpression($powExpression) {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-      $blockchainConfig->setPowExpression($powExpression);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getIntervalPool() {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-
-      return $blockchainConfig->getIntervalPool();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setIntervalPool($intervalPool) {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-      $blockchainConfig->setIntervalPool($intervalPool);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getIntervalAnnounce() {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-
-      return $blockchainConfig->getIntervalAnnounce();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setIntervalAnnounce($intervalAnnounce) {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-      $blockchainConfig->setIntervalAnnounce($intervalAnnounce);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isBlockchainAuth() {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-
-      return $blockchainConfig->getIsAuth();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setBlockchainAuth($blockchainAuth) {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-      $blockchainConfig->setIsAuth($blockchainAuth);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlockchainFilterType() {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-
-      return $blockchainConfig->getFilterType();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setBlockchainFilterType($blockchainFilterType) {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-      $blockchainConfig->setFilterType($blockchainFilterType);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlockchainFilterList() {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-
-      return $blockchainConfig->getFilterList();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setBlockchainFilterList($blockchainFilterList) {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-      $blockchainConfig->setFilterList($blockchainFilterList);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getAllowNotSecure() {
 
     if ($blockchainConfig = $this->getCurrentConfig()) {
@@ -307,7 +131,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
 
     $blockchainFilterList = implode("\r\n", $blockchainFilterList);
 
-    return $this->setBlockchainFilterList($blockchainFilterList);
+    return $this->getCurrentConfig()->setFilterList($blockchainFilterList)->save();
   }
 
   /**
@@ -315,7 +139,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getBlockchainFilterListAsArray() {
 
-    if ($list = $this->getBlockchainFilterList()) {
+    if ($list = $this->getCurrentConfig()->getFilterList()) {
       $parsed = preg_split('~\R~', $list);
       array_walk($parsed, 'trim');
 
@@ -468,7 +292,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getList() {
+  public function getAllConfigs() {
 
     return BlockchainConfig::loadMultiple();
   }
