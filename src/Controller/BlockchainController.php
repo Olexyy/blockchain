@@ -81,8 +81,6 @@ class BlockchainController extends ControllerBase {
     $this->blockchainRequest = BlockchainRequest::createFromRequest($this->request);
     $this->blockchainRequest->setRequestType($this->getRequestType());
     $this->validationResult = $this->validate($this->blockchainRequest);
-    $this->blockchainService->getConfigService()
-      ->setCurrentBlockchainConfig($this->validationResult->getTypeParam());
   }
 
   /**

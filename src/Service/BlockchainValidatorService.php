@@ -130,6 +130,11 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('Invalid type param.');
     }
+
+    // Set blockchain config as it is validated.
+    $this->configService
+      ->setCurrentBlockchainConfig($blockchainRequest->getTypeParam());
+
     if (!$request->isSecure() && !$this->configService->getAllowNotSecure()) {
 
       return BlockchainResponse::create()
