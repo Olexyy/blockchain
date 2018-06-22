@@ -12,10 +12,16 @@ blockchain.blockchain_node.*:
       type: string
     address:
       type: string
-      label: 'Node address/ip'
+      label: 'Node host/ip'
     port:
       type: string
       label: 'Node port'
     secure:
       type: boolean
       label: 'Is protocol secure'
+    blockchainTypeId:
+      type: string
+      label: 'Related blockchain type id'
+    addressSource:
+      type: string
+      label: 'Source of address'

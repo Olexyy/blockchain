@@ -9,6 +9,10 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
  */
 interface BlockchainNodeInterface extends ConfigEntityInterface {
 
+  const ADDRESS_SOURCE_CLIENT = 'client';
+
+  const ADDRESS_SOURCE_REQUEST = 'request';
+
   /**
    * Getter for entity type.
    *
@@ -119,5 +123,62 @@ interface BlockchainNodeInterface extends ConfigEntityInterface {
    *   Endpoint.
    */
   public function getEndPoint();
+
+  /**
+   * Getter for blockchain type id.
+   *
+   * @return string
+   *   Type id.
+   */
+  public function getBlockchainTypeId();
+
+  /**
+   * Setter for property.
+   *
+   * @param string $blockchainTypeId
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainTypeId($blockchainTypeId);
+
+  /**
+   * Getter for blockchain type id.
+   *
+   * @return BlockchainConfigInterface|null
+   *   Type id entity if any.
+   */
+  public function getBlockchainType();
+
+  /**
+   * Setter for property.
+   *
+   * @param BlockchainConfigInterface $blockchainConfig
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainType(BlockchainConfigInterface $blockchainConfig);
+
+  /**
+   * Getter for property.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getAddressSource();
+
+  /**
+   * Setter for property.
+   *
+   * @param string $addressSource
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setAddressSource($addressSource);
 
 }

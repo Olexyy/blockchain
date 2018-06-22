@@ -76,6 +76,18 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   protected $secure;
 
   /**
+   * @var string
+   */
+  protected $blockchainTypeId;
+
+  /**
+   * Source of address (client/request)
+   *
+   * @var string
+   */
+  protected $addressSource;
+
+  /**
    * {@inheritdoc}
    */
   public static function entityTypeId() {
@@ -178,11 +190,73 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
    */
   public function getEndPoint() {
 
-    $protocol = $this->isSecure()? 'https://' : 'http://';
-    $protocol = is_null($this->isSecure())? '' : $protocol;
-    $port = $this->getPort()? ':'. $this->getPort() : '';
+    if ($this->addressSource == static::ADDRESS_SOURCE_CLIENT) {
+      return $this->getAddress();
+    }
+    else {
+      $protocol = $this->isSecure() ? 'https://' : 'http://';
+      $protocol = is_null($this->isSecure()) ? '' : $protocol;
+      $port = $this->getPort() ? ':' . $this->getPort() : '';
 
-    return $protocol . $this->getAddress() . $port;
+      return $protocol . $this->getAddress() . $port;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainTypeId() {
+
+    return $this->blockchainTypeId;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainTypeId($blockchainTypeId) {
+
+    $this->blockchainTypeId = $blockchainTypeId;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainType() {
+
+    if ($this->blockchainTypeId) {
+
+      return BlockchainConfig::load($this->blockchainTypeId);
+    }
+
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainType(BlockchainConfigInterface $blockchainConfig) {
+
+    return $this->setBlockchainTypeId($blockchainConfig->id());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAddressSource() {
+
+    return $this->addressSource;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAddressSource($addressSource) {
+
+    $this->addressSource = $addressSource;
+
+    return $this;
   }
 
 }

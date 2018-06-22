@@ -158,8 +158,16 @@ interface BlockchainConfigServiceInterface {
    * Handler to get list of blockchain configs.
    *
    * @return BlockchainConfigInterface[]|array
-   *   Array of entities if any.
+   *   Array of entities if any .
    */
   public function getAllConfigs();
+
+  /**
+   * Handler to get list of blockchain configs.
+   *
+   * @return array|string[]
+   *   List array.
+   */
+  public function getList();
 
 }

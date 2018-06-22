@@ -7,6 +7,7 @@ use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Utils\Util;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\State\StateInterface;
 
@@ -295,6 +296,19 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   public function getAllConfigs() {
 
     return BlockchainConfig::loadMultiple();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getList() {
+
+    $list = [];
+    foreach ($this->getAllConfigs() as $config) {
+      $list[$config->id()] = $config->label();
+    }
+
+    return $list;
   }
 
 }
