@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Service;
 
+use Drupal\blockchain\Plugin\BlockchainAuthManager;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 
 /**
@@ -75,6 +76,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainLockerService;
 
   /**
+   * Auth manager.
+   *
+   * @var BlockchainAuthManager
+   */
+  protected $blockchainAuthManager;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -95,6 +103,8 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Given Blockchain miner service.
    * @param BlockchainLockerServiceInterface $blockchainLockerService
    *   Blockchain locker service.
+   * @param BlockchainAuthManager $blockchainAuthManager
+   *   Blockchain auth manager.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
@@ -105,7 +115,8 @@ class BlockchainService implements BlockchainServiceInterface {
     BlockchainNodeServiceInterface $blockchainNodeService,
     BlockchainValidatorServiceInterface $blockchainValidatorService,
     BlockchainMinerServiceInterface $blockchainMinerService,
-    BlockchainLockerServiceInterface $blockchainLockerService) {
+    BlockchainLockerServiceInterface $blockchainLockerService,
+    BlockchainAuthManager $blockchainAuthManager) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
@@ -116,6 +127,7 @@ class BlockchainService implements BlockchainServiceInterface {
     $this->blockchainValidatorService = $blockchainValidatorService;
     $this->blockchainMinerService = $blockchainMinerService;
     $this->blockchainLockerService = $blockchainLockerService;
+    $this->blockchainAuthManager = $blockchainAuthManager;
   }
 
   /**
@@ -193,6 +205,14 @@ class BlockchainService implements BlockchainServiceInterface {
   public function getLockerService() {
 
     return $this->blockchainLockerService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAuthManager() {
+
+    return $this->blockchainAuthManager;
   }
 
 }

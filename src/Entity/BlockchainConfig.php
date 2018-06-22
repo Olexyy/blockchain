@@ -78,9 +78,9 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   /**
    * Is auth used.
    *
-   * @var bool
+   * @var string
    */
-  protected $isAuth;
+  protected $auth;
 
   /**
    * Address filter type.
@@ -209,17 +209,17 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   /**
    * {@inheritdoc}
    */
-  public function getIsAuth() {
+  public function getAuth() {
 
-    return $this->isAuth;
+    return $this->auth;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setIsAuth($isAuth) {
+  public function setAuth($authId) {
 
-    $this->isAuth = $isAuth;
+    $this->auth = $authId;
 
     return $this;
   }

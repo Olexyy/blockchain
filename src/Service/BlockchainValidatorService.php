@@ -5,6 +5,7 @@ namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
+use Drupal\blockchain\Plugin\BlockchainAuthManager;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\blockchain\Utils\Util;
@@ -32,13 +33,22 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
   protected $blockchainNodeService;
 
   /**
+   * Auth manager.
+   *
+   * @var BlockchainAuthManager
+   */
+  protected $blockchainAuthManager;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(BlockchainConfigServiceInterface $blockchainSettingsService,
-                              BlockchainNodeServiceInterface $blockchainNodeService) {
+                              BlockchainNodeServiceInterface $blockchainNodeService,
+                              BlockchainAuthManager $blockchainAuthManager) {
 
     $this->configService = $blockchainSettingsService;
     $this->blockchainNodeService = $blockchainNodeService;
+    $this->blockchainAuthManager = $blockchainAuthManager;
   }
 
   /**
@@ -78,16 +88,6 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
     return $previousBlock->getHash() == $blockchainBlock->getPreviousHash() &&
       $this->hashIsValid($hashString);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function authIsValid($self, $auth) {
-
-    $blockchainId = $this->configService->getCurrentConfig()->getBlockchainId();
-
-    return Util::hash($blockchainId.$self) === $auth;
   }
 
   public function validateRequestContext($type) {
@@ -166,19 +166,8 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('No self param.');
     }
-    if ($configService->getCurrentConfig()->getIsAuth()) {
-      if (!$authToken = $blockchainRequest->getAuthParam()) {
-
-        return BlockchainResponse::create()
-          ->setIp($blockchainRequest->getIp())
-          ->setPort($request->getPort())
-          ->setSecure($request->isSecure())
-          ->setStatusCode(401)
-          ->setMessageParam('Unauthorized')
-          ->setDetailsParam('Auth token required.');
-      }
-      if (!$this->authIsValid($blockchainRequest->getSelfParam(), $blockchainRequest->getAuthParam())) {
-
+    if ($authHandler = $this->blockchainAuthManager->getHandler($configService->getCurrentConfig())) {
+      if(!$authHandler->authorize($blockchainRequest)) {
         return BlockchainResponse::create()
           ->setIp($blockchainRequest->getIp())
           ->setPort($request->getPort())

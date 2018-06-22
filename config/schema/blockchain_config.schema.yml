@@ -19,8 +19,8 @@ blockchain.blockchain_config.*:
     type:
       type: string
       label: 'Type of blockchain'
-    isAuth:
-      type: boolean
+    auth:
+      type: string
       label: 'Use auth token or not'
     filterType:
       type: string

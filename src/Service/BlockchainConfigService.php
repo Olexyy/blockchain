@@ -2,12 +2,13 @@
 
 namespace Drupal\blockchain\Service;
 
+
 use Drupal\blockchain\Entity\BlockchainConfig;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
+use Drupal\blockchain\Plugin\BlockchainAuthManager;
 use Drupal\blockchain\Utils\Util;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\State\StateInterface;
 
@@ -216,7 +217,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
     $blockchainConfig->setBlockchainId($this->generateId());
     $blockchainConfig->setNodeId($this->generateId());
     $blockchainConfig->setType(BlockchainConfigInterface::TYPE_SINGLE);
-    $blockchainConfig->setIsAuth(FALSE);
+    $blockchainConfig->setAuth(BlockchainAuthManager::DEFAULT_PLUGIN);
     $blockchainConfig->setAllowNotSecure(TRUE);
     $blockchainConfig->setAnnounceManagement(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE);
     $blockchainConfig->setPoolManagement(BlockchainConfigInterface::POOL_MANAGEMENT_MANUAL);

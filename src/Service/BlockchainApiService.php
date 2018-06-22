@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
+use Drupal\blockchain\Plugin\BlockchainAuthManager;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -56,19 +57,28 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   protected $blockchainNodeService;
 
   /**
+   * Auth manager.
+   *
+   * @var BlockchainAuthManager
+   */
+  protected $blockchainAuthManager;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(RequestStack $requestStack,
                               Client $httpClient,
                               LoggerChannelFactoryInterface $loggerChannelFactory,
                               BlockchainConfigServiceInterface $blockchainSettingsService,
-                              BlockchainNodeServiceInterface $blockchainNodeService) {
+                              BlockchainNodeServiceInterface $blockchainNodeService,
+                              BlockchainAuthManager $blockchainAuthManager) {
 
     $this->requestStack = $requestStack;
     $this->httpClient = $httpClient;
     $this->loggerFactory = $loggerChannelFactory;
     $this->configService = $blockchainSettingsService;
     $this->blockchainNodeService = $blockchainNodeService;
+    $this->blockchainAuthManager = $blockchainAuthManager;
   }
 
   /**
@@ -220,8 +230,8 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
 
     $params[BlockchainRequestInterface::PARAM_SELF] = $this->configService->getCurrentConfig()->getNodeId();
     $params[BlockchainRequestInterface::PARAM_TYPE] = $this->configService->getCurrentConfig()->id();
-    if ($this->configService->getCurrentConfig()->getIsAuth()) {
-      $params[BlockchainRequestInterface::PARAM_AUTH] = $this->configService->tokenGenerate();
+    if ($authHandler = $this->blockchainAuthManager->getHandler($this->configService->getCurrentConfig())) {
+      $authHandler->addAuthParams($params);
     }
   }
 }

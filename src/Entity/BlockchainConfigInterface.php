@@ -83,21 +83,21 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   /**
    * Property getter
    *
-   * @return bool
+   * @return string
    *   Value.
    */
-  public function getIsAuth();
+  public function getAuth();
 
   /**
    * Property setter.
    *
-   * @param bool $isAuth
+   * @param string $authId
    *   Value.
    *
    * @return $this
    *   Chaining.
    */
-  public function setIsAuth($isAuth);
+  public function setAuth($authId);
 
   /**
    * Property getter

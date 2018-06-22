@@ -17,19 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 interface BlockchainValidatorServiceInterface {
 
   /**
-   * Validates auth pram by given logic.
-   *
-   * @param string $self
-   *   String self param.
-   * @param $auth
-   *   String auth param.
-   *
-   * @return bool
-   *   Validation result.
-   */
-  public function authIsValid($self, $auth);
-
-  /**
    * Validates hash according to given Pow rules.
    *
    * @param string $hash

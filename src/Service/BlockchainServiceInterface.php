@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
+use Drupal\blockchain\Plugin\BlockchainAuthManager;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 
@@ -92,5 +93,13 @@ interface BlockchainServiceInterface {
    *   Service object.
    */
   public function getLockerService();
+
+  /**
+   * Manager for auth plugins.
+   *
+   * @return BlockchainAuthManager
+   *   Manager object.
+   */
+  public function getAuthManager();
 
 }

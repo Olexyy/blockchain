@@ -4,7 +4,6 @@ namespace Drupal\blockchain\Form;
 
 use Drupal\blockchain\Entity\BlockchainConfig;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
-use Drupal\blockchain\Service\BlockchainService;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
@@ -136,11 +135,13 @@ class BlockchainConfigForm extends EntityForm {
       '#description' => $this->t('Single means only one node, thus one blockchain database.'),
     ];
 
-    $form['isAuth'] = [
-      '#type' => 'checkbox',
-      '#default_value' => $blockchainConfig->getIsAuth(),
-      '#title' => $this->t('Auth token enabled'),
-      '#description' => $this->t('Does API use token Blockchain token to interact.'),
+    $form['auth'] = [
+      '#type' => 'select',
+      '#default_value' => $blockchainConfig->getAuth(),
+      '#title' => $this->t('Auth method'),
+      '#description' => $this->t('Auth method Blockchain API uses to interact.'),
+      '#options' => $this->blockchainService->getAuthManager()->getList(),
+      '#required' => TRUE,
       '#states' => [
         'visible' => [
           ':input[name="blockchainType"]' => [

@@ -5,6 +5,9 @@ services:
   blockchain.data.manager:
     class: Drupal\blockchain\Plugin\BlockchainDataManager
     parent: default_plugin_manager
+  blockchain.auth.manager:
+    class: Drupal\blockchain\Plugin\BlockchainAuthManager
+    parent: default_plugin_manager
   blockchain.storage:
     class: Drupal\blockchain\Service\BlockchainStorageService
     arguments:
@@ -31,9 +34,10 @@ services:
       -  '@logger.factory'
       -  '@blockchain.config'
       -  '@blockchain.node'
+      -  '@blockchain.auth.manager'
   blockchain.validator:
     class: Drupal\blockchain\Service\BlockchainValidatorService
-    arguments: ['@blockchain.config', '@blockchain.node']
+    arguments: ['@blockchain.config', '@blockchain.node', '@blockchain.auth.manager']
   blockchain.miner:
     class: Drupal\blockchain\Service\BlockchainMinerService
     arguments: ['@blockchain.validator']
@@ -49,3 +53,4 @@ services:
       -  '@blockchain.validator'
       -  '@blockchain.miner'
       -  '@blockchain.locker'
+      -  '@blockchain.auth.manager'
