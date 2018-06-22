@@ -88,9 +88,8 @@ class BlockchainConfigForm extends EntityForm {
     $form = parent::form($form, $form_state);
     /** @var BlockchainConfig $blockchainConfig */
     $blockchainConfig = $this->entity;
-    // TODO INJECT THIS
-    BlockchainService::instance()->getConfigService()->setCurrentConfig($blockchainConfig->id());
-    $anyBlock = BlockchainService::instance()->getStorageService()->anyBlock();
+    $this->blockchainService->getConfigService()->setCurrentConfig($blockchainConfig->id());
+    $anyBlock = $this->blockchainService->getStorageService()->anyBlock();
 
     $form['label'] = [
       '#type' => 'textfield',
@@ -259,12 +258,12 @@ class BlockchainConfigForm extends EntityForm {
       '#type' => 'select',
       '#required' => TRUE,
       '#title' => $this->t('Blockchain data handler.'),
-      '#options' => BlockchainService::instance()->getDataManager()->getList(),
+      '#options' => $this->blockchainService->getDataManager()->getList(),
       '#default_value' => $blockchainConfig->getDataHandler(),
       '#description' => $this->t('Select data handler for given blockchain.'),
     ];
 
-    $hasSettings = BlockchainService::instance()
+    $hasSettings = $this->blockchainService
       ->getDataManager()
       ->definitionGet($blockchainConfig->getDataHandler(), 'settings');
     if ($hasSettings) {
