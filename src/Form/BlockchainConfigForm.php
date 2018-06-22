@@ -4,16 +4,81 @@ namespace Drupal\blockchain\Form;
 
 use Drupal\blockchain\Entity\BlockchainConfig;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
-use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainService;
+use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class BlockchainConfigForm.
  */
 class BlockchainConfigForm extends EntityForm {
+
+  /**
+   * Blockchain service.
+   *
+   * @var BlockchainServiceInterface
+   */
+  protected $blockchainService;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(BlockchainServiceInterface $blockchainService) {
+
+    $this->blockchainService = $blockchainService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+
+    return new static(
+      $container->get('blockchain.service')
+    );
+  }
+
+  /**
+   * Form submission handler.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+
+    $element = $form_state->getTriggeringElement();
+    if ($element['#type'] == 'button') {
+      if ($element['#context'] == 'regenerate_blockchain_id') {
+        $this->blockchainService
+          ->getConfigService()
+          ->getCurrentConfig()
+          ->setBlockchainId(
+            $this->blockchainService->getConfigService()->generateId()
+          )->save();
+      }
+      elseif ($element['#context'] == 'regenerate_blockchain_node_id') {
+        $this->blockchainService
+          ->getConfigService()
+          ->getCurrentConfig()
+          ->setNodeId(
+            $this->blockchainService->getConfigService()->generateId()
+          )->save();
+      }
+      elseif ($element['#context'] == 'put_generic_block') {
+        $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
+        $this->blockchainService->getStorageService()->save($genericBlock);
+      }
+    }
+    else {
+      parent::submitForm($form, $form_state);
+    }
+
+  }
 
   /**
    * {@inheritdoc}

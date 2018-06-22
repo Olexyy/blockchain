@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Form;
 
-use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -62,45 +61,6 @@ class BlockchainBlockSettingsForm extends FormBase {
   public function getFormId() {
 
     return 'blockchain_block_settings';
-  }
-
-  /**
-   * Form submission handler.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-
-    $element = $form_state->getTriggeringElement();
-    if ($element['#type'] == 'button') {
-      if ($element['#context'] == 'regenerate_blockchain_id') {
-        $this->blockchainService
-          ->getConfigService()
-          ->getCurrentConfig()
-          ->setBlockchainId(
-            $this->blockchainService->getConfigService()->generateId()
-          )->save();
-      }
-      elseif ($element['#context'] == 'regenerate_blockchain_node_id') {
-        $this->blockchainService
-          ->getConfigService()
-          ->getCurrentConfig()
-          ->setNodeId(
-            $this->blockchainService->getConfigService()->generateId()
-          )->save();
-      }
-      elseif ($element['#context'] == 'put_generic_block') {
-        $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
-        $this->blockchainService->getStorageService()->save($genericBlock);
-      }
-    }
-    else {
-      // Nothing here... TODO this handler should be moved to entity form
-    }
-
   }
 
   /**
