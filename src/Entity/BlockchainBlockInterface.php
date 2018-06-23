@@ -126,4 +126,20 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    */
   public function getHash();
 
+  /**
+   * Overrides save handler definition.
+   *
+   * @return int
+   *   Save result.
+   */
+  public function save();
+
+  /**
+   * Overrides deletes handler definition.
+   *
+   * @return mixed
+   *   Delete result.
+   */
+  public function delete();
+
 }

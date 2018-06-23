@@ -142,7 +142,8 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->range(0,1)
       ->execute();
     if ($blockId) {
-      return BlockchainBlock::load(current($blockId));
+
+      return $this->getBlockStorage()->load(current($blockId));
     }
 
     return NULL;
@@ -175,14 +176,18 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     if (!$previousHash) {
       $previousHash = Util::hash($rand->string());
     }
-    $block = BlockchainBlock::create();
-    $block->setPreviousHash($previousHash);
-    $block->setTimestamp(time());
-    $block->setAuthor($this->configService->getCurrentConfig()->getNodeId());
-    $block->setData('raw::' . $rand->string(mt_rand(7, 20)));
-    $this->blockchainMinerService->mineBlock($block);
+    $block = $this->getBlockStorage()->create([]);
+    if ($block instanceof BlockchainBlockInterface) {
+      $block->setPreviousHash($previousHash);
+      $block->setTimestamp(time());
+      $block->setAuthor($this->configService->getCurrentConfig()->getNodeId());
+      $block->setData('raw::' . $rand->string(mt_rand(7, 20)));
+      $this->blockchainMinerService->mineBlock($block);
 
-    return $block;
+      return $block;
+    }
+
+    return NULL;
   }
 
   /**
@@ -312,8 +317,8 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->accessCheck(FALSE)
       ->range($offset, $limit)
       ->execute();
-    /** @var BlockchainBlock[] $blocks*/
-    $blocks = BlockchainBlock::loadMultiple($blockIds);
+    /** @var BlockchainBlockInterface[] $blocks*/
+    $blocks = $this->getBlockStorage()->loadMultiple($blockIds);
     if ($asArray) {
       foreach ($blocks as &$block) {
         $block = $block->toArray();
@@ -346,7 +351,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->range(0,1)
       ->execute();
     if ($blockId) {
-      return BlockchainBlock::load(current($blockId));
+      return $this->getBlockStorage()->load(current($blockId));
     }
 
     return NULL;
