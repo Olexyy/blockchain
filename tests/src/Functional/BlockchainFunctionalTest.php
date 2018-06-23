@@ -7,7 +7,6 @@ use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Plugin\BlockchainAuthManager;
 use Drupal\blockchain\Service\BlockchainApiServiceInterface;
-use Drupal\blockchain\Service\BlockchainConfigServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Tests\BrowserTestBase;
