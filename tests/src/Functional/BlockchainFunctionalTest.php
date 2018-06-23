@@ -166,11 +166,10 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('No self param.', $response->getDetailsParam());
     // Generate valid token
     $authToken = $this->blockchainService->getConfigService()->tokenGenerate();
-    /*
     // Enable auth.
-    $this->blockchainService->getConfigService()->getCurrentConfig()->setIsAuth(TRUE)->save();
-    $auth = $this->blockchainService->getConfigService()->getCurrentConfig()->getIsAuth();
-    $this->assertTrue($auth, 'Blockchain auth is enabled');
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setAuth('shared_key')->save();
+    $auth = $this->blockchainService->getConfigService()->getCurrentConfig()->getAuth();
+    $this->assertEquals('shared_key', $auth, 'Blockchain auth is enabled');
     // Cover API is restricted for non 'auth' request.
     $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
@@ -178,7 +177,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     ]);
     $this->assertEquals(401, $response->getStatusCode());
     $this->assertEquals('Unauthorized', $response->getMessageParam());
-    $this->assertEquals('Auth token required.', $response->getDetailsParam());
+    $this->assertEquals('Auth token invalid.', $response->getDetailsParam());
     // Cover API is restricted for invalid 'auth' request.
     $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
@@ -197,7 +196,6 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(401, $response->getStatusCode());
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Not subscribed yet.', $response->getDetailsParam());
-     */
     // Ensure we have blacklist filter mode.
     $blockchainFilterType = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterType();
     $this->assertEquals($blockchainFilterType, BlockchainConfigInterface::FILTER_TYPE_BLACKLIST, 'Blockchain filter type is blacklist');
