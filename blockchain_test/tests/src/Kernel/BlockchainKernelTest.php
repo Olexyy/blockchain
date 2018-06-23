@@ -50,6 +50,7 @@ class BlockchainKernelTest extends KernelTestBase {
     $this->blockchainService->getConfigService()->setCurrentConfig('blockchain_test_block');
     $currentConfig = $this->blockchainService->getConfigService()->getCurrentConfig();
     $this->assertInstanceOf(BlockchainConfigInterface::class, $currentConfig, 'Current config set.');
+    $this->assertEquals('blockchain_test_block', $currentConfig->id(), 'Current config set to test.');
   }
 
   /**
@@ -115,9 +116,14 @@ class BlockchainKernelTest extends KernelTestBase {
     $this->assertEmpty($blocks, 'No blocks loaded');
     $firstBlock = $this->blockchainService->getStorageService()->getFirstBlock();
     $this->assertInstanceOf(BlockchainBlockInterface::class, $firstBlock, 'First block obtained');
-    $blocks = $this->blockchainService->getStorageService()->getBlocksFrom($firstBlock, 100);
+    $this->assertEquals(1, $firstBlock->id(), 'First block id is 1');
+    $blocks = $this->blockchainService->getStorageService()->getBlocksFrom($firstBlock, 100, FALSE);
     $this->assertCount(6, $blocks, 'Loaded 6 blocks');
-    // check no storage in blockchain_block!!!
+    $this->blockchainService->getConfigService()->setCurrentConfig('blockchain_block');
+    $currentConfig = $this->blockchainService->getConfigService()->getCurrentConfig();
+    $this->assertEquals('blockchain_block', $currentConfig->id(), 'Current config set to native.');
+    $count = $this->blockchainService->getStorageService()->getBlockCount();
+    $this->assertEmpty($count, 'No blocks in default storage');
   }
 
 }

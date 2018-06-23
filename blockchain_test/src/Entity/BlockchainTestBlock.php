@@ -6,7 +6,7 @@ namespace Drupal\blockchain_test\Entity;
 use Drupal\blockchain\Entity\BlockchainBlock;
 
 /**
- * Defines the Blockchain Block entity.
+ * Defines the Blockchain test Block entity.
  *
  * @ingroup blockchain
  *
