@@ -174,7 +174,8 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
       }
     }
     if ($blockchainRequest->getRequestType() !== BlockchainRequestInterface::TYPE_SUBSCRIBE) {
-      if (!$blockchainNode = $this->blockchainNodeService->load($blockchainRequest->getSelfParam())) {
+      if (!$blockchainNode = $this->blockchainNodeService->loadBySelfAndType(
+        $blockchainRequest->getSelfParam(), $blockchainConfig->id())) {
 
         return BlockchainResponse::create()
           ->setIp($blockchainRequest->getIp())

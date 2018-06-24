@@ -88,6 +88,13 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   protected $addressSource;
 
   /**
+   * The self param.
+   *
+   * @var string
+   */
+  protected $self;
+
+  /**
    * {@inheritdoc}
    */
   public static function entityTypeId() {
@@ -191,6 +198,7 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   public function getEndPoint() {
 
     if ($this->addressSource == static::ADDRESS_SOURCE_CLIENT) {
+
       return $this->getAddress();
     }
     else {
@@ -255,6 +263,24 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   public function setAddressSource($addressSource) {
 
     $this->addressSource = $addressSource;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSelf() {
+
+    return $this->self;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSelf($self) {
+
+    $this->self = $self;
 
     return $this;
   }

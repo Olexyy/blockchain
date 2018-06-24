@@ -141,6 +141,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function getAuthParam() {
+
     return $this->getParam(static::PARAM_AUTH);
   }
 
@@ -148,6 +149,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function getSelfParam() {
+
     return $this->getParam(static::PARAM_SELF);
   }
 
@@ -155,6 +157,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function getCountParam() {
+
     return $this->getParam(static::PARAM_COUNT);
   }
 
@@ -162,6 +165,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function getBlocksParam() {
+
     return $this->getParam(static::PARAM_BLOCKS);
   }
 
@@ -169,6 +173,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function getPreviousHashParam() {
+
     return $this->getParam(static::PARAM_PREVIOUS_HASH);
   }
 
@@ -176,6 +181,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function getTimestampParam() {
+
     return $this->getParam(static::PARAM_TIMESTAMP);
   }
 
@@ -183,6 +189,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function hasAuthParam() {
+
     return !($this->getAuthParam() === NULL);
   }
 
@@ -190,6 +197,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function hasSelfParam() {
+
     return !($this->getSelfParam() === NULL);
   }
 
@@ -197,6 +205,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function hasCountParam() {
+
     return !($this->getCountParam() === NULL);
   }
 
@@ -204,6 +213,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function hasBlocksParam() {
+
     return !($this->getBlocksParam() === NULL);
   }
 
@@ -211,6 +221,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function hasTimestampParam() {
+
     return !($this->getTimestampParam() === NULL);
   }
 
@@ -218,6 +229,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * {@inheritdoc}
    */
   public function hasPreviousHashParam() {
+
     return !($this->getPreviousHashParam() === NULL);
   }
 
@@ -243,6 +255,22 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   public static function wakeup($data) {
 
     return unserialize($data);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSelfUrl() {
+
+    return $this->getParam(static::PARAM_SELF_URL);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasSelfUrl() {
+
+    return !($this->getSelfUrl() === NULL);
   }
 
 }

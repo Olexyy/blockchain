@@ -94,7 +94,8 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
     if (!($blockchainRequest = BlockchainRequest::wakeup($announceData))) {
       throw new \Exception('Invalid announce queue data.');
     }
-    $blockchainNode = $this->blockchainService->getNodeService()->load($blockchainRequest->getSelfParam());
+    $blockchainNode = $this->blockchainService->getNodeService()->loadBySelfAndType(
+      $blockchainRequest->getSelfParam(), $blockchainRequest->getTypeParam());
     if (!($blockchainNode)) {
       throw new \Exception('Invalid announce request data.');
     }

@@ -90,13 +90,39 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function create($id, $label, $address, $port = NULL, $secure = NULL, $save = TRUE) {
+  public function loadBySelfAndType($self, $blockchainTypeId) {
+
+    if($node = $this->load($self . '_' . $blockchainTypeId)) {
+      if ($node->getBlockchainTypeId() == $blockchainTypeId) {
+
+        return $node;
+      }
+    }
+
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function existsBySelfAndType($self, $blockchainTypeId) {
+
+    return (bool) $this->loadBySelfAndType($self, $blockchainTypeId);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function create($blockchainType, $self, $addressSource,  $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE) {
 
     /** @var BlockchainNodeInterface $blockchainNode */
     $blockchainNode = $this->getStorage()->create();
+    $label = $label? $label : $self;
     $blockchainNode
-      ->setId($id)
-      ->setLabel($label)
+      ->setBlockchainTypeId($blockchainType)
+      ->setSelf($self)
+      ->setId($self . '_' .$blockchainType)
+      ->setLabel($label? $label : $self)
       ->setAddress($address)
       ->setSecure($secure)
       ->setPort($port);
@@ -117,12 +143,23 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
    */
   public function createFromRequest(BlockchainRequestInterface $request, $save = TRUE) {
 
+    if ($request->hasSelfUrl()) {
+
+      return $this->create(
+        $request->getTypeParam(),
+        $request->getSelfParam(),
+        BlockchainNodeInterface::ADDRESS_SOURCE_CLIENT,
+        $request->getSelfUrl(),
+        NULL, NULL, NULL, $save);
+    }
+
     return $this->create(
+      $request->getTypeParam(),
       $request->getSelfParam(),
-      $request->getSelfParam(),
+      BlockchainNodeInterface::ADDRESS_SOURCE_REQUEST,
       $request->getIp(),
-      $request->isSecure(),
-      $request->getPort(), $save);
+      $request->getPort(),
+      $request->isSecure(), NULL, $save);
   }
 
   /**

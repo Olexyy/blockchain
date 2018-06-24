@@ -235,14 +235,21 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $whitelist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
     $this->assertEmpty($whitelist, 'Whitelist is empty.');
     // Lets focus on Blockchain nodes. Ensure we have any.
-    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
+      $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
     $this->assertFalse($blockchainNodeExists, 'Blockchain node not exists in list');
     $nodeCount = count($this->blockchainService->getNodeService()->getList());
     $this->assertEmpty($nodeCount, 'Blockchain node list empty');
     // Try to create one. Ensure list is not empty.
-    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->localIp, $this->localPort);
+    $blockchainNode = $this->blockchainService->getNodeService()->create(
+      $this->blockchainService->getConfigService()->getCurrentConfig()->id(),
+      $blockchainNodeId,
+      BlockchainNodeInterface::ADDRESS_SOURCE_CLIENT,
+      $this->baseUrl
+    );
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
-    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
+      $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
     $nodeCount = $this->blockchainService->getNodeService()->getList();
     $this->assertCount(1, $nodeCount, 'Blockchain node list not empty');
@@ -253,13 +260,11 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('Already in list.', $response->getDetailsParam());
     // Delete node.
     $this->blockchainService->getNodeService()->delete($blockchainNode);
-    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
+      $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
     $this->assertFalse($blockchainNodeExists, 'Blockchain node not exists in list');
     $nodeCount = $this->blockchainService->getNodeService()->getList();
     $this->assertEmpty($nodeCount, 'Blockchain node list empty');
-    // Success case.
-    $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
-    $this->assertEquals(200, $response->getStatusCode(), 'Subscribed');
   }
 
   /**
@@ -277,9 +282,11 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('Success', $response->getMessageParam());
     $this->assertEquals('Added to list.', $response->getDetailsParam());
     $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();
-    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
+        $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
-    $testLoad = $this->blockchainService->getNodeService()->load($blockchainNodeId);
+    $testLoad = $this->blockchainService->getNodeService()->loadBySelfAndType(
+      $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
     $this->assertInstanceOf(BlockchainNodeInterface::class, $testLoad, 'Blockchain node loaded');
     $testLoad = $this->blockchainService->getNodeService()->load('NON_EXISTENT');
     $this->assertEmpty($testLoad, 'Non existent Blockchain node not loaded');
@@ -329,9 +336,15 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_CRON, $announceManagement, 'Announce management set to CRON handled.');
     // Attach self to node list.
     $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();
-    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->baseUrl);
+    $blockchainNode = $this->blockchainService->getNodeService()->create(
+      $this->blockchainService->getConfigService()->getCurrentConfig()->id(),
+      $blockchainNodeId,
+      BlockchainNodeInterface::ADDRESS_SOURCE_CLIENT,
+      $this->baseUrl
+    );
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
-    $blockchainNodeExists = $this->blockchainService->getNodeService()->exists($blockchainNodeId);
+    $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
+      $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
     $nodeCount = $this->blockchainService->getNodeService()->getList();
     $this->assertCount(1, $nodeCount, 'Blockchain node list not empty');

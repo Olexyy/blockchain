@@ -20,9 +20,11 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
   const PARAM_SELF = 'self';
   const PARAM_TIMESTAMP = 'timestamp';
   const PARAM_PREVIOUS_HASH = 'previous_hash';
+  const PARAM_SELF_URL= 'self_url';
   const PARAMS = [
-    self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT, self::PARAM_BLOCKS,
-    self::PARAM_TIMESTAMP, self::PARAM_PREVIOUS_HASH, self::PARAM_TYPE
+    self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT,
+    self::PARAM_BLOCKS, self::PARAM_TIMESTAMP, self::PARAM_PREVIOUS_HASH,
+    self::PARAM_TYPE, self::PARAM_SELF_URL,
   ];
 
   /**
@@ -194,5 +196,21 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    *   This object.
    */
   public static function wakeup($data);
+
+  /**
+   * Getter for param.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getSelfUrl();
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasSelfUrl();
 
 }

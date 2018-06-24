@@ -54,6 +54,19 @@ interface BlockchainNodeServiceInterface {
   /**
    * Getter for list of Blockchain nodes.
    *
+   * @param string $self
+   *   Given id.
+   * @param string $blockchainTypeId
+   *   Blockchain type id.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function existsBySelfAndType($self, $blockchainTypeId);
+
+  /**
+   * Getter for list of Blockchain nodes.
+   *
    * @param string $id
    *   Given id.
    *
@@ -63,24 +76,42 @@ interface BlockchainNodeServiceInterface {
   public function load($id);
 
   /**
+   * Loads node by self and type.
+   *
+   * @param string $self
+   *   Given id.
+   * @param string $blockchainTypeId
+   *   Blockchain type id.
+   *
+   * @return BlockchainNodeInterface|null
+   *   Entity if any.
+   */
+  public function loadBySelfAndType($self, $blockchainTypeId);
+
+  /**
    * Factory method.
    *
-   * @param string $id
-   *   Should be unique.
-   * @param string $label
-   *   Can be same as label.
+   * @param string $blockchainType
+   *   Type of blockchain.
+   * @param $self
+   *   Actual id of blockchain.
+   * @param $addressSource
+   *   Address source.
    * @param string $address
-   *   Client ip.
+   *   Client ip/host.
    * @param string $port
    *   Client port.
    * @param null $secure
+   *   Secure flag.
+   * @param string $label
+   *   Can be same as label.
    * @param bool $save
    *   Flag defines saving action.
    *
    * @return BlockchainNodeInterface|null
    *   New entity if created.
    */
-  public function create($id, $label, $address, $port = NULL, $secure = NULL, $save = TRUE);
+  public function create($blockchainType, $self, $addressSource,  $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE);
 
   /**
    * Factory method.

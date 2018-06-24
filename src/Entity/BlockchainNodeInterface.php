@@ -181,4 +181,23 @@ interface BlockchainNodeInterface extends ConfigEntityInterface {
    */
   public function setAddressSource($addressSource);
 
+  /**
+   * Getter for property.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getSelf();
+
+  /**
+   * Setter for property.
+   *
+   * @param string $self
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setSelf($self);
+
 }

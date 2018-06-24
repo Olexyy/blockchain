@@ -127,7 +127,12 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertEquals(5, $this->blockchainService->getStorageService()->getBlockCount(), 'Set 5 blocks to blockchain emulation.');
     // Attach self to node list.
     $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();
-    $blockchainNode = $this->blockchainService->getNodeService()->create($blockchainNodeId, $blockchainNodeId, $this->baseUrl, $this->localPort);
+    $blockchainNode = $this->blockchainService->getNodeService()->create(
+      $this->blockchainService->getConfigService()->getCurrentConfig()->id(),
+      $blockchainNodeId,
+      BlockchainNodeInterface::ADDRESS_SOURCE_CLIENT,
+      $this->baseUrl
+    );
     $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
   }
 
