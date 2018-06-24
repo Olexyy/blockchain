@@ -7,6 +7,7 @@ use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainApiServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Tests\BrowserTestBase;
 use GuzzleHttp\Client;
 
@@ -46,6 +47,13 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
   protected $blockchainAnnounceUrl;
 
   /**
+   * Blockchain API fetch Url.
+   *
+   * @var string
+   */
+  protected $blockchainFetchUrl;
+
+  /**
    * Local ip.
    *
    * @var string
@@ -77,6 +85,7 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertNotEmpty($this->baseUrl, 'Base url is set.');
     $this->blockchainAnnounceUrl = $this->baseUrl . BlockchainApiServiceInterface::API_ANNOUNCE;
     $this->blockchainSubscribeUrl = $this->baseUrl . BlockchainApiServiceInterface::API_SUBSCRIBE;
+    $this->blockchainFetchUrl = $this->baseUrl . BlockchainApiServiceInterface::API_FETCH;
     $this->assertNotEmpty($this->blockchainSubscribeUrl, 'Blockchain subscribe API url is set.');
     $this->httpClient = $this->container->get('http_client');
     $this->assertInstanceOf(Client::class, $this->httpClient,
@@ -88,10 +97,7 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
     $configs = $this->blockchainService->getConfigService()->getAllConfigs();
     $this->assertCount(2, $configs, '2 config created');
-    $this->blockchainService->getConfigService()->setCurrentConfig('blockchain_test_block');
-    $currentConfig = $this->blockchainService->getConfigService()->getCurrentConfig();
-    $this->assertInstanceOf(BlockchainConfigInterface::class, $currentConfig, 'Current config set.');
-    $this->assertEquals('blockchain_test_block', $currentConfig->id(), 'Current config set to test.');
+    $this->setCurrentConfig('blockchain_test_block');
     // Enable API.
     $this->blockchainService->getConfigService()->getCurrentConfig()->setType(BlockchainConfigInterface::TYPE_MULTIPLE)->save();
     $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
@@ -131,32 +137,39 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
   /**
    * Tests emulation storage API FETCH.
    */
- /* public function testEmulationStorageApiFetch() {
+  public function testEmulationStorageApiFetch() {
 
-    $firstBlock = $this->blockchainEmulationStorage->getBlockStorage()[0];
+    $firstBlock = $this->blockchainService->getStorageService()->getFirstBlock();
+    $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();
+    // Switch to legacy storage.
+    $this->setCurrentConfig('blockchain_block');
+    // Sync node id to be in list.
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setNodeId($blockchainNodeId)->save();
     $params = [
       BlockchainRequestInterface::PARAM_PREVIOUS_HASH => $firstBlock->getPreviousHash(),
       BlockchainRequestInterface::PARAM_TIMESTAMP => $firstBlock->getTimestamp(),
     ];
     $this->blockchainService->getApiService()->addRequiredParams($params);
-    $result = $this->blockchainService->getApiService()->execute($this->baseUrl . '/blockchain/api/emulation/fetch', $params);
+    $params[BlockchainRequestInterface::PARAM_TYPE] = 'blockchain_test_block';
+    $result = $this->blockchainService->getApiService()->execute($this->blockchainFetchUrl, $params);
     $code = $result->getStatusCode();
     $this->assertEquals(200, $code, 'Response ok');
-    $exists = $result->getExistsParam();
-    $this->assertTrue($exists, 'Block exists');
-    $count = $result->getCountParam();
-    $this->assertEquals(4, $count, 'Returned count');
+    $this->assertEquals('Success', $result->getMessageParam(), 'Response message ok');
+    $this->assertTrue($result->getExistsParam(), 'Block exists');
+    $this->assertEquals('Block exists', $result->getDetailsParam(), 'Response details ok');
+    $this->assertEquals(4, $result->getCountParam(), 'Returned count');
     // Execute FETCH to emulation blockchain that downgrades to COUNT.
     $params = [];
     $this->blockchainService->getApiService()->addRequiredParams($params);
-    $result = $this->blockchainService->getApiService()->execute($this->baseUrl . '/blockchain/api/emulation/fetch', $params);
+    $params[BlockchainRequestInterface::PARAM_TYPE] = 'blockchain_test_block';
+    $result = $this->blockchainService->getApiService()->execute($this->blockchainFetchUrl, $params);
     $code = $result->getStatusCode();
     $this->assertEquals(200, $code, 'Response ok');
     $exists = $result->getExistsParam();
     $this->assertFalse($exists, 'Block not exists');
     $count = $result->getCountParam();
     $this->assertEquals(5, $count, 'Returned total count');
-  }*/
+  }
 
   /**
    * Tests emulation storage API PULL.
@@ -240,5 +253,19 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertTrue($valid, 'Collected blocks are valid');
   }
 */
-}
 
+  /**
+   * Helper to switch config and assert it.
+   *
+   * @param string $configId
+   *   Id of config.
+   */
+  public function setCurrentConfig($configId) {
+
+    $this->blockchainService->getConfigService()->setCurrentConfig($configId);
+    $currentConfig = $this->blockchainService->getConfigService()->getCurrentConfig();
+    $this->assertInstanceOf(BlockchainConfigInterface::class, $currentConfig, 'Current config set.');
+    $this->assertEquals($configId, $currentConfig->id(), 'Current config set to '. $configId .'.');
+  }
+
+}
