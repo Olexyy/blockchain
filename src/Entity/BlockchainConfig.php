@@ -440,4 +440,28 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainFilterListAsArray(array $blockchainFilterList) {
+
+    $blockchainFilterList = implode("\r\n", $blockchainFilterList);
+    return $this->setFilterList($blockchainFilterList);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainFilterListAsArray() {
+
+    if ($list = $this->getFilterList()) {
+      $parsed = preg_split('~\R~', $list);
+      array_walk($parsed, 'trim');
+
+      return $parsed;
+    }
+
+    return [];
+  }
+
 }

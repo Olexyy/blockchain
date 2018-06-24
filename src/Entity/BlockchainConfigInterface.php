@@ -334,4 +334,23 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
    */
   public function save();
 
+  /**
+   * Setter for blockchain nodes filter list.
+   *
+   * @param array $blockchainFilterList
+   *   Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setBlockchainFilterListAsArray(array $blockchainFilterList);
+
+  /**
+   * Getter for blockchain nodes filter list.
+   *
+   * @return string[]
+   *   Array of values.
+   */
+  public function getBlockchainFilterListAsArray();
+
 }

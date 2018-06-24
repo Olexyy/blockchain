@@ -82,7 +82,12 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    */
   public static function createFromRequest(Request $request) {
 
-    return new static(static::parseRequest($request), $request->getClientIp());
+    $blockchainRequest = new static(static::parseRequest($request), $request->getClientIp());
+    if ($request->attributes->has('request_type')) {
+      $blockchainRequest->setRequestType($request->attributes->get('request_type'));
+    }
+
+    return $blockchainRequest;
   }
 
   /**

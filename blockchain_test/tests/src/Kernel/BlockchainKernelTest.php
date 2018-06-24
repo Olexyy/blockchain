@@ -45,7 +45,7 @@ class BlockchainKernelTest extends KernelTestBase {
     $this->assertInstanceOf(BlockchainServiceInterface::class, $this->blockchainService,
       'Blockchain service instantiated.');
     $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
-    $configs = $this->blockchainService->getConfigService()->getAllConfigs();
+    $configs = $this->blockchainService->getConfigService()->getAll();
     $this->assertCount(2, $configs, '2 config created');
     $this->blockchainService->getConfigService()->setCurrentConfig('blockchain_test_block');
     $currentConfig = $this->blockchainService->getConfigService()->getCurrentConfig();

@@ -120,7 +120,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('Missing type param.');
     }
-    if (!$this->configService->exists($blockchainRequest->getTypeParam())) {
+    if (!$blockchainConfig = $this->configService->load($blockchainRequest->getTypeParam())) {
 
       return BlockchainResponse::create()
         ->setIp($request->getClientIp())
@@ -131,12 +131,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setDetailsParam('Invalid type param.');
     }
 
-    // Set blockchain config as it is validated.
-    // TODO DO IT NOT HERE
-    $this->configService
-      ->setCurrentConfig($blockchainRequest->getTypeParam());
-
-    if (!$request->isSecure() && !$this->configService->getAllowNotSecure()) {
+    if (!$request->isSecure() && !$blockchainConfig->getAllowNotSecure()) {
 
       return BlockchainResponse::create()
         ->setIp($request->getClientIp())
@@ -146,7 +141,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('Incorrect protocol.');
     }
-    if ($configService->getCurrentConfig()->getType() === BlockchainConfigInterface::TYPE_SINGLE) {
+    if ($blockchainConfig->getType() === BlockchainConfigInterface::TYPE_SINGLE) {
 
       return BlockchainResponse::create()
         ->setIp($request->getClientIp())
@@ -166,8 +161,9 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setMessageParam('Bad request')
         ->setDetailsParam('No self param.');
     }
-    if ($authHandler = $this->blockchainAuthManager->getHandler($configService->getCurrentConfig())) {
-      if(!$authHandler->authorize($blockchainRequest)) {
+    if ($authHandler = $this->blockchainAuthManager->getHandler($blockchainConfig)) {
+      if(!$authHandler->authorize($blockchainRequest, $blockchainConfig)) {
+
         return BlockchainResponse::create()
           ->setIp($blockchainRequest->getIp())
           ->setPort($request->getPort())
@@ -189,8 +185,8 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
           ->setDetailsParam('Not subscribed yet.');
       }
     }
-    if ($filterList = $configService->getBlockchainFilterListAsArray()) {
-      if ($configService->getCurrentConfig()->getFilterType() === BlockchainConfigInterface::FILTER_TYPE_BLACKLIST) {
+    if ($filterList = $blockchainConfig->getBlockchainFilterListAsArray()) {
+      if ($blockchainConfig->getFilterType() === BlockchainConfigInterface::FILTER_TYPE_BLACKLIST) {
         if (in_array($blockchainRequest->getIp(), $filterList)) {
 
           return BlockchainResponse::create()

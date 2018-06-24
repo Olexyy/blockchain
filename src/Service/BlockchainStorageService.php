@@ -195,19 +195,21 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
    */
   public function getBlockDataHandler($data = NULL) {
 
-    $pluginId = $this->configService->getConfig()->get('dataHandler');
+    $pluginId = $this->configService->getCurrentConfig()->getDataHandler();
     if ($data) {
       if ($extractedId = $this->blockchainDataManager->extractPluginId($data)) {
         $pluginId = $extractedId;
       }
     }
     try {
+
       return $this->blockchainDataManager->createInstance($pluginId, [
         BlockchainDataInterface::DATA_KEY => $data,
       ]);
     } catch (\Exception $e) {
       $this->getLogger()
         ->error($e->getMessage() . $e->getTraceAsString());
+
       return NULL;
     }
   }
@@ -222,6 +224,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     } catch (\Exception $e) {
       $this->getLogger()
         ->error($e->getMessage() . $e->getTraceAsString());
+
       return NULL;
     }
   }

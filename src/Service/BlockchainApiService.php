@@ -130,6 +130,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
     } catch (\Exception $e) {
       $this->getLogger()
         ->error($e->getCode() . $e->getMessage() . $e->getTraceAsString());
+
       return BlockchainResponse::create();
     }
   }
@@ -231,7 +232,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
     $params[BlockchainRequestInterface::PARAM_SELF] = $this->configService->getCurrentConfig()->getNodeId();
     $params[BlockchainRequestInterface::PARAM_TYPE] = $this->configService->getCurrentConfig()->id();
     if ($authHandler = $this->blockchainAuthManager->getHandler($this->configService->getCurrentConfig())) {
-      $authHandler->addAuthParams($params);
+      $authHandler->addAuthParams($params, $this->configService->getCurrentConfig());
     }
   }
 }

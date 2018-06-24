@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Plugin;
 
+use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
@@ -20,17 +21,22 @@ interface BlockchainAuthInterface extends PluginInspectionInterface {
    * @param BlockchainRequestInterface $blockchainRequest
    *   Given request.
    *
+   * @param BlockchainConfigInterface $blockchainConfig
+   *   Given config object.
+   *
    * @return bool
    *   Auth result.
    */
-  public function authorize(BlockchainRequestInterface $blockchainRequest);
+  public function authorize(BlockchainRequestInterface $blockchainRequest, BlockchainConfigInterface $blockchainConfig);
 
   /**
    * Setup for auth params.
    *
    * @param array $params
    *   Given params.
+   * @param BlockchainConfigInterface $blockchainConfig
+   *   Given config object.
    */
-  public function addAuthParams(array &$params);
+  public function addAuthParams(array &$params, BlockchainConfigInterface $blockchainConfig);
 
 }

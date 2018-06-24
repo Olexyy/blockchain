@@ -39,50 +39,12 @@ interface BlockchainConfigServiceInterface {
   public function getState();
 
   /**
-   * Setter for blockchain nodes filter list.
-   *
-   * @param array $blockchainFilterList
-   *   Given value.
-   *
-   * @return $this
-   *   Chaining.
-   */
-  public function setBlockchainFilterListAsArray(array $blockchainFilterList);
-
-  /**
-   * Getter for blockchain nodes filter list.
-   *
-   * @return string[]
-   *   Array of values.
-   */
-  public function getBlockchainFilterListAsArray();
-
-  /**
    * Generates auth token.
    *
    * @return string
    *   Hash.
    */
   public function tokenGenerate();
-
-  /**
-   * Getter for allow not secure protocol.
-   *
-   * @return bool
-   *   Value.
-   */
-  public function getAllowNotSecure();
-
-  /**
-   * Setter for allow not secure protocol.
-   *
-   * @param $allowNotSecure
-   *    Given value.
-   *
-   * @return $this
-   *   Chaining.
-   */
-  public function setAllowNotSecure($allowNotSecure);
 
   /**
    * Setter for blockchain config.
@@ -160,7 +122,7 @@ interface BlockchainConfigServiceInterface {
    * @return BlockchainConfigInterface[]|array
    *   Array of entities if any .
    */
-  public function getAllConfigs();
+  public function getAll();
 
   /**
    * Handler to get list of blockchain configs.
@@ -169,5 +131,24 @@ interface BlockchainConfigServiceInterface {
    *   List array.
    */
   public function getList();
+
+  /**
+   * Getter for config storage.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface|null
+   *   Storage.
+   */
+  public function getStorage();
+
+  /**
+   * Shortcut to load entity.
+   *
+   * @param string $id
+   *   Given id.
+   *
+   * @return BlockchainConfigInterface $blockchainConfig
+   *   Loaded entity.
+   */
+  public function load($id);
 
 }

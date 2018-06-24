@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Plugin\BlockchainAuth;
 
+use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Plugin\BlockchainAuthInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
@@ -54,21 +55,19 @@ class BlockchainAuthSharedKey extends PluginBase implements
   }
 
   /**
-   * Auth handler.
-   *
-   * @param BlockchainRequestInterface $blockchainRequest
-   *   Given request.
-   *
-   * @return bool
-   *   Auth result.
+   * {@inheritdoc}
    */
-  public function authorize(BlockchainRequestInterface $blockchainRequest) {
+  public function authorize(BlockchainRequestInterface $blockchainRequest, BlockchainConfigInterface $blockchainConfig) {
 
     if (!$authToken = $blockchainRequest->getAuthParam()) {
 
       return FALSE;
     }
-    if (!$this->authIsValid($blockchainRequest->getSelfParam(), $blockchainRequest->getAuthParam())) {
+    if (!$this->authIsValid(
+      $blockchainRequest->getSelfParam(),
+      $blockchainRequest->getAuthParam(),
+      $blockchainConfig->getBlockchainId())
+    ) {
 
       return FALSE;
     }
@@ -77,12 +76,9 @@ class BlockchainAuthSharedKey extends PluginBase implements
   }
 
   /**
-   * Setup for auth params.
-   *
-   * @param array $params
-   *   Given params.
+   * {@inheritdoc}
    */
-  public function addAuthParams(array &$params) {
+  public function addAuthParams(array &$params, BlockchainConfigInterface $blockchainConfig) {
 
     $params[BlockchainRequestInterface::PARAM_AUTH] = $this->blockchainService
       ->getConfigService()
@@ -96,17 +92,15 @@ class BlockchainAuthSharedKey extends PluginBase implements
    *   Self key.
    * @param string $auth
    *   Auth key.
+   * @param string $blockchainId
+   *   Blockchain id.
    *
    * @return bool
    *   Validation result.
    */
-  public function authIsValid($self, $auth) {
-
-    $blockchainId = $this->blockchainService
-      ->getConfigService()
-      ->getCurrentConfig()
-      ->getBlockchainId();
+  public function authIsValid($self, $auth, $blockchainId) {
 
     return Util::hash($blockchainId.$self) === $auth;
   }
+
 }

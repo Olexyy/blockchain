@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Plugin\BlockchainAuth;
 
+use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Plugin\BlockchainAuthInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -23,27 +24,17 @@ class BlockchainAuthNone extends PluginBase implements
   use StringTranslationTrait;
 
   /**
-   * Auth handler.
-   *
-   * @param BlockchainRequestInterface $blockchainRequest
-   *   Given request.
-   *
-   * @return bool
-   *   Auth result.
+   * {@inheritdoc}
    */
-  public function authorize(BlockchainRequestInterface $blockchainRequest) {
+  public function authorize(BlockchainRequestInterface $blockchainRequest, BlockchainConfigInterface $blockchainConfig) {
 
     return TRUE;
   }
 
   /**
-   * Setup for auth params.
-   *
-   * @param array $params
-   *   Given params.
+   * {@inheritdoc}
    */
-  public function addAuthParams(array &$params) { }
-
+  public function addAuthParams(array &$params, BlockchainConfigInterface $blockchainConfig) { }
 
   /**
    * {@inheritdoc}

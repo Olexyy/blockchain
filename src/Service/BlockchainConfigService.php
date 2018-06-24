@@ -102,58 +102,6 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getAllowNotSecure() {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-
-      return $blockchainConfig->getAllowNotSecure();
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setAllowNotSecure($allowNotSecure) {
-
-    if ($blockchainConfig = $this->getCurrentConfig()) {
-      $blockchainConfig->setAllowNotSecure($allowNotSecure);
-
-      return $this->save($blockchainConfig);
-    }
-
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setBlockchainFilterListAsArray(array $blockchainFilterList) {
-
-    $blockchainFilterList = implode("\r\n", $blockchainFilterList);
-
-    return $this->getCurrentConfig()->setFilterList($blockchainFilterList)->save();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlockchainFilterListAsArray() {
-
-    if ($list = $this->getCurrentConfig()->getFilterList()) {
-      $parsed = preg_split('~\R~', $list);
-      array_walk($parsed, 'trim');
-
-      return $parsed;
-    }
-
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function tokenGenerate() {
 
     return Util::hash($this->getCurrentConfig()->getBlockchainId().$this->getCurrentConfig()->getNodeId());
@@ -172,7 +120,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
       }
     }
     elseif (is_string($blockchainConfig)) {
-      if ($blockchainConfigEntity = BlockchainConfig::load($blockchainConfig)) {
+      if ($blockchainConfigEntity = $this->getStorage()->load($blockchainConfig)) {
         static::$blockchainConfig = $blockchainConfigEntity;
 
         return TRUE;
@@ -211,7 +159,8 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getDefaultBlockchainConfig($entityTypeId) {
 
-    $blockchainConfig = BlockchainConfig::create([]);
+    /** @var BlockchainConfigInterface $blockchainConfig */
+    $blockchainConfig = $this->getStorage()->create([]);
     $blockchainConfig->setId($entityTypeId);
     $blockchainConfig->setLabel($entityTypeId);
     $blockchainConfig->setBlockchainId($this->generateId());
@@ -269,12 +218,33 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
+  public function getStorage() {
+
+    try {
+
+      return $this->entityTypeManager
+        ->getStorage(BlockchainConfigInterface::ENTITY_TYPE);
+    } catch (\Exception $exception) {
+
+      return NULL;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function load($id) {
+
+    return $this->getStorage()->load($id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function save(BlockchainConfigInterface $blockchainConfig) {
 
     try {
-      $this->entityTypeManager
-        ->getStorage(BlockchainConfigInterface::ENTITY_TYPE)
-        ->save($blockchainConfig);
+      $this->getStorage()->save($blockchainConfig);
 
       return TRUE;
     } catch (\Exception $exception) {
@@ -288,15 +258,15 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function exists($blockchainConfigId) {
 
-    return (bool) BlockchainConfig::load($blockchainConfigId);
+    return (bool) $this->getStorage()->load($blockchainConfigId);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getAllConfigs() {
+  public function getAll() {
 
-    return BlockchainConfig::loadMultiple();
+    return $this->getStorage()->loadMultiple();
   }
 
   /**
@@ -305,7 +275,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   public function getList() {
 
     $list = [];
-    foreach ($this->getAllConfigs() as $config) {
+    foreach ($this->getAll() as $config) {
       $list[$config->id()] = $config->label();
     }
 

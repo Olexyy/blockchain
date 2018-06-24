@@ -1,36 +1,36 @@
+
 blockchain.subscribe:
   path: '/blockchain/api/subscribe'
   defaults:
     _controller: \Drupal\blockchain\Controller\BlockchainController::subscribe
+    request_type: 'subscribe'
   requirements:
-    _method: 'POST'
     _access: 'TRUE'
-
 blockchain.announce:
   path: '/blockchain/api/announce'
   defaults:
     _controller: \Drupal\blockchain\Controller\BlockchainController::announce
+    request_type: 'announce'
   requirements:
-    _method: 'POST'
     _access: 'TRUE'
 blockchain.count:
   path: '/blockchain/api/count'
   defaults:
     _controller: \Drupal\blockchain\Controller\BlockchainController::count
+    request_type: 'count'
   requirements:
-    _method: 'POST'
     _access: 'TRUE'
 blockchain.pull:
   path: '/blockchain/api/pull'
   defaults:
     _controller: \Drupal\blockchain\Controller\BlockchainController::pull
+    request_type: 'pull'
   requirements:
-    _method: 'POST'
     _access: 'TRUE'
 blockchain.fetch:
   path: '/blockchain/api/fetch'
   defaults:
     _controller: \Drupal\blockchain\Controller\BlockchainController::fetch
+    request_type: 'fetch'
   requirements:
-    _method: 'POST'
     _access: 'TRUE'
