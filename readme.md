@@ -41,23 +41,7 @@ ____Notes about blockchain implementation.____
   - whitelist/blacklist filtering;
   
   TODOS:
-  - blockchain API service (protocol);
-    - subscribe: OK
-    - announce: ~
-    - count: ~ add to tests
-    - sync ->
-    - fetch ->
-  - blockchain API validate OK;
-  - blockchain node management (service) OK;
-  - list and admin management for blockchain OK;
   - business data as plugins (selected in settings) dynamic ~;
-  - field type, formatter and widget OK;
-  - settings:
-    - blacklist/whitelist OK;
-    - use auth OK;
-  - blockchain response class OK
-  - possibility to assign blockchain id and node id if bc is empty ~
-  - HTTP/S + config ~
   - announce all with promise https://github.com/guzzle/guzzle/issues/1481 ~
   - optimize announce all
   - ! locker service
@@ -66,4 +50,3 @@ ____Notes about blockchain implementation.____
   - ! cache service/extension !!!SharedTempStore!!!
   - ! handle conflicts
   - setting for pull block limit ->
-  - emulation for blockchain nodes ->
