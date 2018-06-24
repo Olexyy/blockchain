@@ -345,10 +345,12 @@ class BlockchainController extends ControllerBase {
           if ($block = $this->blockchainBlockStorage
             ->loadByTimestampAndHash($result->getTimestampParam(), $result->getPreviousHashParam())) {
             $exists = TRUE;
+            $details = 'Block exists';
             $blocks = $this->blockchainBlockStorage
               ->getBlocksFrom($block, $result->getCountParam());
           } else {
             $exists = FALSE;
+            $details = 'Block not exists';
             $blocks = [];
           }
 
@@ -360,7 +362,7 @@ class BlockchainController extends ControllerBase {
             ->setMessageParam('Success')
             ->setExistsParam($exists)
             ->setBlocksParam($blocks)
-            ->setDetailsParam('Block ' . $exists ? 'exists' : 'not exists' . '.')
+            ->setDetailsParam($details)
             ->log($logger)
             ->toJsonResponse();
         }
