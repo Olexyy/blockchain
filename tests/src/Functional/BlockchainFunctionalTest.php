@@ -257,7 +257,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertFalse($blockchainNodeExists, 'Blockchain node not exists in list');
     $nodeCount = $this->blockchainService->getNodeService()->getList();
     $this->assertEmpty($nodeCount, 'Blockchain node list empty');
-    // TODO SUCCESS CASE.
+    // Success case.
     $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
     $this->assertEquals(200, $response->getStatusCode(), 'Subscribed');
   }
