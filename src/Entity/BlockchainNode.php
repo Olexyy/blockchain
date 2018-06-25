@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 
 /**
  * Defines the Blockchain Node entity.
@@ -283,6 +284,14 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
     $this->self = $self;
 
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function generateId() {
+
+    return $this->getBlockchainTypeId() . '_' . $this->getSelf();
   }
 
 }

@@ -200,4 +200,12 @@ interface BlockchainNodeInterface extends ConfigEntityInterface {
    */
   public function setSelf($self);
 
+  /**
+   * Generates id based on self and blockchain id.
+   *
+   * @return string
+   *   Generated id.
+   */
+  public function generateId();
+
 }

@@ -62,6 +62,7 @@ class BlockchainNodeForm extends EntityForm {
         'exists' => '\Drupal\blockchain\Entity\BlockchainNode::load',
       ],
       '#disabled' => !$blockchain_node->isNew(),
+      '#access' => !$blockchain_node->isNew(),
     ];
     $form['address'] = [
       '#type' => 'textfield',
@@ -93,6 +94,13 @@ class BlockchainNodeForm extends EntityForm {
         BlockchainNodeInterface::ADDRESS_SOURCE_REQUEST => $this->t('Request'),
       ],
     ];
+    $form['self'] = [
+      '#type' => 'textfield',
+      '#default_value' => $blockchain_node->getSelf(),
+      '#title' => $this->t('Blockchain self id'),
+      '#description' => $this->t('Blockchain self parameter id.'),
+      '#required' => TRUE,
+    ];
     $form['blockchainTypeId'] = [
       '#type' => 'select',
       '#default_value' => $blockchain_node->getAddressSource(),
@@ -109,22 +117,29 @@ class BlockchainNodeForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    $blockchain_node = $this->entity;
-    $status = $blockchain_node->save();
+
+    /** @var BlockchainNodeInterface $blockchainNode */
+    $blockchainNode = $this->entity;
+    if ($blockchainNode->isNew()) {
+      $blockchainNode->setId(
+        $blockchainNode->generateId()
+      );
+    }
+    $status = $blockchainNode->save();
 
     switch ($status) {
       case SAVED_NEW:
         $this->messenger()->addStatus($this->t('Created the %label Blockchain Node.', [
-          '%label' => $blockchain_node->label(),
+          '%label' => $blockchainNode->label(),
         ]));
         break;
 
       default:
         $this->messenger()->addStatus($this->t('Saved the %label Blockchain Node.', [
-          '%label' => $blockchain_node->label(),
+          '%label' => $blockchainNode->label(),
         ]));
     }
-    $form_state->setRedirectUrl($blockchain_node->toUrl('collection'));
+    $form_state->setRedirectUrl($blockchainNode->toUrl('collection'));
   }
 
 }
