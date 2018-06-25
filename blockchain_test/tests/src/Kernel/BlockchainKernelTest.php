@@ -2,9 +2,10 @@
 
 namespace Drupal\Tests\blockchain_test\Kernel;
 
+
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
-use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\blockchain_test\Service\BlockchainTestServiceInterface;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
@@ -22,6 +23,13 @@ class BlockchainKernelTest extends KernelTestBase {
   protected $blockchainService;
 
   /**
+   * Blockchain test service.
+   *
+   * @var BlockchainTestServiceInterface
+   */
+  protected $blockchainTestService;
+
+  /**
    * Modules to install.
    *
    * @var array
@@ -34,7 +42,6 @@ class BlockchainKernelTest extends KernelTestBase {
   protected function setUp() {
 
     parent::setUp();
-    parent::setUp();
     $this->installConfig('blockchain');
     $this->installConfig('blockchain_test');
     $this->installEntitySchema('blockchain_block');
@@ -44,13 +51,12 @@ class BlockchainKernelTest extends KernelTestBase {
     $this->blockchainService = $this->container->get('blockchain.service');
     $this->assertInstanceOf(BlockchainServiceInterface::class, $this->blockchainService,
       'Blockchain service instantiated.');
-    $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
-    $configs = $this->blockchainService->getConfigService()->getAll();
-    $this->assertCount(2, $configs, '2 config created');
-    $this->blockchainService->getConfigService()->setCurrentConfig('blockchain_test_block');
-    $currentConfig = $this->blockchainService->getConfigService()->getCurrentConfig();
-    $this->assertInstanceOf(BlockchainConfigInterface::class, $currentConfig, 'Current config set.');
-    $this->assertEquals('blockchain_test_block', $currentConfig->id(), 'Current config set to test.');
+    $this->blockchainTestService = $this->container->get('blockchain.test.service');
+    $this->assertInstanceOf(BlockchainTestServiceInterface::class, $this->blockchainTestService,
+      'Blockchain test service instantiated.');
+    $this->blockchainTestService->setTestContext($this);
+    $this->blockchainTestService->initConfigs();
+    $this->blockchainTestService->setConfig('blockchain_test_block');
   }
 
   /**
@@ -59,53 +65,26 @@ class BlockchainKernelTest extends KernelTestBase {
   public function testEmulationStorage() {
 
     $count = $this->blockchainService->getStorageService()->getBlockCount();
-    $this->assertEmpty($count, 'No blocks in storage');
-    $this->assertFalse($this->blockchainService->getStorageService()->anyBlock(), 'Any block not found');
-    $this->blockchainService->getStorageService()->getGenericBlock()->save();
+    $this->assertEmpty($count, 'No blocks in storage.');
+    $this->assertFalse($this->blockchainService->getStorageService()->anyBlock(), 'Any block not found.');
+    $affected = $this->blockchainTestService->setBlockCount(5);
+    $this->assertEquals(5, $affected, 'Affected 5 blocks.');
     $count = $this->blockchainService->getStorageService()->getBlockCount();
-    $this->assertEquals(1, $count, 'Set count of blocks to 1');
-    $this->assertTrue($this->blockchainService->getStorageService()->anyBlock(), 'Any block found');
-    $lastBlock = $this->blockchainService->getStorageService()->getLastBlock();
-    $this->assertInstanceOf(BlockchainBlockInterface::class, $lastBlock, 'Last block obtained.');
-    for ($i = 0; $i < 4; $i++) {
-      $this->blockchainService
-        ->getStorageService()
-        ->getRandomBlock(
-          $this->blockchainService
-            ->getStorageService()
-            ->getLastBlock()
-            ->getHash()
-        )->save();
-    }
+    $this->assertEquals(5, $count, 'Set count of blocks to 5.');
+    $this->assertTrue($this->blockchainService->getStorageService()->anyBlock(), 'Any block found.');
+    $affected = $this->blockchainTestService->setBlockCount(3);
+    $this->assertEquals(2, $affected, 'Affected 2 blocks.');
     $count = $this->blockchainService->getStorageService()->getBlockCount();
-    $this->assertTrue($this->blockchainService->getStorageService()->anyBlock(), 'Any block found');
-    $this->assertEquals(5, $count, 'Set count of blocks to 5');
-    for ($i = 0; $i < 2; $i++) {
-      $this->blockchainService
-        ->getStorageService()
-        ->getLastBlock()->delete();
-    }
+    $this->assertEquals(3, $count, 'Set count of blocks to 3.');
+    $affected = $this->blockchainTestService->setBlockCount(3);
+    $this->assertEquals(0, $affected, 'Affected 0 blocks.');
     $count = $this->blockchainService->getStorageService()->getBlockCount();
-    $this->assertEquals(3, $count, 'Set count of blocks to 3');
-    for ($i = 0; $i < 4; $i++) {
-      $this->blockchainService
-        ->getStorageService()
-        ->getRandomBlock(
-          $this->blockchainService
-            ->getStorageService()
-            ->getLastBlock()
-            ->getHash()
-        )->save();
-    }
-    $checkLast = $this->blockchainService->getValidatorService()->blockIsValid(
-      $this->blockchainService
-      ->getStorageService()
-      ->getLastBlock()
-    );
-    $this->assertEquals(3, $count, 'Set count of blocks to 7');
-    $this->assertTrue($checkLast, 'Last block is valid');
-    $validationResult = $this->blockchainService->getStorageService()->checkBlocks();
-    $this->assertTrue($validationResult, 'Blocks in chain are valid');
+    $this->assertEquals(3, $count, 'Set count of blocks to 3.');
+    $affected = $this->blockchainTestService->setBlockCount(9);
+    $this->assertEquals(6, $affected, 'Affected 6 blocks.');
+    $count = $this->blockchainService->getStorageService()->getBlockCount();
+    $this->assertEquals(9, $count, 'Set count of blocks to 9.');
+    // Check getters by timestamp and hash.
     $lastBlock = $this->blockchainService->getStorageService()->getLastBlock();
     $this->assertInstanceOf(BlockchainBlockInterface::class, $lastBlock, 'Last block obtained');
     $foundLastBlock = $this->blockchainService->getStorageService()->loadByTimestampAndHash($lastBlock->getTimestamp(), $lastBlock->getPreviousHash());
@@ -118,7 +97,7 @@ class BlockchainKernelTest extends KernelTestBase {
     $this->assertInstanceOf(BlockchainBlockInterface::class, $firstBlock, 'First block obtained');
     $this->assertEquals(1, $firstBlock->id(), 'First block id is 1');
     $blocks = $this->blockchainService->getStorageService()->getBlocksFrom($firstBlock, 100, FALSE);
-    $this->assertCount(6, $blocks, 'Loaded 6 blocks');
+    $this->assertCount(8, $blocks, 'Loaded 8 blocks');
     $this->blockchainService->getConfigService()->setCurrentConfig('blockchain_block');
     $currentConfig = $this->blockchainService->getConfigService()->getCurrentConfig();
     $this->assertEquals('blockchain_block', $currentConfig->id(), 'Current config set to native.');
