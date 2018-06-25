@@ -56,7 +56,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
    * @param string $nodeId
    *   Value.
    *
-   * @return $this
+   * @return BlockchainConfigInterface
    *   Chaining.
    */
   public function setNodeId($nodeId);

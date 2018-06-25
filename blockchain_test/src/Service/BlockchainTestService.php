@@ -4,6 +4,7 @@ namespace Drupal\blockchain_test\Service;
 
 
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
+use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -27,6 +28,13 @@ class BlockchainTestService implements BlockchainTestServiceInterface{
   protected $testContext;
 
   /**
+   * Sase url.
+   *
+   * @var string
+   */
+  protected $baseUrl;
+
+  /**
    * BlockchainTestService constructor.
    *
    * @param BlockchainServiceInterface $blockchainService
@@ -38,33 +46,32 @@ class BlockchainTestService implements BlockchainTestServiceInterface{
   }
 
   /**
-   * Setter for test context.
-   *
-   * @param TestCase $testContext
-   *   Test context.
+   * {@inheritdoc}
    */
-  public function setTestContext(TestCase $testContext) {
+  public function setTestContext(TestCase $testContext, $baseUrl = NULL) {
 
     $this->testContext = $testContext;
+    $this->baseUrl = $baseUrl;
   }
 
   /**
-   * Initializes configs.
+   * {@inheritdoc}
    */
-  public function initConfigs() {
+  public function initConfigs($linked = TRUE) {
 
     $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
     $configs = $this->blockchainService->getConfigService()->getAll();
     $this->testContext->assertCount(2, $configs, '2 config created');
+    $blockchainNodeId = $this->blockchainService->getConfigService()->generateId();
+    if ($linked) {
+      foreach ($this->blockchainService->getConfigService()->getAll() as $blockchainConfig) {
+        $blockchainConfig->setNodeId($blockchainNodeId)->save();
+      }
+    }
   }
 
   /**
-   * Setter for current config.
-   *
-   * Can be set: 'blockchain_test_block' or 'blockchain_block'.
-   *
-   * @param string $configId
-   *   Id of config.
+   * {@inheritdoc}
    */
   public function setConfig($configId) {
 
@@ -76,13 +83,7 @@ class BlockchainTestService implements BlockchainTestServiceInterface{
   }
 
   /**
-   * Sets specific count of blocks for storage.
-   *
-   * @param int $count
-   *   Count of blocks to be set.
-   *
-   * @return int
-   *   Count of affected blocks.
+   * {@inheritdoc}
    */
   public function setBlockCount($count) {
 
@@ -135,6 +136,33 @@ class BlockchainTestService implements BlockchainTestServiceInterface{
     }
 
     return $affected;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setBlockchainType($type) {
+
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setType($type)->save();
+    $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
+    $this->testContext->assertEquals($type, $type, 'Blockchain type is set.');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createNode($baseUrl = NULL, BlockchainConfigInterface $blockchainConfig = NULL) {
+
+    $baseUrl = ($baseUrl) ? $baseUrl : $this->baseUrl;
+    $blockchainConfig = ($blockchainConfig) ? $blockchainConfig :
+      $this->blockchainService->getConfigService()->getCurrentConfig();
+    $blockchainNode = $this->blockchainService->getNodeService()->create(
+      $blockchainConfig->id(),
+      $blockchainConfig->getNodeId(),
+      BlockchainNodeInterface::ADDRESS_SOURCE_CLIENT,
+      $baseUrl
+    );
+    $this->testContext->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
   }
 
 }
