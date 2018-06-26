@@ -2,9 +2,11 @@
 
 namespace Drupal\blockchain\Form;
 
+use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Builds the form to delete Blockchain config entities.
@@ -12,9 +14,59 @@ use Drupal\Core\Url;
 class BlockchainConfigDeleteForm extends EntityConfirmFormBase {
 
   /**
+   * Blockchain service.
+   *
+   * @var BlockchainServiceInterface
+   */
+  protected $blockchainService;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+
+    return new static($container->get('blockchain.service'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(BlockchainServiceInterface $blockchainService) {
+
+    $this->blockchainService = $blockchainService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+
+    $exist = $this->blockchainService
+      ->getNodeService()
+      ->getStorage()
+      ->loadByProperties([
+        'blockchainTypeId' => $this->entity->id()
+      ]);
+    if ($exist) {
+      $form = parent::buildForm($form, $form_state);
+      unset($form['actions']['submit']);
+      $form['description']['#markup'] = $this->t(
+        'This item can not be deleted before any related node exists.'
+      );
+
+      return $form;
+    }
+    else {
+
+      return parent::buildForm($form, $form_state);
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getQuestion() {
+
     return $this->t('Are you sure you want to delete %name?', ['%name' => $this->entity->label()]);
   }
 
@@ -22,6 +74,7 @@ class BlockchainConfigDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
+
     return new Url('entity.blockchain_config.collection');
   }
 
@@ -38,7 +91,7 @@ class BlockchainConfigDeleteForm extends EntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    drupal_set_message(
+    $this->messenger()->addStatus(
       $this->t('content @type: deleted @label.',
         [
           '@type' => $this->entity->bundle(),

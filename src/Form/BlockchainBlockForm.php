@@ -2,6 +2,7 @@
 
 namespace Drupal\blockchain\Form;
 
+
 use Drupal\blockchain\Service\BlockchainService;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Component\Datetime\TimeInterface;
@@ -56,9 +57,43 @@ class BlockchainBlockForm extends ContentEntityForm {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $form = parent::buildForm($form, $form_state);
+    $entity = $this->entity;
+    if (!$this->blockchainService->getConfigService()->exists($entity->getEntityTypeId())) {
+      $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
+    }
+    $this->blockchainService->getConfigService()->setCurrentConfig($entity->getEntityTypeId());
+    if (!$this->blockchainService->getStorageService()->anyBlock()) {
+      $form['message'] = [
+        '#type' => 'item',
+        '#title' => $this->t('There are no blocks in list yet'),
+        '#description' => $this->t('Click below to generate first generic block.'),
+      ];
+      $form['action']['put_generic_block'] = [
+        '#type' => 'button',
+        '#executes_submit_callback' => TRUE,
+        '#value' => $this->t('Put generic block'),
+        '#context' => 'put_generic_block',
+        '#submit' =>  [ [$this, 'callbackHandler'] ],
+      ];
+      $this->init($form_state);
+    }
+    else {
+      $form = parent::buildForm($form, $form_state);
+    }
 
     return $form;
+  }
+
+  /**
+   * Callback for custom actions.
+   */
+  public function callbackHandler(array &$form, FormStateInterface $form_state) {
+
+    $this->getRequest()->query->remove('destination');
+    $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
+    $this->blockchainService->getStorageService()->save($genericBlock);
+    $this->messenger()->addStatus($this->t('Generic block created'));
+    $form_state->setRedirect('<current>');
   }
 
   /**
@@ -69,7 +104,7 @@ class BlockchainBlockForm extends ContentEntityForm {
     /* @var $entity \Drupal\blockchain\Entity\BlockchainBlockInterface */
     $entity = $this->entity;
     // Here we pass raw data.
-    $this->blockchainService->getQueueService()->addBlockItem($entity->getData());
+    $this->blockchainService->getQueueService()->addBlockItem($entity->getData(), $entity->getEntityTypeId());
     // Set to queue (pool) and process it conditionally.
     //$status = parent::save($form, $form_state);
     $batch = [
@@ -128,8 +163,7 @@ class BlockchainBlockForm extends ContentEntityForm {
     else {
       $message = t('Finished with an error.');
     }
-
-    drupal_set_message($message);
+    \Drupal::messenger()->addStatus($message);
   }
 
 }

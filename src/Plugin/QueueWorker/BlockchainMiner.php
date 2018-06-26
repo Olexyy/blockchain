@@ -4,6 +4,7 @@ namespace Drupal\blockchain\Plugin\QueueWorker;
 
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
+use Drupal\blockchain\Service\BlockchainQueueServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Core\Logger\LoggerChannelFactory;
@@ -80,11 +81,19 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
   public function processItem($data) {
     $blockData = property_exists($data, BlockchainDataInterface::DATA_KEY) ?
       $data->{BlockchainDataInterface::DATA_KEY} : NULL;
+    $blockchainTypeId = property_exists($data, BlockchainQueueServiceInterface::BLOCKCHAIN_TYPE_ID) ?
+      $data->{BlockchainQueueServiceInterface::BLOCKCHAIN_TYPE_ID} : NULL;
+    if (!$blockchainTypeId) {
+      throw new \Exception('Missing blockchain type.');
+    }
     if (!$blockData) {
       throw new \Exception('Missing block data.');
     }
     if (!$this->blockchainService->getDataManager()->extractPluginId($blockData)) {
       throw new \Exception('Invalid data handler plugin id.');
+    }
+    if (!$this->blockchainService->getConfigService()->setCurrentConfig($blockchainTypeId)) {
+      throw new \Exception('Invalid blockchain type.');
     }
     if (!$lastBlock = $this->blockchainService->getStorageService()->getLastBlock()) {
       throw new \Exception('Missing generic block.');

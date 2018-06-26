@@ -14,6 +14,7 @@ interface BlockchainQueueServiceInterface {
   const ANNOUNCE_QUEUE_NAME = 'announce_queue';
   const LOGGER_CHANNEL = 'blockchain.queue';
   const ANNOUNCE_QUEUE_ITEM = 'announce_item';
+  const BLOCKCHAIN_TYPE_ID = 'blockchain_type_id';
 
   /**
    * Getter for logger.
@@ -58,8 +59,10 @@ interface BlockchainQueueServiceInterface {
    *
    * @param mixed $blockData
    *   Given block data to be queued.
+   * @param string $blockchainTypeId
+   *   Type of blockchain.
    */
-  public function addBlockItem($blockData);
+  public function addBlockItem($blockData, $blockchainTypeId);
 
   /**
    * Queues announce data to queue.

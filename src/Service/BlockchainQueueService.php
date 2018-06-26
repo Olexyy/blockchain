@@ -88,10 +88,11 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function addBlockItem($blockData) {
+  public function addBlockItem($blockData, $blockchainTypeId) {
 
     $item = (object) [
       BlockchainDataInterface::DATA_KEY => $blockData,
+      static::BLOCKCHAIN_TYPE_ID => $blockchainTypeId,
     ];
     $this->getBlockPool()->createItem($item);
   }
