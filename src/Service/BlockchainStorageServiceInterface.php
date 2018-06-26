@@ -198,4 +198,9 @@ interface BlockchainStorageServiceInterface {
    */
   public function getBlocks($offset = NULL, $limit = NULL, $asArray = FALSE);
 
+  /**
+   * Deletes all records.
+   */
+  public function deleteAll();
+
 }

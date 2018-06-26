@@ -41,45 +41,6 @@ class BlockchainConfigForm extends EntityForm {
   }
 
   /**
-   * Form submission handler.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-
-    $element = $form_state->getTriggeringElement();
-    if ($element['#type'] == 'button') {
-      if ($element['#context'] == 'regenerate_blockchain_id') {
-        $this->blockchainService
-          ->getConfigService()
-          ->getCurrentConfig()
-          ->setBlockchainId(
-            $this->blockchainService->getConfigService()->generateId()
-          )->save();
-      }
-      elseif ($element['#context'] == 'regenerate_blockchain_node_id') {
-        $this->blockchainService
-          ->getConfigService()
-          ->getCurrentConfig()
-          ->setNodeId(
-            $this->blockchainService->getConfigService()->generateId()
-          )->save();
-      }
-      elseif ($element['#context'] == 'put_generic_block') {
-        $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
-        $this->blockchainService->getStorageService()->save($genericBlock);
-      }
-    }
-    else {
-      parent::submitForm($form, $form_state);
-    }
-
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
@@ -274,29 +235,86 @@ class BlockchainConfigForm extends EntityForm {
         '#url' => Url::fromRoute('<current>'),
       ];
     }
-
+    $form['action'] = [
+      '#submit' =>  [ '::submitForm' ],
+    ];
     if (!$anyBlock) {
-      $form['actions']['regenerate_blockchain_id'] = [
-        '#type' => 'button',
+      $form['action']['regenerate_blockchain_id'] = [
+        '#type' => 'submit',
         '#executes_submit_callback' => TRUE,
         '#value' => $this->t('Regenerate blockchain id'),
         '#context' => 'regenerate_blockchain_id',
       ];
-      $form['actions']['regenerate_blockchain_node_id'] = [
+      $form['action']['regenerate_blockchain_node_id'] = [
         '#type' => 'button',
         '#executes_submit_callback' => TRUE,
         '#value' => $this->t('Regenerate blockchain node id'),
         '#context' => 'regenerate_blockchain_node_id',
       ];
-      $form['actions']['put_generic_block'] = [
+      $form['action']['put_generic_block'] = [
         '#type' => 'button',
         '#executes_submit_callback' => TRUE,
         '#value' => $this->t('Put generic block'),
         '#context' => 'put_generic_block',
       ];
     }
+    else {
+      $form['action']['remove_blocks'] = [
+        '#type' => 'button',
+        '#executes_submit_callback' => TRUE,
+        '#value' => $this->t('Delete all blocks'),
+        '#context' => 'remove_blocks',
+      ];
+    }
 
     return $form;
+  }
+
+  /**
+   * Form submission handler.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+
+    $this->getRequest()->query->remove('destination');
+    $element = $form_state->getTriggeringElement();
+    if ($element['#type'] == 'button') {
+      if ($element['#context'] == 'regenerate_blockchain_id') {
+        $this->blockchainService
+          ->getConfigService()
+          ->getCurrentConfig()
+          ->setBlockchainId(
+            $this->blockchainService->getConfigService()->generateId()
+          )->save();
+        $this->messenger()->addStatus($this->t('Blockchain id regenerated'));
+      }
+      elseif ($element['#context'] == 'regenerate_blockchain_node_id') {
+        $this->blockchainService
+          ->getConfigService()
+          ->getCurrentConfig()
+          ->setNodeId(
+            $this->blockchainService->getConfigService()->generateId()
+          )->save();
+        $this->messenger()->addStatus($this->t('Blockchain node id regenerated'));
+      }
+      elseif ($element['#context'] == 'put_generic_block') {
+        $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
+        $this->blockchainService->getStorageService()->save($genericBlock);
+        $this->messenger()->addStatus($this->t('Generic block created'));
+      }
+      elseif ($element['#context'] == 'remove_blocks') {
+        $this->blockchainService->getStorageService()->deleteAll();
+        $this->messenger()->addStatus($this->t('Generic blocks deleted'));
+      }
+      $form_state->setRedirect('<current>');
+    }
+    else {
+      parent::submitForm($form, $form_state);
+    }
   }
 
   /**

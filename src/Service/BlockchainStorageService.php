@@ -9,6 +9,7 @@ use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
 use Drupal\blockchain\Utils\Util;
 use Drupal\Component\Utility\Random;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
@@ -62,6 +63,13 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   protected $blockchainMinerService;
 
   /**
+   * Database.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
    * BlockchainStorageService constructor.
    *
    * @param EntityTypeManagerInterface $entityTypeManager
@@ -76,13 +84,16 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
    *   Blockchain validator.
    * @param BlockchainMinerServiceInterface $blockchainMinerService
    *   Blockchain miner service.
+   * @param Connection $database
+   *   Database.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager,
                               LoggerChannelFactoryInterface $loggerFactory,
                               BlockchainConfigServiceInterface $blockchainSettingsService,
                               BlockchainDataManager $blockchainDataManager,
                               BlockchainValidatorServiceInterface $blockchainValidatorService,
-                              BlockchainMinerServiceInterface $blockchainMinerService) {
+                              BlockchainMinerServiceInterface $blockchainMinerService,
+                              Connection $database) {
 
     $this->entityTypeManager = $entityTypeManager;
     $this->loggerFactory = $loggerFactory;
@@ -90,6 +101,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     $this->blockchainDataManager = $blockchainDataManager;
     $this->blockchainValidatorService = $blockchainValidatorService;
     $this->blockchainMinerService = $blockchainMinerService;
+    $this->database = $database;
   }
 
   /**
@@ -360,6 +372,15 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     }
 
     return NULL;
+  }
+
+  /**
+   * Deletes all records.
+   */
+  public function deleteAll() {
+
+    $type = $this->configService->getCurrentConfig()->id();
+    $this->database->delete($type)->execute();
   }
 
 }

@@ -17,6 +17,7 @@ services:
       -  '@blockchain.data.manager'
       -  '@blockchain.validator'
       -  '@blockchain.miner'
+      -  '@database'
   blockchain.queue:
     class: Drupal\blockchain\Service\BlockchainQueueService
     arguments: ['@queue', '@plugin.manager.queue_worker', '@logger.factory']
