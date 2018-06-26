@@ -103,7 +103,8 @@ class BlockchainDataFormatter extends FormatterBase implements ContainerFactoryP
 
     /** @var BlockchainBlockInterface $blockchainBlock */
     $blockchainBlock = $items->getEntity();
-    $blockchainDataHandler = $this->blockchainService->getStorageService()->getBlockDataHandler($blockchainBlock);
+    $this->blockchainService->getConfigService()->setCurrentConfig($blockchainBlock->getEntityTypeId());
+    $blockchainDataHandler = $this->blockchainService->getStorageService()->getBlockDataHandler($blockchainBlock->getData());
 
     return $blockchainDataHandler->getFormatter();
   }

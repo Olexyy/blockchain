@@ -36,8 +36,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     "id" = "id",
  *   },
  *   links = {
- *     "canonical" = "/blockchain_block/{blockchain_block}",
- *     "add-form" = "/blockchain_block/add",
+ *     "canonical" = "/admin/structure//blockchain_block/{blockchain_block}",
+ *     "add-form" = "/admin/structure/blockchain_block/add",
  *     "collection" = "/admin/structure/blockchain_block/collection",
  *   },
  *   field_ui_base_route = "blockchain_block.settings",

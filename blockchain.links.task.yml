@@ -24,6 +24,7 @@ entity.blockchain_block.collection:
 
 entity.blockchain_block.canonical:
   route_name: entity.blockchain_block.canonical
-  base_route: entity.blockchain_block.canonical
-  title: 'View'
+  base_route: blockchain_block.settings
+  weight: 100
+  title: 'Block view'
 

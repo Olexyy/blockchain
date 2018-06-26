@@ -24,4 +24,6 @@ interface JsonBlockchainDataInterface {
 
   public function getFormatter();
 
+  public function humanize($string);
+
 }

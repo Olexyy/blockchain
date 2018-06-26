@@ -2,6 +2,9 @@
 
 namespace Drupal\blockchain\Plugin\BlockchainData;
 
+use Drupal\Core\Field\FieldFilteredMarkup;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 /**
  * Class SerializableDataContainer.
  *
@@ -25,8 +28,8 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
 
     if ($values = json_decode($values)) {
       foreach (get_object_vars($this) as $name => $value) {
-        if (isset($values[$name])) {
-          $this->{$name} = $values[$name];
+        if (isset($values->{$name})) {
+          $this->{$name} = $values->{$name};
         }
       }
     }
@@ -65,7 +68,7 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
       $widget[$name] = [
         '#type' => $type,
         '#default_value' => $value,
-        '#title' => t(ucfirst($name)),
+        '#title' => t($this->humanize($name)),
       ];
     }
 
@@ -74,16 +77,17 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
 
   public function getFormatter() {
 
-    $view = [];
+    $markup = '';
     foreach (get_object_vars($this) as $name => $value) {
-      $view[$name] = [
-        '#type' => 'item',
-        '#title' => t(ucfirst($name)),
-        '#description' => $value,
-      ];
+      $markup .= t($this->humanize($name)) . ':' . $value . '</br>';
     }
 
-    return $view;
+    return [
+      '#type' => 'item',
+      '#title' => t('Data'),
+      '#markup' => $markup,
+      '#allowed_tags' => FieldFilteredMarkup::allowedTags(),
+    ];
   }
 
   public function toArray() {
@@ -94,5 +98,10 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
     }
 
     return $array;
+  }
+
+  public function humanize($string) {
+
+    return ucfirst(str_replace('_', ' ', $string));
   }
 }

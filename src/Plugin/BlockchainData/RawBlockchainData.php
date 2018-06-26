@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Plugin\BlockchainData;
 
 use Drupal\blockchain\Plugin\BlockchainDataBase;
+use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
@@ -78,7 +79,8 @@ class RawBlockchainData extends BlockchainDataBase {
     return [
       '#type' => 'item',
       '#title' => $this->t('Data'),
-      '#description' => $this->getData(),
+      '#markup' => $this->getData(),
+      '#allowed_tags' => FieldFilteredMarkup::allowedTags(),
     ];
   }
 
