@@ -8,3 +8,10 @@ entity.blockchain_node.add_form:
   title: 'Add Blockchain Node'
   appears_on:
     - entity.blockchain_node.collection
+blockchain.storage.validate:
+  route_name: blockchain.storage.validate
+  title: 'Validate blocks'
+  route_parameters:
+    blockchain_config: 'blockchain_block'
+  appears_on:
+    - entity.blockchain_block.collection
