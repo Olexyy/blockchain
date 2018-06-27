@@ -77,28 +77,36 @@ class BlockchainSettingsForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
+    $this->blockchainService->getConfigService()->setCurrentConfig('blockchain_block');
+    $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
     $queueService = $this->blockchainService->getQueueService();
     $countAnnounce = $queueService->getAnnounceQueue()->numberOfItems();
     $countMining = $queueService->getBlockPool()->numberOfItems();
-    $form['queue_wrapper'] = [
+    $form['blockchain_block_wrapper'] = [
       '#type' => 'details',
-      '#title' => $this->t('Announce queue details'),
+      '#title' => $this->t('Blockchain block details'),
       '#open' => TRUE,
       '#attributes' => ['class' => ['package-listing']],
     ];
-    $form['queue_wrapper']['queue_mining_item_count'] = [
+    $form['blockchain_block_wrapper']['block_count'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Number of blocks in storage'),
+      '#markup' => ' - ' . $blockCount . ' - ',
+    ];
+    $form['blockchain_block_wrapper']['queue_mining_item_count'] = [
       '#type' => 'item',
       '#title' => $this->t('Number of items in block pool'),
       '#markup' => ' - ' . $countMining . ' - ',
     ];
-    $form['queue_wrapper']['do_mining'] = [
+    $form['blockchain_block_wrapper']['do_mining'] = [
       '#type' => 'button',
       '#executes_submit_callback' => TRUE,
       '#submit' => [[$this, 'callbackHandler']],
       '#value' => $this->t('Do mining'),
       '#context' => 'do_mining',
+      '#disabled' => !$countMining,
     ];
-    $form['queue_wrapper']['queue_announce_item_count'] = [
+    $form['blockchain_block_wrapper']['queue_announce_item_count'] = [
       '#type' => 'item',
       '#title' => $this->t('Number of items in announce queue'),
       '#markup' => ' - ' . $countAnnounce . ' - ',
