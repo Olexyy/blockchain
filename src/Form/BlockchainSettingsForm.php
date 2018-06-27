@@ -3,17 +3,18 @@
 namespace Drupal\blockchain\Form;
 
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\blockchain\Utils\BlockchainBatchHandler;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class BlockchainBlockSettingsForm.
+ * Class BlockchainSettingsForm.
  *
  * @ingroup blockchain
  */
-class BlockchainBlockSettingsForm extends FormBase {
+class BlockchainSettingsForm extends FormBase {
 
   /**
    * Blockchain service.
@@ -28,7 +29,7 @@ class BlockchainBlockSettingsForm extends FormBase {
   protected $entityTypeManager;
 
   /**
-   * BlockchainBlockSettingsForm constructor.
+   * BlockchainSettingsForm constructor.
    *
    * @param BlockchainServiceInterface $blockchainService
    *   Blockchain service.
@@ -60,7 +61,7 @@ class BlockchainBlockSettingsForm extends FormBase {
    */
   public function getFormId() {
 
-    return 'blockchain_block_settings';
+    return 'blockchain_settings';
   }
 
   /**
@@ -76,9 +77,46 @@ class BlockchainBlockSettingsForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
-    $form = [];
+    $queueService = $this->blockchainService->getQueueService();
+    $countAnnounce = $queueService->getAnnounceQueue()->numberOfItems();
+    $countMining = $queueService->getBlockPool()->numberOfItems();
+    $form['queue_wrapper'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Announce queue details'),
+      '#open' => TRUE,
+      '#attributes' => ['class' => ['package-listing']],
+    ];
+    $form['queue_wrapper']['queue_mining_item_count'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Number of items in block pool'),
+      '#markup' => ' - ' . $countMining . ' - ',
+    ];
+    $form['queue_wrapper']['do_mining'] = [
+      '#type' => 'button',
+      '#executes_submit_callback' => TRUE,
+      '#submit' => [[$this, 'callbackHandler']],
+      '#value' => $this->t('Do mining'),
+      '#context' => 'do_mining',
+    ];
+    $form['queue_wrapper']['queue_announce_item_count'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Number of items in announce queue'),
+      '#markup' => ' - ' . $countAnnounce . ' - ',
+    ];
 
     return $form;
+  }
+
+  /**
+   * Callback for custom actions.
+   */
+  public function callbackHandler(array &$form, FormStateInterface $form_state) {
+
+    $this->getRequest()->query->remove('destination');
+    $context = $form_state->getTriggeringElement()['#context'];
+    if ($context == 'do_mining') {
+      BlockchainBatchHandler::set(BlockchainBatchHandler::getMiningBatchDefinition());
+    }
   }
 
   /**

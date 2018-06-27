@@ -36,7 +36,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     "id" = "id",
  *   },
  *   links = {
- *     "canonical" = "/admin/structure//blockchain_block/{blockchain_block}",
+ *     "canonical" = "/admin/structure/blockchain_block/{blockchain_block}",
  *     "add-form" = "/admin/structure/blockchain_block/add",
  *     "collection" = "/admin/structure/blockchain_block/collection",
  *   },
