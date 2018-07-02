@@ -35,7 +35,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *     "add-form" = "/admin/structure/blockchain_node/add",
  *     "edit-form" = "/admin/structure/blockchain_node/{blockchain_node}/edit",
  *     "delete-form" = "/admin/structure/blockchain_node/{blockchain_node}/delete",
- *     "collection" = "/admin/structure/blockchain_node"
+ *     "collection" = "/admin/structure/blockchain/blockchain_node"
  *   }
  * )
  */

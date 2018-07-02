@@ -34,7 +34,7 @@ use Drupal\Core\Entity\EntityInterface;
  *     "canonical" = "/admin/structure/blockchain_config/{blockchain_config}",
  *     "edit-form" = "/admin/structure/blockchain_config/{blockchain_config}/edit",
  *     "delete-form" = "/admin/structure/blockchain_config/{blockchain_config}/delete",
- *     "collection" = "/admin/structure/blockchain_config"
+ *     "collection" = "/admin/structure/blockchain/blockchain_config"
  *   }
  * )
  */

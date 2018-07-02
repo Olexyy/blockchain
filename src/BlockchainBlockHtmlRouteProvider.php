@@ -18,12 +18,10 @@ class BlockchainBlockHtmlRouteProvider extends AdminHtmlRouteProvider {
    * {@inheritdoc}
    */
   public function getRoutes(EntityTypeInterface $entity_type) {
+
     $collection = parent::getRoutes($entity_type);
-
-    $entity_type_id = $entity_type->id();
-
     if ($settings_form_route = $this->getSettingsFormRoute($entity_type)) {
-      $collection->add("$entity_type_id.settings", $settings_form_route);
+      $collection->add("blockchain.dashboard", $settings_form_route);
     }
 
     return $collection;
@@ -40,11 +38,11 @@ class BlockchainBlockHtmlRouteProvider extends AdminHtmlRouteProvider {
    */
   protected function getSettingsFormRoute(EntityTypeInterface $entity_type) {
     if (!$entity_type->getBundleEntityType()) {
-      $route = new Route("/admin/structure/{$entity_type->id()}/settings");
+      $route = new Route("/admin/structure/blockchain");
       $route
         ->setDefaults([
           '_form' => 'Drupal\blockchain\Form\BlockchainSettingsForm',
-          '_title' => "{$entity_type->getLabel()} settings",
+          '_title' => 'Blockchain dashboard',
         ])
         ->setRequirement('_permission', $entity_type->getAdminPermission())
         ->setOption('_admin_route', TRUE);

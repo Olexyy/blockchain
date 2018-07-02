@@ -36,11 +36,11 @@ use Drupal\Core\Entity\EntityTypeInterface;
  *     "id" = "id",
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/blockchain_block/{blockchain_block}",
- *     "add-form" = "/admin/structure/blockchain_block/add",
- *     "collection" = "/admin/structure/blockchain_block/collection",
+ *     "canonical" = "/admin/structure/blockchain/blockchain_block/{blockchain_block}",
+ *     "add-form" = "/admin/structure/blockchain/blockchain_block/add",
+ *     "collection" = "/admin/structure/blockchain/blockchain_block",
  *   },
- *   field_ui_base_route = "blockchain_block.settings",
+ *   field_ui_base_route = "blockchain.dashboard",
  *   blockchain_entity = TRUE,
  * )
  */
