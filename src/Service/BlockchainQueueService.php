@@ -3,7 +3,6 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
-use Drupal\blockchain\Utils\BlockchainLockerException;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
@@ -102,13 +101,13 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
    */
   public function doMining($limit = 0, $leaseTime = 3600) {
 
-    $i = 0;
-    while ($item = $this->getBlockPool()->claimItem($leaseTime)) {
-      if (!$limit || $i < $limit) {
+    $count = 0;
+    while (!$limit || $count < $limit) {
+      if ($item = $this->getBlockPool()->claimItem($leaseTime)) {
         try {
           $this->getMiner()->processItem($item->data);
           $this->getBlockPool()->deleteItem($item);
-          $i++;
+          $count++;
         } catch (SuspendQueueException $e) {
           $this->getBlockPool()->releaseItem($item);
           break;
@@ -117,9 +116,12 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
             ->error($e->getMessage() . $e->getTraceAsString());
         }
       }
+      else {
+        break;
+      }
     }
 
-    return $i;
+    return $count;
   }
 
   /**
@@ -134,6 +136,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
    * {@inheritdoc}
    */
   public function getAnnounceHandler() {
+
     try {
 
       return $this->queueWorkerManager->createInstance(static::ANNOUNCE_QUEUE_NAME);
@@ -146,10 +149,11 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function addAnnounceItem($announceData) {
+  public function addAnnounceItem($announceData, $blockchainTypeId) {
 
     $item = (object) [
       static::ANNOUNCE_QUEUE_ITEM => $announceData,
+      static::BLOCKCHAIN_TYPE_ID => $blockchainTypeId,
     ];
     $this->getAnnounceQueue()->createItem($item);
   }
@@ -160,8 +164,8 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   public function doAnnounceHandling($limit = 0, $leaseTime = 3600) {
 
     $i = 0;
-    while ($item = $this->getAnnounceQueue()->claimItem($leaseTime)) {
-      if (!$limit || $i < $limit) {
+    while (!$limit || $i < $limit) {
+      if ($item = $this->getAnnounceQueue()->claimItem($leaseTime)) {
         try {
           $this->getAnnounceHandler()->processItem($item->data);
           $this->getAnnounceQueue()->deleteItem($item);
@@ -175,6 +179,9 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
             ->error($e->getMessage() . $e->getTraceAsString());
           return $e->getMessage();
         }
+      }
+      else {
+        break;
       }
     }
 

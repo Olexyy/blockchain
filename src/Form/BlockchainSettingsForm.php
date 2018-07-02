@@ -111,6 +111,14 @@ class BlockchainSettingsForm extends FormBase {
       '#title' => $this->t('Number of items in announce queue'),
       '#markup' => ' - ' . $countAnnounce . ' - ',
     ];
+    $form['blockchain_block_wrapper']['process_announce'] = [
+      '#type' => 'button',
+      '#executes_submit_callback' => TRUE,
+      '#submit' => [[$this, 'callbackHandler']],
+      '#value' => $this->t('Process announces'),
+      '#context' => 'process_announce',
+      '#disabled' => !$countAnnounce,
+    ];
 
     return $form;
   }
@@ -124,6 +132,9 @@ class BlockchainSettingsForm extends FormBase {
     $context = $form_state->getTriggeringElement()['#context'];
     if ($context == 'do_mining') {
       BlockchainBatchHandler::set(BlockchainBatchHandler::getMiningBatchDefinition());
+    }
+    elseif ($context == 'process_announce') {
+      BlockchainBatchHandler::set(BlockchainBatchHandler::getAnnounceBatchDefinition());
     }
   }
 

@@ -123,7 +123,9 @@ class BlockchainApiController extends ControllerBase {
       if ($result->hasCountParam()) {
         $ownBlockCount = $this->blockchainBlockStorage->getBlockCount();
         if ($ownBlockCount < $result->getCountParam()) {
-          $this->blockchainService->getQueueService()->addAnnounceItem($result->sleep());
+          $this->blockchainService->getQueueService()->addAnnounceItem(
+            $result->sleep(),
+            $this->blockchainService->getConfigService()->getCurrentConfig()->id());
           $announceManagement = $this->blockchainService->getConfigService()->getCurrentConfig()->getAnnounceManagement();
           if ($announceManagement == BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE) {
             $this->blockchainService->getQueueService()->doAnnounceHandling();

@@ -59,13 +59,40 @@ class BlockchainBatchHandler {
    */
   public static function getMiningBatchDefinition() {
 
+    $blockchainService = BlockchainService::instance();
+    $count = $blockchainService->getQueueService()->getBlockPool()->numberOfItems();
     $batch = [
       'title' => t('Mining block...'),
-      'operations' => [
-        [ static::class . '::processMiningBatch', [] ],
-      ],
+      'operations' => [],
       'finished' => static::class .'::finalizeMiningBatch',
     ];
+    while ($count) {
+      $batch['operations'][]= [ static::class . '::processMiningBatch', [] ];
+      $count--;
+    }
+
+    return $batch;
+  }
+
+  /**
+   * Mining batch definition.
+   *
+   * @return array
+   *   Definition for batch.
+   */
+  public static function getAnnounceBatchDefinition() {
+
+    $blockchainService = BlockchainService::instance();
+    $count = $blockchainService->getQueueService()->getAnnounceQueue()->numberOfItems();
+    $batch = [
+      'title' => t('Handling announces...'),
+      'operations' => [],
+      'finished' => static::class .'::finalizeAnnounceBatch',
+    ];
+    while ($count) {
+      $batch['operations'][]= [ static::class . '::processAnnounceBatch', [] ];
+      $count--;
+    }
 
     return $batch;
   }
@@ -79,10 +106,30 @@ class BlockchainBatchHandler {
   public static function processMiningBatch(array &$context) {
 
     $blockchainService = BlockchainService::instance();
-    $message = t('Mining is in progress...');
+    $message = 'Mining is in progress...(@count)';
     $results = $context['results']? $context['results'] : [];
-    $results[] = $blockchainService->getQueueService()->doMining();
-    $context['message'] = $message;
+    if ($blockchainService->getQueueService()->doMining(1)) {
+      $results[] = 1;
+    }
+    $context['message'] = t($message, ['@count' => count($results)]);
+    $context['results'] = $results;
+  }
+
+  /**
+   * Batch processor.
+   *
+   * @param mixed $context
+   *   Batch context.
+   */
+  public static function processAnnounceBatch(array &$context) {
+
+    $blockchainService = BlockchainService::instance();
+    $message = 'Announce handling is in progress...(@count)';
+    $results = $context['results']? $context['results'] : [];
+    if ($blockchainService->getQueueService()->doAnnounceHandling(1)) {
+      $results[] = 1;
+    };
+    $context['message'] = t($message, ['@count' => count($results)]);
     $context['results'] = $results;
   }
 
@@ -95,6 +142,24 @@ class BlockchainBatchHandler {
 
     if ($success) {
       $message = t('@count blocks processed.', [
+        '@count' => count($results),
+      ]);
+    }
+    else {
+      $message = t('Finished with an error.');
+    }
+    \Drupal::messenger()->addStatus($message);
+  }
+
+  /**
+   * Batch finalizer.
+   *
+   * {@inheritdoc}
+   */
+  public static function finalizeAnnounceBatch($success, $results, $operations) {
+
+    if ($success) {
+      $message = t('@count announces processed.', [
         '@count' => count($results),
       ]);
     }

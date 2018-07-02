@@ -69,8 +69,10 @@ interface BlockchainQueueServiceInterface {
    *
    * @param mixed $announceData
    *   Given announce data to be queued.
+   * @param string $blockchainTypeId
+   *   Type of blockchain.
    */
-  public function addAnnounceItem($announceData);
+  public function addAnnounceItem($announceData, $blockchainTypeId);
 
   /**
    * Processes mining.
