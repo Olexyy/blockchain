@@ -69,6 +69,7 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
         '#type' => $type,
         '#default_value' => $value,
         '#title' => t($this->humanize($name)),
+        '#required' => TRUE,
       ];
     }
 
