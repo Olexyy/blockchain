@@ -178,7 +178,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   /**
    * Property getter
    *
-   * @return string
+   * @return string|int
    *   Value.
    */
   public function getIntervalPool();
@@ -186,7 +186,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   /**
    * Property setter.
    *
-   * @param string $intervalPool
+   * @param string|int $intervalPool
    *   Value.
    *
    * @return $this
@@ -216,7 +216,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   /**
    * Property getter
    *
-   * @return string
+   * @return string|int
    *   Value.
    */
   public function getIntervalAnnounce();
@@ -224,7 +224,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   /**
    * Property setter.
    *
-   * @param string $intervalAnnounce
+   * @param string|int $intervalAnnounce
    *   Value.
    *
    * @return $this

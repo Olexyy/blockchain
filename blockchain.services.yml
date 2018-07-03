@@ -26,7 +26,7 @@ services:
     arguments: ['@entity_type.manager']
   blockchain.locker:
     class: Drupal\blockchain\Service\BlockchainLockerService
-    arguments: ['@lock']
+    arguments: ['@lock', '@blockchain.config']
   blockchain.api:
     class: Drupal\blockchain\Service\BlockchainApiService
     arguments:

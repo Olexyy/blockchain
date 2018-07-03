@@ -4,13 +4,19 @@ namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\Core\Config\Config;
+use Drupal\workflows\StateInterface;
 
 /**
  * Interface BlockchainConfigServiceInterface.
  *
  * @package Drupal\blockchain\Service
  */
-interface BlockchainConfigServiceInterface {
+interface BlockchainConfigServiceInterface
+{
+
+  const LAST_CRON_RUN = 'last_cron_run_';
+  const CONTEXT_ANNOUNCE = 'announce_';
+  const CONTEXT_MINING = 'mining_';
 
   /**
    * Getter for unique identifier.
@@ -31,10 +37,10 @@ interface BlockchainConfigServiceInterface {
   function getGlobalConfig($editable = FALSE);
 
   /**
-   * State values.
+   * State storage.
    *
-   * @return array
-   *   Values for given state.
+   * @return StateInterface
+   *   State storage.
    */
   public function getState();
 
@@ -150,5 +156,29 @@ interface BlockchainConfigServiceInterface {
    *   Loaded entity.
    */
   public function load($id);
+
+  /**
+   * Getter for CRON last run in context of current config.
+   *
+   * @param string $context
+   *   Context.
+   *
+   * @return int|null
+   *   Value if any.
+   */
+  public function getLastCronRun($context);
+
+  /**
+   * Setter for last cron run.
+   *
+   * @param string $context
+   *   Context.
+   * @param int $value
+   *   Integer value expected.
+   *
+   * @return bool
+   *   Execution result.
+   */
+  public function setLastCronRun($context, $value);
 
 }

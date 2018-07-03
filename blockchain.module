@@ -1,0 +1,13 @@
+<?php
+
+use Drupal\blockchain\Utils\BlockchainCronHandler;
+
+/**
+ * Implements hook_cron().
+ */
+function blockchain_cron() {
+
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(BlockchainCronHandler::class)
+    ->hookCron();
+}

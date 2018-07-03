@@ -21,14 +21,25 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
   protected $lockBackend;
 
   /**
+   * Blockchain config.
+   *
+   * @var BlockchainConfigServiceInterface
+   */
+  protected $blockchainConfigService;
+
+  /**
    * BlockchainLockerService constructor.
    *
    * @param LockBackendInterface $lockBackend
    *   Locker.
+   * @param BlockchainConfigServiceInterface $blockchainConfigService
+   *   Blockchain config.
    */
-  public function __construct(LockBackendInterface $lockBackend) {
+  public function __construct(LockBackendInterface $lockBackend,
+                              BlockchainConfigServiceInterface $blockchainConfigService) {
 
     $this->lockBackend = $lockBackend;
+    $this->blockchainConfigService = $blockchainConfigService;
   }
 
   /**
@@ -60,7 +71,7 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
    */
   public function lockAnnounce() {
 
-    return $this->lock(static::ANNOUNCE);
+    return $this->lock(static::ANNOUNCE . $this->blockchainConfigService->getCurrentConfig()->id());
   }
 
   /**
@@ -68,7 +79,7 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
    */
   public function releaseAnnounce() {
 
-    $this->lockBackend->release(static::ANNOUNCE);
+    $this->lockBackend->release(static::ANNOUNCE . $this->blockchainConfigService->getCurrentConfig()->id());
   }
 
   /**
@@ -76,7 +87,7 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
    */
   public function waitAnnounce($timeout) {
 
-    return $this->wait(static::ANNOUNCE, $timeout);
+    return $this->wait(static::ANNOUNCE . $this->blockchainConfigService->getCurrentConfig()->id(), $timeout);
   }
 
   /**
@@ -84,7 +95,7 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
    */
   public function lockMining() {
 
-    return $this->lock(static::MINING);
+    return $this->lock(static::MINING . $this->blockchainConfigService->getCurrentConfig()->id());
   }
 
   /**
@@ -92,7 +103,7 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
    */
   public function releaseMining() {
 
-    $this->lockBackend->release(static::MINING);
+    $this->lockBackend->release(static::MINING . $this->blockchainConfigService->getCurrentConfig()->id());
   }
 
   /**
@@ -100,7 +111,7 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
    */
   public function waitMining($timeout) {
 
-    return $this->wait(static::MINING, $timeout);
+    return $this->wait(static::MINING . $this->blockchainConfigService->getCurrentConfig()->id(), $timeout);
   }
 
 }

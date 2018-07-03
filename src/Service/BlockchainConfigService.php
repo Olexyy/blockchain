@@ -96,7 +96,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getState() {
 
-    return $this->state->get('blockchain.state', []);
+    return $this->state;
   }
 
   /**
@@ -281,6 +281,35 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
     }
 
     return $list;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLastCronRun($context) {
+
+    if ($currentConfig = $this->getCurrentConfig()) {
+      $suffix = $context . $currentConfig->id();
+
+      return $this->getState()->get(static::LAST_CRON_RUN . $suffix, NULL);
+    }
+
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setLastCronRun($context, $value) {
+
+    if ($currentConfig = $this->getCurrentConfig()) {
+      $suffix = $context . $currentConfig->id();
+      $this->getState()->set(static::LAST_CRON_RUN . $suffix, $value);
+
+      return TRUE;
+    }
+
+    return FALSE;
   }
 
 }
