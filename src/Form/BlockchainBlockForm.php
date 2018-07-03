@@ -3,7 +3,6 @@
 namespace Drupal\blockchain\Form;
 
 
-use Drupal\blockchain\Service\BlockchainService;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainBatchHandler;
 use Drupal\Component\Datetime\TimeInterface;
@@ -96,12 +95,12 @@ class BlockchainBlockForm extends ContentEntityForm {
     $element['add_to_queue'] = [
       '#type' => 'button',
       '#executes_submit_callback' => TRUE,
-      '#value' => $this->t('Add to queue'),
+      '#value' => $this->t('Add to pool'),
       '#context' => 'add_to_queue',
       '#submit' =>  [ [$this, 'callbackHandler'] ],
       '#weight' => 100
     ];
-    $element['submit']['#value'] = $this->t('Mine');
+    $element['submit']['#value'] = $this->t('Mine pool');
 
     return $element;
   }
@@ -139,29 +138,10 @@ class BlockchainBlockForm extends ContentEntityForm {
 
     /* @var $entity \Drupal\blockchain\Entity\BlockchainBlockInterface */
     $entity = $this->entity;
-    // Here we pass raw data.
     $this->blockchainService
       ->getQueueService()
       ->addBlockItem($entity->getData(), $entity->getEntityTypeId());
-    // Set mining batch.
     BlockchainBatchHandler::set(BlockchainBatchHandler::getMiningBatchDefinition());
-
-    /*
-    $status = parent::save($form, $form_state);
-    switch ($status) {
-      case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Blockchain Block.', [
-          '%label' => $entity->label(),
-        ]));
-        break;
-
-      default:
-        drupal_set_message($this->t('Saved the %label Blockchain Block.', [
-          '%label' => $entity->label(),
-        ]));
-    }
-    $form_state->setRedirect('entity.blockchain_block.canonical', ['blockchain_block' => $entity->id()]);
-    */
   }
 
 }

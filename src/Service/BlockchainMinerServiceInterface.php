@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
+use Drupal\Core\Queue\SuspendQueueException;
 
 /**
  * Interface BlockchainMinerServiceInterface.
@@ -16,17 +17,25 @@ interface BlockchainMinerServiceInterface {
    *
    * @param string $miningString
    *   Given value.
+   * @param int $deadline
+   *   Deadline for mining.
    *
    * @return int
    *   Nonce.
+   *
+   * @throws SuspendQueueException
    */
-  public function mine($miningString);
+  public function mine($miningString, $deadline = 0);
 
   /**
    * Block, with all values set except for nonce.
    *
    * @param BlockchainBlockInterface $blockchainBlock
    *   Given blockchain block.
+   * @param int $deadline
+   *   Deadline for mining.
+   *
+   * @throws SuspendQueueException
    */
-  public function mineBlock(BlockchainBlockInterface $blockchainBlock);
+  public function mineBlock(BlockchainBlockInterface $blockchainBlock, $deadline = 0);
 }

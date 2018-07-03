@@ -15,6 +15,7 @@ interface BlockchainQueueServiceInterface {
   const LOGGER_CHANNEL = 'blockchain.queue';
   const ANNOUNCE_QUEUE_ITEM = 'announce_item';
   const BLOCKCHAIN_TYPE_ID = 'blockchain_type_id';
+  const START_TIME = 'start_time';
 
   /**
    * Getter for logger.
@@ -85,7 +86,7 @@ interface BlockchainQueueServiceInterface {
    * @return int
    *   Count of processed items.
    */
-  public function doMining($limit = 0, $leaseTime = 3600);
+  public function doMining($limit = 0, $leaseTime = 600);
 
   /**
    * Processes announce handling.
@@ -98,6 +99,6 @@ interface BlockchainQueueServiceInterface {
    * @return int
    *   Count of processed items.
    */
-  public function doAnnounceHandling($limit = 0, $leaseTime = 3600);
+  public function doAnnounceHandling($limit = 0, $leaseTime = 600);
 
 }

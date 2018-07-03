@@ -83,6 +83,11 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
       $data->{BlockchainDataInterface::DATA_KEY} : NULL;
     $blockchainTypeId = property_exists($data, BlockchainQueueServiceInterface::BLOCKCHAIN_TYPE_ID) ?
       $data->{BlockchainQueueServiceInterface::BLOCKCHAIN_TYPE_ID} : NULL;
+    $startTime = property_exists($data, BlockchainQueueServiceInterface::START_TIME) ?
+      $data->{BlockchainQueueServiceInterface::START_TIME} : NULL;
+    if (!$startTime) {
+      throw new \Exception('Start time not set.');
+    }
     if (!$blockchainTypeId) {
       throw new \Exception('Missing blockchain type.');
     }
@@ -98,13 +103,14 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
     if (!$lastBlock = $this->blockchainService->getStorageService()->getLastBlock()) {
       throw new \Exception('Missing generic block.');
     }
+    $deadline = $startTime + $this->blockchainService->getConfigService()->getCurrentConfig()->getTimeoutPool();
     $block = BlockchainBlock::create();
     $block->setPreviousHash($lastBlock->getHash());
     $block->setData($blockData);
     $block->setAuthor($this->blockchainService
       ->getConfigService()->getCurrentConfig()->getNodeId());
     $block->setTimestamp(time());
-    $this->blockchainService->getMinerService()->mineBlock($block);
+    $this->blockchainService->getMinerService()->mineBlock($block, $deadline);
     $block->save();
     $this->blockchainService->getApiService()->executeAnnounce([
       BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),

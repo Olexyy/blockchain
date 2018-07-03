@@ -137,6 +137,15 @@ class BlockchainConfigForm extends EntityForm {
       '#description' => $this->t('List of ip addresses to be filtered, newline separated.'),
     ];
 
+    $form['timeoutPool'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Pool process timeout'),
+      '#default_value' => $blockchainConfig->getTimeoutPool(),
+      '#required' => TRUE,
+      '#min' => 1,
+      '#description' => $this->t('Timeout for pool processing.'),
+    ];
+
     $form['poolManagement'] = [
       '#type' => 'select',
       '#title' => $this->t('Pool management'),
@@ -155,22 +164,6 @@ class BlockchainConfigForm extends EntityForm {
       '#required' => TRUE,
       '#min' => 1,
       '#description' => $this->t('Interval for pool management CRON job.'),
-      '#states' => [
-        'visible' => [
-          ':input[name="poolManagement"]' => [
-            'value' => BlockchainConfigInterface::POOL_MANAGEMENT_CRON
-          ],
-        ],
-      ],
-    ];
-
-    $form['timeoutPool'] = [
-      '#type' => 'number',
-      '#title' => $this->t('Pool management timeout'),
-      '#default_value' => $blockchainConfig->getTimeoutPool(),
-      '#required' => TRUE,
-      '#min' => 1,
-      '#description' => $this->t('Timeout for pool management CRON job.'),
       '#states' => [
         'visible' => [
           ':input[name="poolManagement"]' => [

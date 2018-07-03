@@ -197,7 +197,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   /**
    * Property getter
    *
-   * @return string
+   * @return string|int
    *   Value.
    */
   public function getTimeoutPool();
@@ -205,7 +205,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   /**
    * Property setter.
    *
-   * @param string $timeoutPool
+   * @param string|int $timeoutPool
    *   Value.
    *
    * @return $this

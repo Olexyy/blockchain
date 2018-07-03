@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
+use Drupal\blockchain\Utils\MiningTimeoutException;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
@@ -99,12 +100,14 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function doMining($limit = 0, $leaseTime = 3600) {
+  public function doMining($limit = 0, $leaseTime = 600) {
 
     $count = 0;
+    $start = time();
     while (!$limit || $count < $limit) {
       if ($item = $this->getBlockPool()->claimItem($leaseTime)) {
         try {
+          $item->data->{static::START_TIME} = $start;
           $this->getMiner()->processItem($item->data);
           $this->getBlockPool()->deleteItem($item);
           $count++;
@@ -161,7 +164,7 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function doAnnounceHandling($limit = 0, $leaseTime = 3600) {
+  public function doAnnounceHandling($limit = 0, $leaseTime = 600) {
 
     $i = 0;
     while (!$limit || $i < $limit) {
@@ -177,7 +180,6 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
           $this->getAnnounceQueue()->deleteItem($item);
           $this->getLogger()
             ->error($e->getMessage() . $e->getTraceAsString());
-          return $e->getMessage();
         }
       }
       else {
