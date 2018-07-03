@@ -79,4 +79,28 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
     return $this->wait(static::ANNOUNCE, $timeout);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function lockMining() {
+
+    return $this->lock(static::MINING);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function releaseMining() {
+
+    $this->lockBackend->release(static::MINING);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function waitMining($timeout) {
+
+    return $this->wait(static::MINING, $timeout);
+  }
+
 }

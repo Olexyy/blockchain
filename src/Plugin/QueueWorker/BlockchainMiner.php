@@ -10,6 +10,7 @@ use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\Core\Queue\SuspendQueueException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -103,18 +104,23 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
     if (!$lastBlock = $this->blockchainService->getStorageService()->getLastBlock()) {
       throw new \Exception('Missing generic block.');
     }
-    $deadline = $startTime + $this->blockchainService->getConfigService()->getCurrentConfig()->getTimeoutPool();
-    $block = BlockchainBlock::create();
-    $block->setPreviousHash($lastBlock->getHash());
-    $block->setData($blockData);
-    $block->setAuthor($this->blockchainService
-      ->getConfigService()->getCurrentConfig()->getNodeId());
-    $block->setTimestamp(time());
-    $this->blockchainService->getMinerService()->mineBlock($block, $deadline);
-    $block->save();
-    $this->blockchainService->getApiService()->executeAnnounce([
-      BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),
-    ]);
+    if ($this->blockchainService->getLockerService()->lockMining()) {
+      $deadline = $startTime + $this->blockchainService->getConfigService()->getCurrentConfig()->getTimeoutPool();
+      $block = BlockchainBlock::create();
+      $block->setPreviousHash($lastBlock->getHash());
+      $block->setData($blockData);
+      $block->setAuthor($this->blockchainService
+        ->getConfigService()->getCurrentConfig()->getNodeId());
+      $block->setTimestamp(time());
+      $this->blockchainService->getMinerService()->mineBlock($block, $deadline);
+      $block->save();
+      $this->blockchainService->getApiService()->executeAnnounce([
+        BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),
+      ]);
+    }
+    else {
+      throw new SuspendQueueException('Block mining locked');
+    }
   }
 
 }
