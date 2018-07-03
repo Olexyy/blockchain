@@ -23,6 +23,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   const DATA_HANDLER = 'simple';
   const FILTER_TYPE_BLACKLIST = 'blacklist';
   const FILTER_TYPE_WHITELIST = 'whitelist';
+  const TIMEOUT_POOL = 60 * 10;
 
   /**
    * Generator for UUID.
@@ -192,6 +193,25 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
    *   Chaining.
    */
   public function setIntervalPool($intervalPool);
+
+  /**
+   * Property getter
+   *
+   * @return string
+   *   Value.
+   */
+  public function getTimeoutPool();
+
+  /**
+   * Property setter.
+   *
+   * @param string $timeoutPool
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setTimeoutPool($timeoutPool);
 
   /**
    * Property getter

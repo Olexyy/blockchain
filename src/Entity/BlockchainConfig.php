@@ -118,6 +118,13 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   protected $intervalPool;
 
   /**
+   * Pool management timeout.
+   *
+   * @var string
+   */
+  protected $timeoutPool;
+
+  /**
    * Announce management interval.
    *
    * @var string
@@ -310,6 +317,24 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   public function setIntervalPool($intervalPool) {
 
     $this->intervalPool = $intervalPool;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTimeoutPool() {
+
+    return $this->timeoutPool;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setTimeoutPool($timeoutPool) {
+
+    $this->timeoutPool = $timeoutPool;
 
     return $this;
   }

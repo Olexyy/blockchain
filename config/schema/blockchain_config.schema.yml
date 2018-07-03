@@ -37,6 +37,9 @@ blockchain.blockchain_config.*:
     intervalPool:
       type: integer
       label: 'Interval for CRON blockchain pool management'
+    timeoutPool:
+      type: integer
+      label: 'Timeout for CRON blockchain pool management'
     intervalAnnounce:
       type: integer
       label: 'Interval for CRON syncing with other blockchain nodes'
