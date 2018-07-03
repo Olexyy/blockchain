@@ -13,6 +13,11 @@ class BlockchainConfigListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
+  protected $limit = 20;
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildHeader() {
     $header['label'] = $this->t('Blockchain config');
     $header['id'] = $this->t('Machine name');

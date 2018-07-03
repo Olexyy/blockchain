@@ -14,6 +14,11 @@ class BlockchainNodeListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
+  protected $limit = 20;
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildHeader() {
 
     $header['id'] = $this->t('Id');
