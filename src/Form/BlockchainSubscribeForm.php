@@ -32,7 +32,7 @@ class BlockchainSubscribeForm extends FormBase {
   protected $blockchainConfigId;
 
   /**
-   * BlockchainSettingsForm constructor.
+   * BlockchainDashboardForm constructor.
    *
    * @param BlockchainServiceInterface $blockchainService
    *   Blockchain service.

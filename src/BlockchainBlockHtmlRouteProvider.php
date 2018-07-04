@@ -41,7 +41,7 @@ class BlockchainBlockHtmlRouteProvider extends AdminHtmlRouteProvider {
       $route = new Route("/admin/structure/blockchain");
       $route
         ->setDefaults([
-          '_form' => 'Drupal\blockchain\Form\BlockchainSettingsForm',
+          '_form' => 'Drupal\blockchain\Form\BlockchainDashboardForm',
           '_title' => 'Blockchain dashboard',
         ])
         ->setRequirement('_permission', $entity_type->getAdminPermission())
