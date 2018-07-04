@@ -145,13 +145,6 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
     return $this->getParam(static::PARAM_AUTH);
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getSelfParam() {
-
-    return $this->getParam(static::PARAM_SELF);
-  }
 
   /**
    * {@inheritdoc}
@@ -191,14 +184,6 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   public function hasAuthParam() {
 
     return !($this->getAuthParam() === NULL);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function hasSelfParam() {
-
-    return !($this->getSelfParam() === NULL);
   }
 
   /**

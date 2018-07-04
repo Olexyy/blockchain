@@ -94,7 +94,7 @@ interface BlockchainNodeServiceInterface {
    * @param string $blockchainType
    *   Type of blockchain.
    * @param $self
-   *   Actual id of blockchain.
+   *   Id of blockchain node.
    * @param $addressSource
    *   Address source.
    * @param string $address

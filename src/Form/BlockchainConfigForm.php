@@ -317,7 +317,7 @@ class BlockchainConfigForm extends EntityForm {
       }
       elseif ($element['#context'] == 'remove_blocks') {
         $this->blockchainService->getStorageService()->deleteAll();
-        $this->messenger()->addStatus($this->t('Generic blocks deleted'));
+        $this->messenger()->addStatus($this->t('All blocks deleted'));
       }
       $form_state->setRedirect('<current>');
     }

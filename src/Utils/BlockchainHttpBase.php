@@ -244,4 +244,30 @@ abstract class BlockchainHttpBase implements BlockchainHttpInterface {
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function hasSelfParam() {
+
+    return !($this->getSelfParam() === NULL);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSelfParam() {
+
+    return $this->getParam(static::PARAM_SELF);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSelfParam($value) {
+
+    $this->setParam(static::PARAM_SELF, $value);
+
+    return $this;
+  }
+
 }

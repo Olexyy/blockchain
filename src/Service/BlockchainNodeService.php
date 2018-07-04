@@ -92,7 +92,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
    */
   public function loadBySelfAndType($self, $blockchainTypeId) {
 
-    if($node = $this->load($blockchainTypeId . '_' . $self)) {
+    if($node = $this->load($this->generateId($blockchainTypeId, $self))) {
       if ($node->getBlockchainTypeId() == $blockchainTypeId) {
 
         return $node;
@@ -121,7 +121,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
     $blockchainNode
       ->setBlockchainTypeId($blockchainType)
       ->setSelf($self)
-      ->setId($blockchainType . '_' . $self)
+      ->setId($this->generateId($blockchainType, $self))
       ->setLabel($label? $label : $self)
       ->setAddress($address)
       ->setSecure($secure)
@@ -186,5 +186,21 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
     catch (\Exception $exception) {
       return FALSE;
     }
+  }
+
+  /**
+   * Id generator.
+   *
+   * @param string $blockchainTypeId
+   *   Type of blockchain.
+   * @param string $self
+   *   Self id param.
+   *
+   * @return string
+   *   Hash.
+   */
+  public function generateId($blockchainTypeId, $self) {
+
+    return sha1($blockchainTypeId . '_' . $self);
   }
 }

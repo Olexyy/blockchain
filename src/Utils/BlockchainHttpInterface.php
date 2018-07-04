@@ -6,12 +6,10 @@ namespace Drupal\blockchain\Utils;
 interface BlockchainHttpInterface {
 
   const PARAM_EXISTS = 'exists';
-  
   const PARAM_COUNT = 'count';
-
   const PARAM_BLOCKS = 'blocks';
-
   const PARAM_TYPE = 'type';
+  const PARAM_SELF = 'self';
 
   /**
    * Getter for param if exists.
@@ -227,5 +225,32 @@ interface BlockchainHttpInterface {
    *   Test result.
    */
   public function hasTypeParam();
+
+  /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasSelfParam();
+
+  /**
+   * Getter for param.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getSelfParam();
+
+  /**
+   * Setter for exists property.
+   *
+   * @param string $value
+   *   Given value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setSelfParam($value);
 
 }

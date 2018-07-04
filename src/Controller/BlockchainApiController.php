@@ -205,6 +205,7 @@ class BlockchainApiController extends ControllerBase {
             ->setPort($result->getPort())
             ->setSecure($result->isSecure())
             ->setStatusCode(200)
+            ->setSelfParam($this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId())
             ->setMessageParam('Success')
             ->setDetailsParam('Added to list.')
             ->log($logger)

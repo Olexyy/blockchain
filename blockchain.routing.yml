@@ -40,3 +40,10 @@ blockchain.storage.validate:
     _controller: \Drupal\blockchain\Controller\BlockchainController::storageValidate
   requirements:
     _permission: 'administer blockchain block entities'
+blockchain.api.subscribe:
+  path: '/admin/structure/{blockchain_config}/subscribe'
+  defaults:
+    _title: 'Subscribe to existing Blockchain'
+    _form: 'Drupal\blockchain\Form\BlockchainSubscribeForm'
+  requirements:
+    _permission: 'administer blockchain block entities'

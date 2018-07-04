@@ -17,7 +17,6 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
   const TYPE_FETCH = 'fetch';
   const TYPE_PULL = 'pull';
   const PARAM_AUTH = 'auth'; // hash of (self+bc_token)
-  const PARAM_SELF = 'self';
   const PARAM_TIMESTAMP = 'timestamp';
   const PARAM_PREVIOUS_HASH = 'previous_hash';
   const PARAM_SELF_URL= 'self_url';
@@ -34,14 +33,6 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    *   Value.
    */
   public function getAuthParam();
-
-  /**
-   * Getter for param.
-   *
-   * @return string
-   *   Value.
-   */
-  public function getSelfParam();
 
   /**
    * Getter for param.
@@ -130,14 +121,6 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    *   Test result.
    */
   public function hasAuthParam();
-
-  /**
-   * Predicate.
-   *
-   * @return bool
-   *   Test result.
-   */
-  public function hasSelfParam();
 
   /**
    * Predicate.
