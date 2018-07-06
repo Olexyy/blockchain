@@ -56,6 +56,13 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   protected static $blockchainConfig;
 
   /**
+   * Blockchain hash service.
+   *
+   * @var BlockchainHashServiceInterface
+   */
+  protected $blockchainHashService;
+
+  /**
    * BlockchainConfigServiceInterface constructor.
    *
    * {@inheritdoc}
@@ -63,12 +70,14 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   public function __construct(UuidInterface $uuid,
                               StateInterface $state,
                               ConfigFactoryInterface $configFactory,
-                              EntityTypeManagerInterface $entityTypeManager) {
+                              EntityTypeManagerInterface $entityTypeManager,
+                              BlockchainHashServiceInterface $blockchainHashService) {
 
     $this->uuid = $uuid;
     $this->state = $state;
     $this->configFactory = $configFactory;
     $this->entityTypeManager = $entityTypeManager;
+    $this->blockchainHashService = $blockchainHashService;
   }
 
   /**
@@ -104,7 +113,8 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function tokenGenerate() {
 
-    return Util::hash($this->getCurrentConfig()->getBlockchainId().$this->getCurrentConfig()->getNodeId());
+    return $this->blockchainHashService
+      ->hash($this->getCurrentConfig()->getBlockchainId().$this->getCurrentConfig()->getNodeId());
   }
 
   /**

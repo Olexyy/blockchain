@@ -3,7 +3,7 @@
 namespace Drupal\blockchain\Entity;
 
 
-use Drupal\blockchain\Utils\Util;
+use Drupal\blockchain\Service\BlockchainService;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -178,15 +178,11 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
   /**
    * {@inheritdoc}
    */
-  public function getHash() {
+  public function toHash() {
 
-    return Util::hash(
-      $this->getAuthor() .
-      $this->getPreviousHash().
-      $this->getData().
-      $this->getTimestamp().
-      $this->getNonce()
-    );
+    return BlockchainService::instance()
+      ->getHashService()
+      ->hashBlock($this);
   }
 
   /**
@@ -200,7 +196,7 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
    */
   public function equals(BlockchainBlockInterface $blockchainBlock) {
 
-    return $this->getHash() == $blockchainBlock->getHash();
+    return $this->toHash() == $blockchainBlock->toHash();
   }
 
 }

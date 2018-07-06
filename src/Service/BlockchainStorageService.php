@@ -70,6 +70,13 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   protected $database;
 
   /**
+   * Blockchain hash service.
+   *
+   * @var BlockchainHashServiceInterface
+   */
+  protected $blockchainHashService;
+
+  /**
    * BlockchainStorageService constructor.
    *
    * @param EntityTypeManagerInterface $entityTypeManager
@@ -86,6 +93,8 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
    *   Blockchain miner service.
    * @param Connection $database
    *   Database.
+   * @param BlockchainHashServiceInterface $blockchainHashService
+   *   Hash service.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager,
                               LoggerChannelFactoryInterface $loggerFactory,
@@ -93,7 +102,8 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
                               BlockchainDataManager $blockchainDataManager,
                               BlockchainValidatorServiceInterface $blockchainValidatorService,
                               BlockchainMinerServiceInterface $blockchainMinerService,
-                              Connection $database) {
+                              Connection $database,
+                              BlockchainHashServiceInterface $blockchainHashService) {
 
     $this->entityTypeManager = $entityTypeManager;
     $this->loggerFactory = $loggerFactory;
@@ -102,6 +112,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     $this->blockchainValidatorService = $blockchainValidatorService;
     $this->blockchainMinerService = $blockchainMinerService;
     $this->database = $database;
+    $this->blockchainHashService = $blockchainHashService;
   }
 
   /**
@@ -186,7 +197,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
 
     $rand = new Random();
     if (!$previousHash) {
-      $previousHash = Util::hash($rand->string());
+      $previousHash = $this->blockchainHashService->hash($rand->string());
     }
     $block = $this->getBlockStorage()->create([]);
     if ($block instanceof BlockchainBlockInterface) {

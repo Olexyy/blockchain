@@ -110,4 +110,12 @@ interface BlockchainServiceInterface {
    */
   public function getTempStoreService();
 
+  /**
+   * Getter for Blockchain hash service.
+   *
+   * @return BlockchainHashServiceInterface
+   *   Blockchain hash service.
+   */
+  public function getHashService();
+
 }

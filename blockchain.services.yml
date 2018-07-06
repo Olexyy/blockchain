@@ -1,7 +1,12 @@
 services:
   blockchain.config:
     class: Drupal\blockchain\Service\BlockchainConfigService
-    arguments: ['@uuid','@state','@config.factory','@entity_type.manager']
+    arguments:
+      -  '@uuid'
+      -  '@state'
+      -  '@config.factory'
+      -  '@entity_type.manager'
+      -  '@blockchain.hash'
   blockchain.data.manager:
     class: Drupal\blockchain\Plugin\BlockchainDataManager
     parent: default_plugin_manager
@@ -18,6 +23,7 @@ services:
       -  '@blockchain.validator'
       -  '@blockchain.miner'
       -  '@database'
+      -  '@blockchain.hash'
   blockchain.tempstore:
     class: Drupal\blockchain\Service\BlockchainTempStoreService
     arguments:
@@ -45,10 +51,16 @@ services:
       -  '@blockchain.auth.manager'
   blockchain.validator:
     class: Drupal\blockchain\Service\BlockchainValidatorService
-    arguments: ['@blockchain.config', '@blockchain.node', '@blockchain.auth.manager']
+    arguments:
+      -  '@blockchain.config'
+      -  '@blockchain.node'
+      -  '@blockchain.auth.manager'
+      -  '@blockchain.hash'
   blockchain.miner:
     class: Drupal\blockchain\Service\BlockchainMinerService
-    arguments: ['@blockchain.validator']
+    arguments: ['@blockchain.validator', '@blockchain.hash']
+  blockchain.hash:
+    class: Drupal\blockchain\Service\BlockchainHashService
   blockchain.service:
     class: Drupal\blockchain\Service\BlockchainService
     arguments:
@@ -63,3 +75,4 @@ services:
       -  '@blockchain.locker'
       -  '@blockchain.auth.manager'
       -  '@blockchain.tempstore'
+      -  '@blockchain.hash'

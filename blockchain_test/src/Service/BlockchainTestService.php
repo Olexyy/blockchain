@@ -108,7 +108,7 @@ class BlockchainTestService implements BlockchainTestServiceInterface{
                 $this->blockchainService
                   ->getStorageService()
                   ->getLastBlock()
-                  ->getHash()
+                  ->toHash()
               )->save();
           }
           else {

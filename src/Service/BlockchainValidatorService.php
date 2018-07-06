@@ -40,15 +40,24 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
   protected $blockchainAuthManager;
 
   /**
+   * Blockchain hash service.
+   *
+   * @var BlockchainHashServiceInterface
+   */
+  protected $blockchainHashService;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(BlockchainConfigServiceInterface $blockchainSettingsService,
                               BlockchainNodeServiceInterface $blockchainNodeService,
-                              BlockchainAuthManager $blockchainAuthManager) {
+                              BlockchainAuthManager $blockchainAuthManager,
+                              BlockchainHashServiceInterface $blockchainHashService) {
 
     $this->configService = $blockchainSettingsService;
     $this->blockchainNodeService = $blockchainNodeService;
     $this->blockchainAuthManager = $blockchainAuthManager;
+    $this->blockchainHashService = $blockchainHashService;
   }
 
   /**
@@ -80,13 +89,14 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
    */
   public function blockIsValid(BlockchainBlockInterface $blockchainBlock, BlockchainBlockInterface $previousBlock = NULL) {
 
-    $hashString = Util::hash($blockchainBlock->getPreviousHash() . $blockchainBlock->getNonce());
+    $hashString = $this->blockchainHashService
+      ->hash($blockchainBlock->getPreviousHash() . $blockchainBlock->getNonce());
     if (!$previousBlock) {
 
       return $this->hashIsValid($hashString);
     }
 
-    return $previousBlock->getHash() == $blockchainBlock->getPreviousHash() &&
+    return $previousBlock->toHash() == $blockchainBlock->getPreviousHash() &&
       $this->hashIsValid($hashString);
   }
 
@@ -99,7 +109,6 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
    */
   public function validateRequest(BlockchainRequestInterface $blockchainRequest, Request $request) {
 
-    $configService = $this->configService;
     if ($request->getMethod() !== Request::METHOD_POST) {
 
       return BlockchainResponse::create()

@@ -107,7 +107,7 @@ class BlockchainMiner extends QueueWorkerBase implements ContainerFactoryPluginI
     if ($this->blockchainService->getLockerService()->lockMining()) {
       $deadline = $startTime + $this->blockchainService->getConfigService()->getCurrentConfig()->getTimeoutPool();
       $block = BlockchainBlock::create();
-      $block->setPreviousHash($lastBlock->getHash());
+      $block->setPreviousHash($lastBlock->toHash());
       $block->setData($blockData);
       $block->setAuthor($this->blockchainService
         ->getConfigService()->getCurrentConfig()->getNodeId());

@@ -119,12 +119,12 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
   function setTimestamp($timestamp);
 
   /**
-   * Getter for block hash as object.
+   * Getter for block hash from object.
    *
    * @return string
    *   Hash, provided by Util class.
    */
-  public function getHash();
+  public function toHash();
 
   /**
    * Overrides save handler definition.

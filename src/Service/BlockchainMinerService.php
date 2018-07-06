@@ -23,14 +23,25 @@ class BlockchainMinerService implements BlockchainMinerServiceInterface {
   protected $blockchainValidatorService;
 
   /**
+   * Blockchain hash service.
+   *
+   * @var BlockchainHashServiceInterface
+   */
+  protected $blockchainHashService;
+
+  /**
    * BlockchainMinerService constructor.
    *
    * @param BlockchainValidatorServiceInterface $blockchainValidatorService
    *   Injected service.
+   * @param BlockchainHashServiceInterface $blockchainHashService
+   *   Miner service.
    */
-  public function __construct(BlockchainValidatorServiceInterface $blockchainValidatorService) {
+  public function __construct(BlockchainValidatorServiceInterface $blockchainValidatorService,
+                              BlockchainHashServiceInterface $blockchainHashService) {
 
     $this->blockchainValidatorService = $blockchainValidatorService;
+    $this->blockchainHashService = $blockchainHashService;
   }
 
   /**
@@ -39,13 +50,13 @@ class BlockchainMinerService implements BlockchainMinerServiceInterface {
   public function mine($previousHash, $deadline = 0) {
 
     $nonce = 0;
-    $result = Util::hash($previousHash . $nonce);
+    $result = $this->blockchainHashService->hash($previousHash . $nonce);
     while (!$this->blockchainValidatorService->hashIsValid($result)) {
       if ($deadline && $deadline > time()) {
         throw new SuspendQueueException('Block mining timed out');
       }
       $nonce++;
-      $result = Util::hash($previousHash . $nonce);
+      $result = $this->blockchainHashService->hash($previousHash . $nonce);
     }
 
     return $nonce;

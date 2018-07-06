@@ -90,6 +90,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainTempStoreService;
 
   /**
+   * Blockchain hash service.
+   *
+   * @var BlockchainHashServiceInterface
+   */
+  protected $blockchainHashService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -114,6 +121,8 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Blockchain auth manager.
    * @param BlockchainTempStoreServiceInterface $blockchainTempStoreService
    *   Blockchain temporary storage.
+   * @param BlockchainHashServiceInterface $blockchainHashService
+   *   Blockchain hash service.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
@@ -126,7 +135,8 @@ class BlockchainService implements BlockchainServiceInterface {
     BlockchainMinerServiceInterface $blockchainMinerService,
     BlockchainLockerServiceInterface $blockchainLockerService,
     BlockchainAuthManager $blockchainAuthManager,
-    BlockchainTempStoreServiceInterface $blockchainTempStoreService) {
+    BlockchainTempStoreServiceInterface $blockchainTempStoreService,
+    BlockchainHashServiceInterface $blockchainHashService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
@@ -139,6 +149,7 @@ class BlockchainService implements BlockchainServiceInterface {
     $this->blockchainLockerService = $blockchainLockerService;
     $this->blockchainAuthManager = $blockchainAuthManager;
     $this->blockchainTempStoreService = $blockchainTempStoreService;
+    $this->blockchainHashService = $blockchainHashService;
   }
 
   /**
@@ -232,6 +243,17 @@ class BlockchainService implements BlockchainServiceInterface {
   public function getTempStoreService() {
 
     return $this->blockchainTempStoreService;
+  }
+
+  /**
+   * Getter for Blockchain hash service.
+   *
+   * @return BlockchainHashServiceInterface
+   *   Blockchain hash service.
+   */
+  public function getHashService() {
+
+    return $this->blockchainHashService;
   }
 
 }

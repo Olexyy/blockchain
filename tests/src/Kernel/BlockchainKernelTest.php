@@ -80,7 +80,7 @@ class BlockchainKernelTest extends KernelTestBase {
     $lastBlock = $tempStore->getLastBlock();
     $this->assertInstanceOf(BlockchainBlockInterface::class, $lastBlock, 'Last block obtained.');
     for ($i = 0; $i < 2; $i++) {
-      $block = $this->blockchainService->getStorageService()->getRandomBlock($tempStore->getLastBlock()->getHash());
+      $block = $this->blockchainService->getStorageService()->getRandomBlock($tempStore->getLastBlock()->toHash());
       $tempStore->save($block);
     }
     $blocks = $tempStore->getAll();

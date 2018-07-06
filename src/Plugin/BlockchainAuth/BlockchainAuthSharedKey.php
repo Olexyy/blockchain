@@ -100,7 +100,7 @@ class BlockchainAuthSharedKey extends PluginBase implements
    */
   public function authIsValid($self, $auth, $blockchainId) {
 
-    return Util::hash($blockchainId.$self) === $auth;
+    return $this->blockchainService->getHashService()->hash($blockchainId.$self) === $auth;
   }
 
 }
