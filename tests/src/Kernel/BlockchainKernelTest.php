@@ -3,6 +3,7 @@
 namespace Drupal\Tests\blockchain\Kernel;
 
 
+use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Service\BlockchainTempStoreServiceInterface;
 use Drupal\blockchain_test\Service\BlockchainTestServiceInterface;
@@ -67,7 +68,7 @@ class BlockchainKernelTest extends KernelTestBase {
   public function testTempStore() {
 
     $tempStore = $this->blockchainService->getTempStoreService();
-    $this->assertInstanceOf(BlockchainTempStoreServiceInterface::class, $tempStore, 'Tempstore serivce obtained.');
+    $this->assertInstanceOf(BlockchainTempStoreServiceInterface::class, $tempStore, 'Tempstore service obtained.');
     $storage = $tempStore->getBlockStorage();
     $this->assertInstanceOf(SharedTempStore::class, $storage, 'Tempstore storage obtained.');
     $blocks = $tempStore->getAll();
@@ -75,8 +76,29 @@ class BlockchainKernelTest extends KernelTestBase {
     $block = $this->blockchainService->getStorageService()->getGenericBlock();
     $tempStore->save($block);
     $blocks = $tempStore->getAll();
-    $this->assertCount(1, $blocks, 'One block added to tempstore');
-
+    $this->assertCount(1, $blocks, 'One block added to tempstore.');
+    $lastBlock = $tempStore->getLastBlock();
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $lastBlock, 'Last block obtained.');
+    for ($i = 0; $i < 2; $i++) {
+      $block = $this->blockchainService->getStorageService()->getRandomBlock($tempStore->getLastBlock()->getHash());
+      $tempStore->save($block);
+    }
+    $blocks = $tempStore->getAll();
+    $this->assertCount(3, $blocks, '3 blocks in tempstore.');
+    $this->assertEquals(3, $tempStore->getBlockCount(), 'Count of blocks is 3.');
+    $this->assertTrue($tempStore->anyBlock(), 'BLocks exist.');
+    $firstBlock = $tempStore->getFirstBlock();
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $firstBlock, 'First block ok.');
+    $countFrom = $tempStore->getBlocksCountFrom($firstBlock);
+    $this->assertEquals(2, $countFrom, 'Count from is ok.');
+    $countFrom = $tempStore->getBlocksFrom($firstBlock, 100);
+    $this->assertCount(2, $countFrom, 'Blocks get  from is ok.');
+    $this->assertTrue($tempStore->checkBlocks(), 'BLocks are valid.');
+    $this->assertTrue($tempStore->existsByTimestampAndHash($firstBlock->getTimestamp(), $firstBlock->getPreviousHash()));
+    $deletedBlock = $tempStore->pop();
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $deletedBlock, 'Deleted block ok.');
+    $blocks = $tempStore->getBlocks();
+    $this->assertCount(2, $blocks, '2 blocks in tempstore already.');
     $tempStore->deleteAll();
     $blocks = $tempStore->getAll();
     $this->assertEmpty($blocks, 'No blocks in tempstore already.');

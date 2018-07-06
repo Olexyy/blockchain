@@ -156,7 +156,8 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
     $data = $this->getAll();
     $count = 0;
     foreach ($data as $blockchainBlock) {
-      if ($blockchainBlock->getTimestamp() > $block->getTimestamp()) {
+      if ($blockchainBlock->getTimestamp() >= $block->getTimestamp() &&
+        $blockchainBlock->id() > $block->id()) {
         $count++;
       }
     }
@@ -173,7 +174,8 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
     $fetched = 0;
     $data = $this->getAll();
     foreach ($data as $blockchainBlock) {
-      if ($blockchainBlock->getTimestamp() > $block->getTimestamp()) {
+      if ($blockchainBlock->getTimestamp() >= $block->getTimestamp() &&
+        $blockchainBlock->id() > $block->id()) {
         if ($asArray) {
           $results[]= $blockchainBlock->toArray();
         }
@@ -214,6 +216,7 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
   public function save(BlockchainBlockInterface $blockchainBlock) {
 
     $data = $this->getAll();
+    $blockchainBlock->set('id', count($data) + 1);
     $data[]= $blockchainBlock;
     $this->getBlockStorage()->set(static::BLOCKS_KEY,  $data);
   }
