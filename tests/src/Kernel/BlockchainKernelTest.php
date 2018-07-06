@@ -99,6 +99,10 @@ class BlockchainKernelTest extends KernelTestBase {
     $this->assertInstanceOf(BlockchainBlockInterface::class, $deletedBlock, 'Deleted block ok.');
     $blocks = $tempStore->getBlocks();
     $this->assertCount(2, $blocks, '2 blocks in tempstore already.');
+    $deletedBlock = $tempStore->shift();
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $deletedBlock, 'Deleted block ok.');
+    $blocks = $tempStore->getBlocks();
+    $this->assertCount(1, $blocks, '1 blocks in tempstore already.');
     $tempStore->deleteAll();
     $blocks = $tempStore->getAll();
     $this->assertEmpty($blocks, 'No blocks in tempstore already.');

@@ -175,4 +175,12 @@ interface BlockchainTempStoreServiceInterface {
    */
   public function pop();
 
+  /**
+   * Deletes first block.
+   *
+   * @return BlockchainBlockInterface|null
+   *   Block if any.
+   */
+  public function shift();
+
 }

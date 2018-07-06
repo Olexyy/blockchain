@@ -229,7 +229,22 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
     $data = $this->getAll();
     if ($data) {
       $block = array_pop($data);
-      $data = array_values($data);
+      $this->getBlockStorage()->set(static::BLOCKS_KEY,  $data);
+
+      return $block;
+    }
+
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function shift() {
+
+    $data = $this->getAll();
+    if ($data) {
+      $block = array_shift($data);
       $this->getBlockStorage()->set(static::BLOCKS_KEY,  $data);
 
       return $block;

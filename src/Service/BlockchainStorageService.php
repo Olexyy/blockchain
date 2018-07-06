@@ -375,7 +375,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   }
 
   /**
-   * Deletes all records.
+   * {@inheritdoc}
    */
   public function deleteAll() {
 
@@ -383,4 +383,17 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
     $this->database->delete($type)->execute();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function pop() {
+
+    if ($lastBlock = $this->getLastBlock()) {
+      $lastBlock->delete();
+
+      return $lastBlock;
+    }
+
+    return NULL;
+  }
 }

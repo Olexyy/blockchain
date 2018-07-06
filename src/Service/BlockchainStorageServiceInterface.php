@@ -203,4 +203,12 @@ interface BlockchainStorageServiceInterface {
    */
   public function deleteAll();
 
+  /**
+   * Deletes last block.
+   *
+   * @return BlockchainBlockInterface|null
+   *   Block if any.
+   */
+  public function pop();
+
 }

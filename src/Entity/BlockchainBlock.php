@@ -189,4 +189,18 @@ class BlockchainBlock extends ContentEntityBase implements BlockchainBlockInterf
     );
   }
 
+  /**
+   * Comparator.
+   *
+   * @param BlockchainBlockInterface $blockchainBlock
+   *   Block to compare.
+   *
+   * @return bool
+   *   Compare result.
+   */
+  public function equals(BlockchainBlockInterface $blockchainBlock) {
+
+    return $this->getHash() == $blockchainBlock->getHash();
+  }
+
 }

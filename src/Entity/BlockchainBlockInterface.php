@@ -142,4 +142,15 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    */
   public function delete();
 
+  /**
+   * Comparator.
+   *
+   * @param BlockchainBlockInterface $blockchainBlock
+   *   Block to compare.
+   *
+   * @return bool
+   *   Compare result.
+   */
+  public function equals(BlockchainBlockInterface $blockchainBlock);
+
 }
