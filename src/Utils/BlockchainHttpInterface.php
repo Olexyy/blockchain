@@ -127,6 +127,14 @@ interface BlockchainHttpInterface {
   public function hasCountParam();
 
   /**
+   * Predicate.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function isCountParamValid();
+
+  /**
    * Getter for param.
    *
    * @return string

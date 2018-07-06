@@ -118,4 +118,12 @@ interface BlockchainServiceInterface {
    */
   public function getHashService();
 
+  /**
+   * Getter for collision handler service.
+   *
+   * @return BlockchainCollisionHandlerServiceInterface
+   *   Collision handler service.
+   */
+  public function getCollisionHandler();
+
 }

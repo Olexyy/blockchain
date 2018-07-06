@@ -97,6 +97,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainHashService;
 
   /**
+   * Collision handler service.
+   *
+   * @var BlockchainCollisionHandlerServiceInterface
+   */
+  protected $blockchainCollisionHandlerService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -123,6 +130,8 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Blockchain temporary storage.
    * @param BlockchainHashServiceInterface $blockchainHashService
    *   Blockchain hash service.
+   * @param BlockchainCollisionHandlerServiceInterface $blockchainCollisionHandlerService
+   *   Collision handler.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
@@ -136,7 +145,8 @@ class BlockchainService implements BlockchainServiceInterface {
     BlockchainLockerServiceInterface $blockchainLockerService,
     BlockchainAuthManager $blockchainAuthManager,
     BlockchainTempStoreServiceInterface $blockchainTempStoreService,
-    BlockchainHashServiceInterface $blockchainHashService) {
+    BlockchainHashServiceInterface $blockchainHashService,
+    BlockchainCollisionHandlerServiceInterface $blockchainCollisionHandlerService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
@@ -150,6 +160,7 @@ class BlockchainService implements BlockchainServiceInterface {
     $this->blockchainAuthManager = $blockchainAuthManager;
     $this->blockchainTempStoreService = $blockchainTempStoreService;
     $this->blockchainHashService = $blockchainHashService;
+    $this->blockchainCollisionHandlerService = $blockchainCollisionHandlerService;
   }
 
   /**
@@ -246,14 +257,19 @@ class BlockchainService implements BlockchainServiceInterface {
   }
 
   /**
-   * Getter for Blockchain hash service.
-   *
-   * @return BlockchainHashServiceInterface
-   *   Blockchain hash service.
+   * {@inheritdoc}
    */
   public function getHashService() {
 
     return $this->blockchainHashService;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCollisionHandler() {
+
+    return $this->blockchainCollisionHandlerService;
   }
 
 }

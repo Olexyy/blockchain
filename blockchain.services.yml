@@ -61,6 +61,15 @@ services:
     arguments: ['@blockchain.validator', '@blockchain.hash']
   blockchain.hash:
     class: Drupal\blockchain\Service\BlockchainHashService
+  blockchain.collision.handler:
+    class: Drupal\blockchain\Service\BlockchainCollisionHandlerService
+      arguments:
+      -  '@blockchain.storage'
+      -  '@blockchain.config'
+      -  '@blockchain.api'
+      -  '@blockchain.validator'
+      -  '@blockchain.tempstore'
+      -  '@blockchain.queue'
   blockchain.service:
     class: Drupal\blockchain\Service\BlockchainService
     arguments:

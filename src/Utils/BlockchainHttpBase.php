@@ -167,6 +167,14 @@ abstract class BlockchainHttpBase implements BlockchainHttpInterface {
     return !($this->getCountParam() === NULL);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function isCountParamValid() {
+
+    return $this->hasCountParam() && $this->getCountParam() > 0;
+  }
+
 
   /**
    * {@inheritdoc}
