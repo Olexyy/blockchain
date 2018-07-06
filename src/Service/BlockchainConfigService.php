@@ -151,7 +151,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
       return static::$blockchainConfig;
     }
 
-    return NULL;
+    throw new \Exception('Get not set blockchain config.');
   }
 
   /**
