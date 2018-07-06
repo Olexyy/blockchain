@@ -221,17 +221,18 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
   /**
    * {@inheritdoc}
    */
-  public function delete($index = NULL) {
+  public function pop() {
 
     $data = $this->getAll();
-    if (is_numeric($index) && array_key_exists($index, $data)) {
-      unset($data[$index]);
+    if ($data) {
+      $block = array_pop($data);
+      $data = array_values($data);
+      $this->getBlockStorage()->set(static::BLOCKS_KEY,  $data);
+
+      return $block;
     }
-    else {
-      array_pop($data);
-    }
-    $data = array_values($data);
-    $this->getBlockStorage()->set(static::BLOCKS_KEY,  $data);
+
+    return NULL;
   }
 
   /**

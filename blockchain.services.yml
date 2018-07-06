@@ -19,6 +19,8 @@ services:
       -  '@blockchain.miner'
       -  '@database'
   blockchain.tempstore:
+    class: Drupal\blockchain\Service\BlockchainTempStoreService
+    arguments:
       -  '@tempstore.shared'
       -  '@logger.factory'
       -  '@blockchain.config'

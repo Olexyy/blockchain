@@ -27,7 +27,7 @@ interface BlockchainTempStoreServiceInterface {
   /**
    * Getter for blockchain block storage.
    *
-   * @return \Drupal\Core\Entity\EntityStorageInterface|null
+   * @return \Drupal\Core\Entity\EntityStorageInterface|\Drupal\Core\TempStore\SharedTempStore|null
    *   Storage object.
    */
   public function getBlockStorage();
@@ -166,5 +166,13 @@ interface BlockchainTempStoreServiceInterface {
    * Deletes all records.
    */
   public function deleteAll();
+
+  /**
+   * Deletes last block.
+   *
+   * @return BlockchainBlockInterface|null
+   *   Block if any.
+   */
+  public function pop();
 
 }
