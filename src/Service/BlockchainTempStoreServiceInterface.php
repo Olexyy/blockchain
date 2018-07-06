@@ -76,58 +76,6 @@ interface BlockchainTempStoreServiceInterface {
   public function save(BlockchainBlockInterface $block);
 
   /**
-   * Finds block in storage. If found, gets count created after blocks.
-   *
-   * @param BlockchainBlockInterface $block
-   *   Given block.
-   *
-   * @return int
-   *   Number of blocks.
-   */
-  public function getBlocksCountFrom(BlockchainBlockInterface $block);
-
-  /**
-   * Defines whether block exists.
-   *
-   * @param string $timestamp
-   *   Timestamp param.
-   * @param string $previousHash
-   *   Previous hash param.
-   *
-   * @return bool
-   *   Test result.
-   */
-  public function existsByTimestampAndHash($timestamp, $previousHash);
-
-  /**
-   * Defines whether block exists.
-   *
-   * @param string $timestamp
-   *   Timestamp param.
-   * @param string $previousHash
-   *   Previous hash param.
-   *
-   * @return BlockchainBlockInterface|null
-   *   Block if any.
-   */
-  public function loadByTimestampAndHash($timestamp, $previousHash);
-
-  /**
-   * Getter for blocks next to given one.
-   *
-   * @param BlockchainBlockInterface $block
-   *   Given block.
-   * @param string|int $count
-   *   Numeric value - limit of blocks.
-   * @param bool $asArray
-   *   Flag defines output format.
-   *
-   * @return array|BlockchainBlockInterface[]
-   *   Array of blocks as array.
-   */
-  public function getBlocksFrom(BlockchainBlockInterface $block, $count, $asArray = TRUE);
-
-  /**
    * Checks existing blocks in blockchain.
    *
    * Note that first bloc is checked only by nonce.
@@ -146,21 +94,6 @@ interface BlockchainTempStoreServiceInterface {
    *   Block if any.
    */
   public function getFirstBlock();
-
-  /**
-   * Getter for blocks.
-   *
-   * @param null|int $offset
-   *   Offset.
-   * @param null|int $limit
-   *   Limit.
-   * @param bool $asArray
-   *   Defines output format.
-   *
-   * @return BlockchainBlockInterface[]|array
-   *   Blocks if any.
-   */
-  public function getBlocks($offset = NULL, $limit = NULL, $asArray = FALSE);
 
   /**
    * Deletes all records.

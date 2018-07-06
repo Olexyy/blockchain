@@ -63,7 +63,7 @@ services:
     class: Drupal\blockchain\Service\BlockchainHashService
   blockchain.collision.handler:
     class: Drupal\blockchain\Service\BlockchainCollisionHandlerService
-      arguments:
+    arguments:
       -  '@blockchain.storage'
       -  '@blockchain.config'
       -  '@blockchain.api'
@@ -85,3 +85,4 @@ services:
       -  '@blockchain.auth.manager'
       -  '@blockchain.tempstore'
       -  '@blockchain.hash'
+      -  '@blockchain.collision.handler'

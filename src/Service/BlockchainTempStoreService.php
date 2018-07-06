@@ -88,9 +88,13 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
   public function getAll() {
 
     $storage = $this->getBlockStorage();
-    $data = $storage->get(static::BLOCKS_KEY);
+    $keys = $storage->get(static::BLOCKS_KEY)? $storage->get(static::BLOCKS_KEY) : [];
+    $results = [];
+    foreach ($keys as $key) {
+      $results[] = $storage->get($key);
+    }
 
-    return  $data? $data : [];
+    return $results;
   }
 
   /**
@@ -98,7 +102,11 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
    */
   public function getBlockCount() {
 
-    return count($this->getAll());
+    $storage = $this->getBlockStorage();
+    $keys = $storage->get(static::BLOCKS_KEY)? $storage->get(static::BLOCKS_KEY) : [];
+
+    return count($keys);
+
   }
 
   /**
@@ -106,10 +114,10 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
    */
   public function getLastBlock() {
 
-    $data = $this->getAll();
-    if ($count = count($data)) {
-
-      return $data[$count-1];
+    $storage = $this->getBlockStorage();
+    $keys = $storage->get(static::BLOCKS_KEY)? $storage->get(static::BLOCKS_KEY) : [];
+    if ($keys) {
+      return $storage->get(max($keys));
     }
 
     return NULL;
@@ -126,79 +134,13 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
   /**
    * {@inheritdoc}
    */
-  public function loadByTimestampAndHash($timestamp, $previousHash) {
-
-    $data = $this->getAll();
-    foreach ($data as $blockchainBlock) {
-      if ($blockchainBlock->getTimestamp() == $timestamp &&
-        $blockchainBlock->getPreviousHash() == $previousHash) {
-
-        return $blockchainBlock;
-      }
-    }
-
-    return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function existsByTimestampAndHash($timestamp, $previousHash) {
-
-    return (bool) $this->loadByTimestampAndHash($timestamp, $previousHash);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlocksCountFrom(BlockchainBlockInterface $block) {
-
-    $data = $this->getAll();
-    $count = 0;
-    foreach ($data as $blockchainBlock) {
-      if ($blockchainBlock->getTimestamp() >= $block->getTimestamp() &&
-        $blockchainBlock->id() > $block->id()) {
-        $count++;
-      }
-    }
-
-    return $count;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlocksFrom(BlockchainBlockInterface $block, $count, $asArray = TRUE) {
-
-    $results = [];
-    $fetched = 0;
-    $data = $this->getAll();
-    foreach ($data as $blockchainBlock) {
-      if ($blockchainBlock->getTimestamp() >= $block->getTimestamp() &&
-        $blockchainBlock->id() > $block->id()) {
-        if ($asArray) {
-          $results[]= $blockchainBlock->toArray();
-        }
-        else {
-          $results[]= $blockchainBlock;
-        }
-        $fetched++;
-      }
-      if ($fetched == $count) {
-        break;
-      }
-    }
-
-    return $results;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function checkBlocks() {
 
+    $storage = $this->getBlockStorage();
+    $keys = $storage->get(static::BLOCKS_KEY)? $storage->get(static::BLOCKS_KEY) : [];
     $previousBlock = NULL;
-    foreach ($this->getBlockStorage() as $blockchainBlock) {
+    foreach ($keys as $key) {
+      $blockchainBlock = $storage->get($key);
       if (!$this->blockchainValidatorService->blockIsValid($blockchainBlock, $previousBlock)) {
 
         return FALSE;
@@ -209,16 +151,18 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
     return TRUE;
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function save(BlockchainBlockInterface $blockchainBlock) {
 
-    $data = $this->getAll();
-    $blockchainBlock->set('id', count($data) + 1);
-    $data[]= $blockchainBlock;
-    $this->getBlockStorage()->set(static::BLOCKS_KEY,  $data);
+    $storage = $this->getBlockStorage();
+    $keys = $storage->get(static::BLOCKS_KEY)? $storage->get(static::BLOCKS_KEY) : [];
+    $id = (!$keys)? 1 : max($keys) + 1;
+    $blockchainBlock->set('id', $id);
+    $storage->set($id, $blockchainBlock);
+    $keys[] = $id;
+    $storage->set(static::BLOCKS_KEY,  $keys);
   }
 
   /**
@@ -226,10 +170,14 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
    */
   public function pop() {
 
-    $data = $this->getAll();
-    if ($data) {
-      $block = array_pop($data);
-      $this->getBlockStorage()->set(static::BLOCKS_KEY,  $data);
+    $storage = $this->getBlockStorage();
+    $keys = $storage->get(static::BLOCKS_KEY)? $storage->get(static::BLOCKS_KEY) : [];
+    if ($keys) {
+      $id = max($keys);
+      $block = $storage->get($id);
+      $storage->delete($id);
+      unset($keys[array_search($id,$keys)]);
+      $storage->set(static::BLOCKS_KEY,  $keys);
 
       return $block;
     }
@@ -242,10 +190,14 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
    */
   public function shift() {
 
-    $data = $this->getAll();
-    if ($data) {
-      $block = array_shift($data);
-      $this->getBlockStorage()->set(static::BLOCKS_KEY,  $data);
+    $storage = $this->getBlockStorage();
+    $keys = $storage->get(static::BLOCKS_KEY)? $storage->get(static::BLOCKS_KEY) : [];
+    if ($keys) {
+      $id = min($keys);
+      $block = $storage->get($id);
+      $storage->delete($id);
+      unset($keys[array_search($id,$keys)]);
+      $storage->set(static::BLOCKS_KEY,  $keys);
 
       return $block;
     }
@@ -258,37 +210,13 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
    */
   public function getFirstBlock() {
 
-    if ($data = $this->getAll()) {
-      return $data[0];
+    $storage = $this->getBlockStorage();
+    $keys = $storage->get(static::BLOCKS_KEY)? $storage->get(static::BLOCKS_KEY) : [];
+    if ($keys) {
+      return $storage->get(min($keys));
     }
 
     return NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getBlocks($offset = NULL, $limit = NULL ,$asArray = FALSE) {
-
-    $results = [];
-    $data = $this->getAll();
-    foreach ($data as $index => $block) {
-      if ($offset) {
-        $offset--;
-        continue;
-      }
-      $results[]= $block;
-      if ($limit && count($results) == $limit) {
-        break;
-      }
-    }
-    if ($asArray) {
-      foreach ($results as &$result) {
-        $result = $result->toArray();
-      }
-    }
-
-    return $results;
   }
 
   /**
@@ -297,6 +225,12 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
   public function deleteAll() {
 
     $storage = $this->getBlockStorage();
+    $keys = $storage->get(static::BLOCKS_KEY)? $storage->get(static::BLOCKS_KEY) : [];
+    if ($keys) {
+      foreach ($keys as $key) {
+        $storage->delete($key);
+      }
+    }
     $storage->delete(static::BLOCKS_KEY);
   }
 
