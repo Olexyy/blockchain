@@ -102,4 +102,12 @@ interface BlockchainServiceInterface {
    */
   public function getAuthManager();
 
+  /**
+   * Temporary storage.
+   *
+   * @return BlockchainTempStoreServiceInterface
+   *   Service object.
+   */
+  public function getTempStoreService();
+
 }

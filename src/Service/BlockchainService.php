@@ -83,6 +83,13 @@ class BlockchainService implements BlockchainServiceInterface {
   protected $blockchainAuthManager;
 
   /**
+   * Temporary storage.
+   *
+   * @var BlockchainTempStoreServiceInterface
+   */
+  protected $blockchainTempStoreService;
+
+  /**
    * BlockchainService constructor.
    *
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
@@ -105,6 +112,8 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Blockchain locker service.
    * @param BlockchainAuthManager $blockchainAuthManager
    *   Blockchain auth manager.
+   * @param BlockchainTempStoreServiceInterface $blockchainTempStoreService
+   *   Blockchain temporary storage.
    */
   public function __construct(
     BlockchainConfigServiceInterface $blockchainSettingsService,
@@ -116,7 +125,8 @@ class BlockchainService implements BlockchainServiceInterface {
     BlockchainValidatorServiceInterface $blockchainValidatorService,
     BlockchainMinerServiceInterface $blockchainMinerService,
     BlockchainLockerServiceInterface $blockchainLockerService,
-    BlockchainAuthManager $blockchainAuthManager) {
+    BlockchainAuthManager $blockchainAuthManager,
+    BlockchainTempStoreServiceInterface $blockchainTempStoreService) {
 
     $this->blockchainServiceSettings = $blockchainSettingsService;
     $this->blockchainDataManager = $blockchainDataManager;
@@ -128,6 +138,7 @@ class BlockchainService implements BlockchainServiceInterface {
     $this->blockchainMinerService = $blockchainMinerService;
     $this->blockchainLockerService = $blockchainLockerService;
     $this->blockchainAuthManager = $blockchainAuthManager;
+    $this->blockchainTempStoreService = $blockchainTempStoreService;
   }
 
   /**
@@ -213,6 +224,14 @@ class BlockchainService implements BlockchainServiceInterface {
   public function getAuthManager() {
 
     return $this->blockchainAuthManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTempStoreService() {
+
+    return $this->blockchainTempStoreService;
   }
 
 }

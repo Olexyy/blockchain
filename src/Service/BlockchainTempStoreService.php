@@ -13,7 +13,6 @@ use Drupal\Core\TempStore\SharedTempStoreFactory;
  */
 class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface {
 
-
   /**
    * Logger factory.
    *
@@ -36,6 +35,13 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
   protected $blockchainConfigService;
 
   /**
+   * Blockchain validator service.
+   *
+   * @var BlockchainValidatorServiceInterface
+   */
+  protected $blockchainValidatorService;
+
+  /**
    * BlockchainStorageService constructor.
    *
    * @param SharedTempStoreFactory $storeFactory
@@ -44,14 +50,18 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
    *   Logger factory.
    * @param BlockchainConfigServiceInterface $blockchainConfigService
    *   Blockchain config.
+   * @param BlockchainValidatorServiceInterface $blockchainValidatorService
+   *   Validator service.
    */
   public function __construct(SharedTempStoreFactory $storeFactory,
                               LoggerChannelFactoryInterface $loggerFactory,
-                              BlockchainConfigServiceInterface $blockchainConfigService) {
+                              BlockchainConfigServiceInterface $blockchainConfigService,
+                              BlockchainValidatorServiceInterface $blockchainValidatorService) {
 
     $this->loggerFactory = $loggerFactory;
     $this->storeFactory = $storeFactory;
     $this->blockchainConfigService = $blockchainConfigService;
+    $this->blockchainValidatorService = $blockchainValidatorService;
   }
 
   /**
@@ -73,10 +83,7 @@ class BlockchainTempStoreService implements BlockchainTempStoreServiceInterface 
   }
 
   /**
-   * Getter for all blocks collection.
-   *
-   * @return array|BlockchainBlockInterface[]
-   *   Blocks if any.
+   * {@inheritdoc}
    */
   public function getAll() {
 

@@ -18,6 +18,11 @@ services:
       -  '@blockchain.validator'
       -  '@blockchain.miner'
       -  '@database'
+  blockchain.tempstore:
+      -  '@tempstore.shared'
+      -  '@logger.factory'
+      -  '@blockchain.config'
+      -  '@blockchain.validator'
   blockchain.queue:
     class: Drupal\blockchain\Service\BlockchainQueueService
     arguments: ['@queue', '@plugin.manager.queue_worker', '@logger.factory']
@@ -55,3 +60,4 @@ services:
       -  '@blockchain.miner'
       -  '@blockchain.locker'
       -  '@blockchain.auth.manager'
+      -  '@blockchain.tempstore'

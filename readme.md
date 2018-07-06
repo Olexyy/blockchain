@@ -1,5 +1,11 @@
 ____Notes about blockchain implementation.____
 
+Conventions:
+
+- generic should be same;
+- blockchain entity type should be same;
+- bigger block count prevails;
+
 - Each blockchain node has: 
   - unique uuid among other nodes;
   - open api to expose its blockchain;
