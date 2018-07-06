@@ -217,14 +217,13 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
           }
         }
         // Move from cache to db.
-        // To be faster get all...
-        $blocks = $this->blockchainTempStoreService->getAll();
         // Shift first existing block.
-        array_shift($blocks);
-        foreach ($blocks as $blockchainBlock) {
+        $this->blockchainTempStoreService->shift();
+        // Move to DB.
+        while ($blockchainBlock = $this->blockchainTempStoreService->shift()) {
           $this->blockchainStorageService->save($blockchainBlock);
         }
-        // Clear temp store.
+        // Clear temp store for sure.
         $this->blockchainTempStoreService->deleteAll();
       }
     }
