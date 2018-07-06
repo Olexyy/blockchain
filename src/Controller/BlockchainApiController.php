@@ -280,6 +280,11 @@ class BlockchainApiController extends ControllerBase {
   /**
    * Fetch action.
    *
+   * This is previous action before pull.
+   * If given block found, returns blocks after it.
+   * Else returns general block count.
+   * Same behavior if search params not set.
+   *
    * @return JsonResponse
    *   Response by convention.
    */
@@ -305,7 +310,7 @@ class BlockchainApiController extends ControllerBase {
         else {
           $exists = FALSE;
           $details = 'Block not exists';
-          $count = 0;
+          $count = $this->blockchainBlockStorage->getBlockCount();
         }
 
         return BlockchainResponse::create()
