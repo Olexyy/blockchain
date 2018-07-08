@@ -43,6 +43,12 @@ blockchain.blockchain_config.*:
     intervalAnnounce:
       type: integer
       label: 'Interval for CRON syncing with other blockchain nodes'
+    pullSizeAnnounce:
+      type: integer
+      label: 'Pull size for announce handling'
+    searchIntervalAnnounce:
+      type: integer
+      label: 'Search interval for announce handling'
     powPosition:
       type: string
       label: 'Proof of work position'

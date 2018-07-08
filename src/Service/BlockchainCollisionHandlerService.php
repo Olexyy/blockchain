@@ -112,7 +112,7 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
   public function pullNoConflict(BlockchainResponseInterface $fetchResponse, $endPoint) {
     $neededBlocks = $fetchResponse->getCountParam();
     $addedBlocks = 0;
-    $fetchLimit = 5; // --->>> Setting for blocks fetching count.
+    $fetchLimit = $this->blockchainSettingsService->getCurrentConfig()->getPullSizeAnnounce();
     while ($neededBlocks > $addedBlocks) {
       $lastBlock = $this->blockchainStorageService->getLastBlock();
       $result = $this->blockchainApiService
@@ -148,13 +148,13 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
       if ($this->isPullGranted($result)) {
         // We see that generic matches, find last match block.
         $i = 0;
-        $blockSearchStep = 2; // ---> This variable to config.
+        $blockSearchInterval = $this->blockchainSettingsService->getCurrentConfig()->getSearchIntervalAnnounce();
         // Ensure step is not more than count itself.
-        $blockSearchStep = ($blockCount < $blockSearchStep)? $blockCount : $blockSearchStep;
+        $blockSearchInterval = ($blockCount < $blockSearchInterval)? $blockCount : $blockSearchInterval;
         do {
-          $i += $blockSearchStep;
+          $i += $blockSearchInterval;
           $offset = ($blockCount - $i) < 0 ? 0 : $blockCount - $i;
-          $blockchainBlocks = $this->blockchainStorageService->getBlocks($offset, $blockSearchStep);
+          $blockchainBlocks = $this->blockchainStorageService->getBlocks($offset, $blockSearchInterval);
           $result = $this->blockchainApiService
             ->executeFetch($endPoint, reset($blockchainBlocks));
         } while (!$this->isPullGranted($result));
@@ -179,7 +179,7 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
         $this->blockchainTempStoreService->save($validBlock);
         $neededBlocks = $result->getCountParam();
         $addedBlocks = 0;
-        $fetchLimit = 5; // --->>> Setting for blocks fetching count.
+        $fetchLimit = $this->blockchainSettingsService->getCurrentConfig()->getPullSizeAnnounce();
         while ($neededBlocks > $addedBlocks) {
           // Use tempStorage service here...
           $lastBlock = $this->blockchainTempStoreService->getLastBlock();

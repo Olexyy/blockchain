@@ -24,6 +24,8 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   const FILTER_TYPE_BLACKLIST = 'blacklist';
   const FILTER_TYPE_WHITELIST = 'whitelist';
   const TIMEOUT_POOL = 60 * 10;
+  const PULL_SIZE_ANNOUNCE = 5;
+  const SEARCH_INTERVAL_ANNOUNCE = 2;
 
   /**
    * Generator for UUID.
@@ -345,6 +347,44 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
    *   Chaining.
    */
   public function setLabel($label);
+
+  /**
+   * Property getter
+   *
+   * @return string|int
+   *   Value.
+   */
+  public function getPullSizeAnnounce();
+
+  /**
+   * Property setter.
+   *
+   * @param string|int $pullSizeAnnounce
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setPullSizeAnnounce($pullSizeAnnounce);
+
+  /**
+   * Property getter
+   *
+   * @return string|int
+   *   Value.
+   */
+  public function getSearchIntervalAnnounce();
+
+  /**
+   * Property setter.
+   *
+   * @param string|int $searchIntervalAnnounce
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setSearchIntervalAnnounce($searchIntervalAnnounce);
 
   /**
    * Base method definition override.

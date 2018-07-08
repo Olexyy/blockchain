@@ -173,6 +173,24 @@ class BlockchainConfigForm extends EntityForm {
       ],
     ];
 
+    $form['pullSizeAnnounce'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Announce pull size'),
+      '#default_value' => $blockchainConfig->getPullSizeAnnounce(),
+      '#required' => TRUE,
+      '#min' => 1,
+      '#description' => $this->t('Size in blocks to be pulled in one request.'),
+    ];
+
+    $form['searchIntervalAnnounce'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Announce search interval'),
+      '#default_value' => $blockchainConfig->getSearchIntervalAnnounce(),
+      '#required' => TRUE,
+      '#min' => 1,
+      '#description' => $this->t('Size in blocks to be skipped while searching.'),
+    ];
+
     $form['announceManagement'] = [
       '#type' => 'select',
       '#title' => $this->t('Announce management'),

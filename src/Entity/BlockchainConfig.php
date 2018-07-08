@@ -132,6 +132,20 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   protected $intervalAnnounce;
 
   /**
+   * Pull size announce.
+   *
+   * @var string
+   */
+  protected $pullSizeAnnounce;
+
+  /**
+   * Search size announce.
+   *
+   * @var string
+   */
+  protected $searchIntervalAnnounce;
+
+  /**
    * POW position.
    *
    * @var string
@@ -461,6 +475,42 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   public function setLabel($label) {
 
     $this->label = $label;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPullSizeAnnounce() {
+
+    return $this->pullSizeAnnounce;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setPullSizeAnnounce($pullSizeAnnounce) {
+
+    $this->pullSizeAnnounce = $pullSizeAnnounce;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSearchIntervalAnnounce() {
+
+    return $this->searchIntervalAnnounce;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSearchIntervalAnnounce($searchIntervalAnnounce) {
+
+    $this->searchIntervalAnnounce = $searchIntervalAnnounce;
 
     return $this;
   }

@@ -187,6 +187,8 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
     $blockchainConfig->setIntervalAnnounce(BlockchainConfigInterface::INTERVAL_DEFAULT);
     $blockchainConfig->setFilterType(BlockchainConfigInterface::FILTER_TYPE_BLACKLIST);
     $blockchainConfig->setTimeoutPool(BlockchainConfigInterface::TIMEOUT_POOL);
+    $blockchainConfig->setPullSizeAnnounce(BlockchainConfigInterface::PULL_SIZE_ANNOUNCE);
+    $blockchainConfig->setSearchIntervalAnnounce(BlockchainConfigInterface::SEARCH_INTERVAL_ANNOUNCE);
 
     return $blockchainConfig;
   }
