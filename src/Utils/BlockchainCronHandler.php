@@ -93,6 +93,7 @@ class BlockchainCronHandler implements ContainerInjectionInterface {
               '@count' => $announceCount,
             ]);
           }
+          $configService->setLastCronRun(BlockchainConfigServiceInterface::CONTEXT_ANNOUNCE, time());
         }
       }
     }
