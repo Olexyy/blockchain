@@ -104,15 +104,13 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
           ->executeFetch($endPoint, $this->blockchainService->getStorageService()->getLastBlock());
         $collisionHandler = $this->blockchainService->getCollisionHandler();
         if ($collisionHandler->isPullGranted($result)) {
-          // Standard process.
-          $collisionHandler->pullNoConflict($result, $endPoint);
-          // Search and cache blocks only with pending blocks.
-        } elseif ($result->isCountParamValid()) {
-          // We are in conflict situation.
-          $collisionHandler->pullWithConflict($result, $endPoint);
+          $collisionHandler->processNoConflict($result, $endPoint);
         }
-      } finally {
-        // Always release lock.
+        elseif ($result->isCountParamValid()) {
+          $collisionHandler->processConflict($result, $endPoint);
+        }
+      }
+      finally {
         $this->blockchainService->getLockerService()->releaseAnnounce();
       }
     }

@@ -35,7 +35,7 @@ interface BlockchainCollisionHandlerServiceInterface {
    *
    * @throws \Exception
    */
-  public function pullNoConflict(BlockchainResponseInterface $fetchResponse, $endPoint);
+  public function processNoConflict(BlockchainResponseInterface $fetchResponse, $endPoint);
 
   /**
    * Attempts to manage PULL by given endpoint address.
@@ -47,6 +47,6 @@ interface BlockchainCollisionHandlerServiceInterface {
    *
    * @throws \Exception
    */
-  public function pullWithConflict(BlockchainResponseInterface $fetchResponse, $endPoint);
+  public function processConflict(BlockchainResponseInterface $fetchResponse, $endPoint);
 
 }

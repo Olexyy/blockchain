@@ -109,7 +109,7 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
   /**
    * {@inheritdoc}
    */
-  public function pullNoConflict(BlockchainResponseInterface $fetchResponse, $endPoint) {
+  public function processNoConflict(BlockchainResponseInterface $fetchResponse, $endPoint) {
     $neededBlocks = $fetchResponse->getCountParam();
     $addedBlocks = 0;
     $fetchLimit = $this->blockchainSettingsService->getCurrentConfig()->getPullSizeAnnounce();
@@ -135,7 +135,7 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
   /**
    * {@inheritdoc}
    */
-  public function pullWithConflict(BlockchainResponseInterface $fetchResponse, $endPoint) {
+  public function processConflict(BlockchainResponseInterface $fetchResponse, $endPoint) {
 
     $blockCount = $this->blockchainStorageService->getBlockCount();
     // Ensure remote blockchain declares priority.
