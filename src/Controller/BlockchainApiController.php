@@ -4,11 +4,13 @@ namespace Drupal\blockchain\Controller;
 
 
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
+use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequest;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\blockchain\Utils\BlockchainResponseInterface;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -198,6 +200,24 @@ class BlockchainApiController extends ControllerBase {
     elseif ($result instanceof BlockchainRequestInterface) {
       if (!$this->blockchainService->getNodeService()->existsBySelfAndType(
         $result->getSelfParam(), $result->getTypeParam())) {
+        if (($selfUrl = $result->getSelfUrl()) && UrlHelper::isValid($selfUrl)) {
+          $this->blockchainService->getNodeService()->create(
+            $this->blockchainService->getConfigService()->getCurrentConfig()->id(),
+            $result->getSelfParam(), BlockchainNodeInterface::ADDRESS_SOURCE_CLIENT,
+            $selfUrl
+          );
+
+          return BlockchainResponse::create()
+            ->setIp($result->getIp())
+            ->setPort($result->getPort())
+            ->setSecure($result->isSecure())
+            ->setStatusCode(200)
+            ->setSelfParam($this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId())
+            ->setMessageParam('Success')
+            ->setDetailsParam('Added to list.')
+            ->log($logger)
+            ->toJsonResponse();
+        }
         if ($this->blockchainService->getNodeService()->createFromRequest($result)) {
 
           return BlockchainResponse::create()

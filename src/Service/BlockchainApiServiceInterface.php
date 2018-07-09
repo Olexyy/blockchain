@@ -43,11 +43,13 @@ interface BlockchainApiServiceInterface {
    *
    * @param string $baseUrl
    *   Base url of request.
+   * @param array $params
+   *   Given params.
    *
    * @return BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
-  public function executeSubscribe($baseUrl);
+  public function executeSubscribe($baseUrl, array $params = []);
 
   /**
    * Executes post request by given url with given params in json format.

@@ -100,9 +100,8 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function executeSubscribe($baseUrl) {
+  public function executeSubscribe($baseUrl, array $params = []) {
 
-    $params = [];
     $this->addRequiredParams($params);
 
     return $this->execute($baseUrl.static::API_SUBSCRIBE, $params);

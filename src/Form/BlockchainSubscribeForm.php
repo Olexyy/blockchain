@@ -5,6 +5,7 @@ namespace Drupal\blockchain\Form;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -106,7 +107,15 @@ class BlockchainSubscribeForm extends FormBase {
 
     $url = trim($formState->getValue('subscribe_url'));
     $this->blockchainService->getConfigService()->setCurrentConfig($this->blockchainConfigId);
-    $result = $this->blockchainService->getApiService()->executeSubscribe($url);
+    if ($selfUrl = trim($formState->getValue('self_url'))) {
+      $params = [
+        BlockchainRequestInterface::PARAM_SELF_URL => $selfUrl,
+      ];
+    }
+    else {
+      $params = [];
+    }
+    $result = $this->blockchainService->getApiService()->executeSubscribe($url, $params);
     $details = $result->getStatusCode().'|'. $result->getMessageParam() .'|'.$result->getDetailsParam();
     if ($result->isStatusOk()) {
       $this->blockchainService->getNodeService()->create(
