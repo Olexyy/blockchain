@@ -116,7 +116,7 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
     while ($neededBlocks > $addedBlocks) {
       $lastBlock = $this->blockchainStorageService->getLastBlock();
       $result = $this->blockchainApiService
-        ->executePull($endPoint, $lastBlock, $fetchLimit);
+        ->executePull($endPoint, $fetchLimit, $lastBlock);
       if ($result->hasBlocksParam()) {
         foreach ($result->getBlocksParam() as $item) {
           $block = $this->blockchainStorageService->createFromArray($item);
@@ -184,7 +184,7 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
           // Use tempStorage service here...
           $lastBlock = $this->blockchainTempStoreService->getLastBlock();
           $result = $this->blockchainApiService
-            ->executePull($endPoint, $lastBlock, $fetchLimit);
+            ->executePull($endPoint, $fetchLimit, $lastBlock);
           if ($result->hasBlocksParam()) {
             foreach ($result->getBlocksParam() as $item) {
               $block = $this->blockchainStorageService->createFromArray($item);

@@ -212,13 +212,15 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function executePull($url, BlockchainBlockInterface $blockchainBlock, $count) {
+  public function executePull($url, $count, BlockchainBlockInterface $blockchainBlock = NULL) {
 
     $params = [];
     $this->addRequiredParams($params);
-    $params[BlockchainRequestInterface::PARAM_PREVIOUS_HASH] = $blockchainBlock->getPreviousHash();
-    $params[BlockchainRequestInterface::PARAM_TIMESTAMP] = $blockchainBlock->getTimestamp();
     $params[BlockchainRequestInterface::PARAM_COUNT] = $count;
+    if ($blockchainBlock) {
+      $params[BlockchainRequestInterface::PARAM_PREVIOUS_HASH] = $blockchainBlock->getPreviousHash();
+      $params[BlockchainRequestInterface::PARAM_TIMESTAMP] = $blockchainBlock->getTimestamp();
+    }
 
     return $this->execute($url.static::API_PULL, $params);
   }

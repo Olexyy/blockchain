@@ -113,15 +113,15 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function create($blockchainType, $self, $addressSource,  $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE) {
+  public function create($blockchainTypeId, $self, $addressSource,  $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE) {
 
     /** @var BlockchainNodeInterface $blockchainNode */
     $blockchainNode = $this->getStorage()->create();
     $label = $label? $label : $self;
     $blockchainNode
-      ->setBlockchainTypeId($blockchainType)
+      ->setBlockchainTypeId($blockchainTypeId)
       ->setSelf($self)
-      ->setId($this->generateId($blockchainType, $self))
+      ->setId($this->generateId($blockchainTypeId, $self))
       ->setAddressSource($addressSource)
       ->setLabel($label? $label : $self)
       ->setAddress($address)

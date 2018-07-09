@@ -104,7 +104,7 @@ interface BlockchainApiServiceInterface {
    *
    * @param string $url
    *   Full Url.
-   * @param BlockchainBlockInterface $blockchainBlock
+   * @param BlockchainBlockInterface|null $blockchainBlock
    *   Blockchain block.
    * @param $count
    *   String count of blocks to be fetched.
@@ -112,7 +112,7 @@ interface BlockchainApiServiceInterface {
    * @return BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
-  public function executePull($url, BlockchainBlockInterface $blockchainBlock, $count);
+  public function executePull($url, $count, BlockchainBlockInterface $blockchainBlock = NULL);
 
   /**
    * Adds common required params to request params array.
