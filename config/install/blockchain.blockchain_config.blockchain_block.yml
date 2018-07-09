@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies: {  }
+id: blockchain_block
+label: 'Blockchain block configuration'
+blockchainId: null
+nodeId: null
+type: single
+auth: none
+filterType: blacklist
+filterList: null
+poolManagement: manual
+announceManagement: immediate
+intervalPool: 600
+timeoutPool: 600
+intervalAnnounce: 600
+pullSizeAnnounce: 5
+searchIntervalAnnounce: 2
+powPosition: start
+powExpression: '00'
+dataHandler: raw
+allowNotSecure: true
