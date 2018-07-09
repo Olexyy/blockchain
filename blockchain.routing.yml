@@ -35,15 +35,22 @@ blockchain.fetch:
   requirements:
     _access: 'TRUE'
 blockchain.storage.validate:
-  path: '/admin/structure/{blockchain_config}/collection/validate'
+  path: '/admin/structure/blockchain/{blockchain_config}/collection/validate'
   defaults:
     _controller: \Drupal\blockchain\Controller\BlockchainController::storageValidate
   requirements:
     _permission: 'administer blockchain block entities'
 blockchain.api.subscribe:
-  path: '/admin/structure/{blockchain_config}/subscribe'
+  path: '/admin/structure//blockchain/{blockchain_config}/subscribe'
   defaults:
     _title: 'Subscribe to existing Blockchain'
     _form: 'Drupal\blockchain\Form\BlockchainSubscribeForm'
+  requirements:
+    _permission: 'administer blockchain block entities'
+blockchain.config.discover:
+  path: '/admin/structure/blockchain/config/discover'
+  defaults:
+    _title: 'Discover blockchain configs'
+    _controller: \Drupal\blockchain\Controller\BlockchainController::discoverConfigs
   requirements:
     _permission: 'administer blockchain block entities'

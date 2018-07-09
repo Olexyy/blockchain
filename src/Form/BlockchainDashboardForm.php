@@ -7,6 +7,8 @@ use Drupal\blockchain\Utils\BlockchainBatchHandler;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -82,7 +84,11 @@ class BlockchainDashboardForm extends FormBase {
       $form['empty'] = [
         '#type' => 'item',
         '#title' => $this->t('No blockchain configs created'),
-        '#markup' => $this->t('Go to related tab and create config based on blockchain type.'),
+        '#markup' => $this->t('Go to related @tab and discover blockchain configurations.', [
+          '@tab' => Link::fromTextAndUrl(
+            $this->t('tab'),
+            Url::fromRoute('entity.blockchain_config.collection'))->toString()
+        ]),
       ];
     }
     else {

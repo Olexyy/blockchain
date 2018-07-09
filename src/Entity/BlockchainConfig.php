@@ -17,7 +17,6 @@ use Drupal\Core\Entity\EntityInterface;
  *     "list_builder" = "Drupal\blockchain\BlockchainConfigListBuilder",
  *     "form" = {
  *       "edit" = "Drupal\blockchain\Form\BlockchainConfigForm",
- *       "delete" = "Drupal\blockchain\Form\BlockchainConfigDeleteForm"
  *     },
  *     "route_provider" = {
  *       "html" = "Drupal\blockchain\BlockchainConfigHtmlRouteProvider",
@@ -31,9 +30,7 @@ use Drupal\Core\Entity\EntityInterface;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/admin/structure/blockchain_config/{blockchain_config}",
  *     "edit-form" = "/admin/structure/blockchain_config/{blockchain_config}/edit",
- *     "delete-form" = "/admin/structure/blockchain_config/{blockchain_config}/delete",
  *     "collection" = "/admin/structure/blockchain/blockchain_config"
  *   }
  * )

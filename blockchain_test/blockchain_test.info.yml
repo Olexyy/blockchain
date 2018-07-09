@@ -1,7 +1,7 @@
-name: Blockchain emulation
+name: Blockchain test
 type: module
-description: 'Blockchain endpoint emulation to test api interaction.'
-package: Other
+description: 'Blockchain test integration.'
+package: Blockchain
 core: 8.x
 dependencies:
   - blockchain:blockchain

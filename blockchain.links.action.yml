@@ -22,3 +22,8 @@ blockchain.storage.validate:
     blockchain_config: 'blockchain_block'
   appears_on:
     - entity.blockchain_block.collection
+blockchain.config.discover:
+  route_name: blockchain.config.discover
+  title: 'Discover configs'
+  appears_on:
+  - entity.blockchain_config.collection

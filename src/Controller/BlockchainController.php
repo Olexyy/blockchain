@@ -5,9 +5,7 @@ namespace Drupal\blockchain\Controller;
 
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
-use Drupal\blockchain\Utils\BlockchainBatchHandler;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -73,6 +71,22 @@ class BlockchainController extends ControllerBase {
     }
 
     return $this->redirect("entity.{$type}.collection");
+  }
+
+  /**
+   * Controller callback.
+   *
+   * @return RedirectResponse
+   *   Response.
+   */
+  public function discoverConfigs() {
+
+    $count = $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
+    $this->messenger()->addStatus($this->t('Discovered @count configurations.', [
+      '@count' => $count,
+    ]));
+
+    return $this->redirect('entity.blockchain_config.collection');
   }
 
 }
