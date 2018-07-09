@@ -122,6 +122,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
       ->setBlockchainTypeId($blockchainType)
       ->setSelf($self)
       ->setId($this->generateId($blockchainType, $self))
+      ->setAddressSource($addressSource)
       ->setLabel($label? $label : $self)
       ->setAddress($address)
       ->setSecure($secure)
