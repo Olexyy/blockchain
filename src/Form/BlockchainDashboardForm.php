@@ -99,6 +99,8 @@ class BlockchainDashboardForm extends FormBase {
         $queueService = $this->blockchainService->getQueueService();
         $countAnnounce = $queueService->getAnnounceQueue()->numberOfItems();
         $countMining = $queueService->getBlockPool()->numberOfItems();
+        $announceManagement = $this->blockchainService->getConfigService()->getCurrentConfig()->getAnnounceManagement();
+        $poolManagement = $this->blockchainService->getConfigService()->getCurrentConfig()->getPoolManagement();
         $form[$blockchainConfigId . '_wrapper'] = [
           '#type' => 'details',
           '#title' => $this->t('Blockchain block details'),
@@ -109,11 +111,24 @@ class BlockchainDashboardForm extends FormBase {
           '#type' => 'item',
           '#title' => $this->t('Number of blocks in storage'),
           '#markup' => $blockCount,
+          '#description' => $this->t('Blocks in storage.'),
+        ];
+        $form[$blockchainConfigId . '_wrapper']['validate'] = [
+          '#type' => 'button',
+          '#executes_submit_callback' => TRUE,
+          '#submit' => [[$this, 'callbackHandler']],
+          '#value' => $this->t('Check now'),
+          '#context' => 'check_blocks',
+          '#blockchain_type' => $blockchainConfig->id(),
+          '#disabled' => !$blockCount,
         ];
         $form[$blockchainConfigId . '_wrapper']['queue_mining_item_count'] = [
           '#type' => 'item',
           '#title' => $this->t('Number of items in block pool'),
           '#markup' => $countMining,
+          '#description' => $this->t('Block pool management: @type', [
+            '@type' => $this->t($poolManagement),
+          ]),
         ];
         $form[$blockchainConfigId . '_wrapper']['do_mining'] = [
           '#type' => 'button',
@@ -127,6 +142,9 @@ class BlockchainDashboardForm extends FormBase {
           '#type' => 'item',
           '#title' => $this->t('Number of items in announce queue'),
           '#markup' => $countAnnounce,
+          '#description' => $this->t('Announce management: @type', [
+            '@type' => $this->t($announceManagement),
+          ]),
         ];
         $form[$blockchainConfigId . '_wrapper']['process_announce'] = [
           '#type' => 'button',
@@ -154,6 +172,16 @@ class BlockchainDashboardForm extends FormBase {
     }
     elseif ($context == 'process_announce') {
       BlockchainBatchHandler::set(BlockchainBatchHandler::getAnnounceBatchDefinition());
+    }
+    elseif ($context == 'check_blocks') {
+      $type = $form_state->getTriggeringElement()['#blockchain_type'];
+      $this->blockchainService->getConfigService()->setCurrentConfig($type);
+      if ($this->blockchainService->getStorageService()->checkBlocks()) {
+        $this->messenger()->addStatus($this->t('Blocks are valid'));
+      }
+      else {
+        $this->messenger()->addError($this->t('Validation failed'));
+      }
     }
   }
 
