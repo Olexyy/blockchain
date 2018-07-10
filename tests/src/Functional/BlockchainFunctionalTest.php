@@ -77,7 +77,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     parent::setUp();
     $this->localIp = '127.0.0.1';
     $this->localPort = '80';
-    $this->assertEquals($this->baseUrl, 'http://et_legis.loc', 'Base url is set.');
+    $this->assertNotEmpty($this->baseUrl,'Base url is set.');
     $this->blockchainAnnounceUrl = $this->baseUrl . BlockchainApiServiceInterface::API_ANNOUNCE;
     $this->blockchainSubscribeUrl = $this->baseUrl . BlockchainApiServiceInterface::API_SUBSCRIBE;
     $this->assertNotEmpty($this->blockchainSubscribeUrl, 'Blockchain subscribe API url is set.');

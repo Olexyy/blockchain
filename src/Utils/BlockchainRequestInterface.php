@@ -21,11 +21,14 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
   const PARAM_TIMESTAMP = 'timestamp';
   const PARAM_PREVIOUS_HASH = 'previous_hash';
   const PARAM_SELF_URL = 'self_url';
-  const PARAMS = [
-    self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT,
-    self::PARAM_BLOCKS, self::PARAM_TIMESTAMP, self::PARAM_PREVIOUS_HASH,
-    self::PARAM_TYPE, self::PARAM_SELF_URL,
-  ];
+
+  /**
+   * Getter for all params.
+   *
+   * @return string[]
+   *   Array.
+   */
+  public static function getAllParamKeys();
 
   /**
    * Getter for param.

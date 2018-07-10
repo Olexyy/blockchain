@@ -29,6 +29,18 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   /**
    * {@inheritdoc}
    */
+  public static function getAllParamKeys() {
+
+    return [
+      self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT,
+      self::PARAM_BLOCKS, self::PARAM_TIMESTAMP, self::PARAM_PREVIOUS_HASH,
+      self::PARAM_TYPE, self::PARAM_SELF_URL,
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function __construct(array $params, $ip) {
 
     $this->params = $params;
@@ -106,7 +118,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
       if ($jsonData = json_decode($data, TRUE)) {
 
         if (is_array($jsonData)) {
-          foreach (static::PARAMS as $param) {
+          foreach (static::getAllParamKeys() as $param) {
             if (isset($jsonData[$param]) && $value = $jsonData[$param]) {
               $params[$param] = $jsonData[$param];
             }
