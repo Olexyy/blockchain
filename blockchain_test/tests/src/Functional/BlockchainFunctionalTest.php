@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\blockchain_emulation\Functional;
+namespace Drupal\Tests\blockchain_test\Functional;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
