@@ -2,9 +2,7 @@
 
 namespace Drupal\blockchain\Service;
 
-
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
-use Drupal\blockchain\Plugin\BlockchainDataInterface;
 
 /**
  * Interface BlockchainStorageServiceInterface.
@@ -19,6 +17,7 @@ interface BlockchainStorageServiceInterface {
    * Getter for logger.
    *
    * @return \Drupal\Core\Logger\LoggerChannelInterface
+   *   Logger.
    */
   public function getLogger();
 
@@ -49,7 +48,7 @@ interface BlockchainStorageServiceInterface {
   /**
    * Getter for last block if any.
    *
-   * @return BlockchainBlockInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface|null
    *   Blockchain block if any.
    */
   public function getLastBlock();
@@ -57,10 +56,10 @@ interface BlockchainStorageServiceInterface {
   /**
    * Getter for generic block.
    *
-   * @return BlockchainBlockInterface
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface
    *   Given block.
    */
-  function getGenericBlock();
+  public function getGenericBlock();
 
   /**
    * Getter for random block.
@@ -68,7 +67,7 @@ interface BlockchainStorageServiceInterface {
    * @param string $previousHash
    *   Previous hash to be set.
    *
-   * @return BlockchainBlockInterface
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface
    *   Given block.
    */
   public function getRandomBlock($previousHash);
@@ -79,7 +78,7 @@ interface BlockchainStorageServiceInterface {
    * @param string|null $data
    *   Block to be handled.
    *
-   * @return BlockchainDataInterface
+   * @return \Drupal\blockchain\Plugin\BlockchainDataInterface
    *   Given handler.
    */
   public function getBlockDataHandler($data = NULL);
@@ -87,7 +86,7 @@ interface BlockchainStorageServiceInterface {
   /**
    * Save handler.
    *
-   * @param BlockchainBlockInterface $block
+   * @param \Drupal\blockchain\Entity\BlockchainBlockInterface $block
    *   Given block.
    *
    * @return mixed
@@ -98,7 +97,7 @@ interface BlockchainStorageServiceInterface {
   /**
    * Finds block in storage. If found, gets count created after blocks.
    *
-   * @param BlockchainBlockInterface $block
+   * @param \Drupal\blockchain\Entity\BlockchainBlockInterface $block
    *   Given block.
    *
    * @return int
@@ -127,7 +126,7 @@ interface BlockchainStorageServiceInterface {
    * @param string $previousHash
    *   Previous hash param.
    *
-   * @return BlockchainBlockInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface|null
    *   Block if any.
    */
   public function loadByTimestampAndHash($timestamp, $previousHash);
@@ -135,7 +134,7 @@ interface BlockchainStorageServiceInterface {
   /**
    * Getter for blocks next to given one.
    *
-   * @param BlockchainBlockInterface $block
+   * @param \Drupal\blockchain\Entity\BlockchainBlockInterface $block
    *   Given block.
    * @param string|int $count
    *   Numeric value - limit of blocks.
@@ -153,7 +152,7 @@ interface BlockchainStorageServiceInterface {
    * @param array $values
    *   Array of values.
    *
-   * @return BlockchainBlockInterface
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface
    *   Blockchain block.
    */
   public function createFromArray(array $values);
@@ -178,7 +177,7 @@ interface BlockchainStorageServiceInterface {
   /**
    * Getter for first block.
    *
-   * @return BlockchainBlockInterface|\Drupal\Core\Entity\EntityInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface|\Drupal\Core\Entity\EntityInterface|null
    *   Block if any.
    */
   public function getFirstBlock();
@@ -193,7 +192,7 @@ interface BlockchainStorageServiceInterface {
    * @param bool $asArray
    *   Defines output format.
    *
-   * @return BlockchainBlockInterface[]|array
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface[]|array
    *   Blocks if any.
    */
   public function getBlocks($offset = NULL, $limit = NULL, $asArray = FALSE);
@@ -206,7 +205,7 @@ interface BlockchainStorageServiceInterface {
   /**
    * Deletes last block.
    *
-   * @return BlockchainBlockInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface|null
    *   Block if any.
    */
   public function pop();

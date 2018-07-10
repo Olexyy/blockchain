@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Utils\BlockchainResponseInterface;
@@ -17,7 +16,7 @@ interface BlockchainCollisionHandlerServiceInterface {
    *
    * Grants pull based on response.
    *
-   * @param BlockchainResponseInterface $response
+   * @param \Drupal\blockchain\Utils\BlockchainResponseInterface $response
    *   Blockchain response.
    *
    * @return bool
@@ -28,9 +27,9 @@ interface BlockchainCollisionHandlerServiceInterface {
   /**
    * Attempts to manage PULL by given endpoint address.
    *
-   * @param BlockchainResponseInterface $fetchResponse
+   * @param \Drupal\blockchain\Utils\BlockchainResponseInterface $fetchResponse
    *   Fetch response.
-   * @param $endPoint
+   * @param string $endPoint
    *   Given endpoint.
    *
    * @throws \Exception
@@ -40,9 +39,9 @@ interface BlockchainCollisionHandlerServiceInterface {
   /**
    * Attempts to manage PULL by given endpoint address.
    *
-   * @param BlockchainResponseInterface $fetchResponse
+   * @param \Drupal\blockchain\Utils\BlockchainResponseInterface $fetchResponse
    *   Fetch response.
-   * @param $endPoint
+   * @param string $endPoint
    *   Given endpoint.
    *
    * @throws \Exception

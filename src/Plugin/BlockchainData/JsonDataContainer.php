@@ -3,7 +3,6 @@
 namespace Drupal\blockchain\Plugin\BlockchainData;
 
 use Drupal\Core\Field\FieldFilteredMarkup;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Class SerializableDataContainer.
@@ -16,6 +15,9 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
 
   public $body;
 
+  /**
+   * Static constructor.
+   */
   public static function create(array $values = []) {
 
     $object = new static();
@@ -24,6 +26,9 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
     return $object;
   }
 
+  /**
+   * Constructor form json string.
+   */
   public function fromJson($values) {
 
     if ($values = json_decode($values)) {
@@ -35,6 +40,9 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
     }
   }
 
+  /**
+   * Constructor form array.
+   */
   public function fromArray(array $values) {
 
     if ($values) {
@@ -46,6 +54,9 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
     }
   }
 
+  /**
+   * Converts to json string.
+   */
   public function toJson() {
 
     $values = [];
@@ -56,6 +67,9 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
     return json_encode($values);
   }
 
+  /**
+   * Getter for widget render array.
+   */
   public function getWidget() {
 
     $types = [
@@ -76,6 +90,9 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
     return $widget;
   }
 
+  /**
+   * Getter for formatter render array.
+   */
   public function getFormatter() {
 
     $markup = '';
@@ -91,6 +108,9 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
     ];
   }
 
+  /**
+   * Converts to array.
+   */
   public function toArray() {
 
     $array = [];
@@ -101,8 +121,12 @@ class JsonDataContainer implements JsonBlockchainDataInterface {
     return $array;
   }
 
+  /**
+   * Humanises string.
+   */
   public function humanize($string) {
 
     return ucfirst(str_replace('_', ' ', $string));
   }
+
 }

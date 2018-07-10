@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\blockchain_test\Kernel;
 
-
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain_test\Service\BlockchainTestServiceInterface;
@@ -18,14 +17,14 @@ class BlockchainKernelTest extends KernelTestBase {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
   /**
    * Blockchain test service.
    *
-   * @var BlockchainTestServiceInterface
+   * @var \Drupal\blockchain_test\Service\BlockchainTestServiceInterface
    */
   protected $blockchainTestService;
 

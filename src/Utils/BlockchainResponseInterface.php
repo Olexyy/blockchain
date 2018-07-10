@@ -2,14 +2,12 @@
 
 namespace Drupal\blockchain\Utils;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-
 /**
  * Class BlockchainResponseInterface.
  *
  * @package Drupal\blockchain\Utils
  */
-interface BlockchainResponseInterface extends BlockchainHttpInterface  {
+interface BlockchainResponseInterface extends BlockchainHttpInterface {
 
   const PARAM_MESSAGE = 'message';
   const PARAM_DETAILS = 'details';
@@ -74,7 +72,7 @@ interface BlockchainResponseInterface extends BlockchainHttpInterface  {
   /**
    * Returns prepared json response.
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   Response object.
    */
   public function toJsonResponse();
@@ -98,7 +96,7 @@ interface BlockchainResponseInterface extends BlockchainHttpInterface  {
   /**
    * Handles logging.
    *
-   * @param  \Psr\Log\LoggerInterface $logger
+   * @param \Psr\Log\LoggerInterface|null $logger
    *   The logger for the given channel.
    *
    * @return $this

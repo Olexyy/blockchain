@@ -1,4 +1,3 @@
-
 blockchain.subscribe:
   path: '/blockchain/api/subscribe'
   defaults:

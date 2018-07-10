@@ -16,10 +16,11 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
   const TYPE_COUNT = 'count';
   const TYPE_FETCH = 'fetch';
   const TYPE_PULL = 'pull';
-  const PARAM_AUTH = 'auth'; // hash of (self+bc_token)
+  // Hash of (self+bc_token)
+  const PARAM_AUTH = 'auth';
   const PARAM_TIMESTAMP = 'timestamp';
   const PARAM_PREVIOUS_HASH = 'previous_hash';
-  const PARAM_SELF_URL= 'self_url';
+  const PARAM_SELF_URL = 'self_url';
   const PARAMS = [
     self::PARAM_AUTH, self::PARAM_SELF, self::PARAM_COUNT,
     self::PARAM_BLOCKS, self::PARAM_TIMESTAMP, self::PARAM_PREVIOUS_HASH,
@@ -47,11 +48,11 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    *
    * @param string $type
    *   Given type.
+   *
    * @return string
    *   Value.
    */
   public function setRequestType($type);
-
 
   /**
    * Getter for type property.
@@ -106,7 +107,7 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
   /**
    * BlockchainRequestInterface constructor.
    *
-   * @param Request $request
+   * @param \Symfony\Component\HttpFoundation\Request $request
    *   Request.
    *
    * @return static
@@ -166,6 +167,7 @@ interface BlockchainRequestInterface extends BlockchainHttpInterface {
    * Serializer.
    *
    * @return string
+   *   Serialized object.
    */
   public function sleep();
 

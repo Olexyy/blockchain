@@ -18,10 +18,9 @@ interface BlockchainAuthInterface extends PluginInspectionInterface {
   /**
    * Auth handler.
    *
-   * @param BlockchainRequestInterface $blockchainRequest
+   * @param \Drupal\blockchain\Utils\BlockchainRequestInterface $blockchainRequest
    *   Given request.
-   *
-   * @param BlockchainConfigInterface $blockchainConfig
+   * @param \Drupal\blockchain\Entity\BlockchainConfigInterface $blockchainConfig
    *   Given config object.
    *
    * @return bool
@@ -34,7 +33,7 @@ interface BlockchainAuthInterface extends PluginInspectionInterface {
    *
    * @param array $params
    *   Given params.
-   * @param BlockchainConfigInterface $blockchainConfig
+   * @param \Drupal\blockchain\Entity\BlockchainConfigInterface $blockchainConfig
    *   Given config object.
    */
   public function addAuthParams(array &$params, BlockchainConfigInterface $blockchainConfig);

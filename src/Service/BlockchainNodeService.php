@@ -17,14 +17,14 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * Entity type manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
    * BlockchainNodeService constructor.
    *
-   * @param EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity type manager service.
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager) {
@@ -40,7 +40,8 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
     try {
       return $this->entityTypeManager
         ->getStorage(BlockchainNode::entityTypeId());
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
       return NULL;
     }
   }
@@ -92,7 +93,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
    */
   public function loadBySelfAndType($self, $blockchainTypeId) {
 
-    if($node = $this->load($this->generateId($blockchainTypeId, $self))) {
+    if ($node = $this->load($this->generateId($blockchainTypeId, $self))) {
       if ($node->getBlockchainTypeId() == $blockchainTypeId) {
 
         return $node;
@@ -113,17 +114,17 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function create($blockchainTypeId, $self, $addressSource,  $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE) {
+  public function create($blockchainTypeId, $self, $addressSource, $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE) {
 
-    /** @var BlockchainNodeInterface $blockchainNode */
+    /** @var \Drupal\blockchain\Entity\BlockchainNodeInterface $blockchainNode */
     $blockchainNode = $this->getStorage()->create();
-    $label = $label? $label : $self;
+    $label = $label ? $label : $self;
     $blockchainNode
       ->setBlockchainTypeId($blockchainTypeId)
       ->setSelf($self)
       ->setId($this->generateId($blockchainTypeId, $self))
       ->setAddressSource($addressSource)
-      ->setLabel($label? $label : $self)
+      ->setLabel($label ? $label : $self)
       ->setAddress($address)
       ->setSecure($secure)
       ->setPort($port);
@@ -133,7 +134,8 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
       }
 
       return $blockchainNode;
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
 
       return NULL;
     }
@@ -204,4 +206,5 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
 
     return sha1($blockchainTypeId . '_' . $self);
   }
+
 }

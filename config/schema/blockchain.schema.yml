@@ -44,4 +44,3 @@ blockchain.config:
     allowNotSecure:
       type: boolean
       label: 'Allows not secure blockchain nodes'
-

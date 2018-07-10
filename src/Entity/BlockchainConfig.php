@@ -3,8 +3,6 @@
 namespace Drupal\blockchain\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\Core\Entity\Entity;
-use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Defines the Blockchain config entity.
@@ -150,7 +148,7 @@ class BlockchainConfig extends ConfigEntityBase implements BlockchainConfigInter
   protected $powPosition;
 
   /**
-   * POW expression
+   * POW expression.
    *
    * @var string
    */

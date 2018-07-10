@@ -17,7 +17,7 @@ class BlockchainNodeForm extends EntityForm {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -45,7 +45,7 @@ class BlockchainNodeForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
 
     $form = parent::form($form, $form_state);
-    /** @var BlockchainNodeInterface $blockchain_node */
+    /** @var \Drupal\blockchain\Entity\BlockchainNodeInterface $blockchain_node */
     $blockchain_node = $this->entity;
     $form['label'] = [
       '#type' => 'textfield',
@@ -118,7 +118,7 @@ class BlockchainNodeForm extends EntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
 
-    /** @var BlockchainNodeInterface $blockchainNode */
+    /** @var \Drupal\blockchain\Entity\BlockchainNodeInterface $blockchainNode */
     $blockchainNode = $this->entity;
     if ($blockchainNode->isNew()) {
       $blockchainNode->setId(

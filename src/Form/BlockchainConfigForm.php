@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Form;
 
-use Drupal\blockchain\Entity\BlockchainConfig;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Entity\EntityForm;
@@ -18,7 +17,7 @@ class BlockchainConfigForm extends EntityForm {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -46,7 +45,7 @@ class BlockchainConfigForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
 
     $form = parent::form($form, $form_state);
-    /** @var BlockchainConfig $blockchainConfig */
+    /** @var \Drupal\blockchain\Entity\BlockchainConfig $blockchainConfig */
     $blockchainConfig = $this->entity;
     $this->blockchainService->getConfigService()->setCurrentConfig($blockchainConfig->id());
     $anyBlock = $this->blockchainService->getStorageService()->anyBlock();
@@ -106,7 +105,7 @@ class BlockchainConfigForm extends EntityForm {
       '#states' => [
         'visible' => [
           ':input[name="blockchainType"]' => [
-            'value' => BlockchainConfigInterface::TYPE_MULTIPLE
+            'value' => BlockchainConfigInterface::TYPE_MULTIPLE,
           ],
         ],
       ],
@@ -124,7 +123,7 @@ class BlockchainConfigForm extends EntityForm {
       '#states' => [
         'visible' => [
           ':input[name="blockchainType"]' => [
-            'value' => BlockchainConfigInterface::TYPE_MULTIPLE
+            'value' => BlockchainConfigInterface::TYPE_MULTIPLE,
           ],
         ],
       ],
@@ -167,7 +166,7 @@ class BlockchainConfigForm extends EntityForm {
       '#states' => [
         'visible' => [
           ':input[name="poolManagement"]' => [
-            'value' => BlockchainConfigInterface::POOL_MANAGEMENT_CRON
+            'value' => BlockchainConfigInterface::POOL_MANAGEMENT_CRON,
           ],
         ],
       ],
@@ -263,7 +262,7 @@ class BlockchainConfigForm extends EntityForm {
       ];
     }
     $form['action'] = [
-      '#submit' =>  [ '::submitForm' ],
+      '#submit' => ['::submitForm'],
     ];
     if (!$anyBlock) {
       $form['action']['regenerate_blockchain_id'] = [

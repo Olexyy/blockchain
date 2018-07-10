@@ -22,14 +22,14 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   /**
    * Http client.
    *
-   * @var Client
+   * @var \GuzzleHttp\Client
    */
   protected $httpClient;
 
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -76,7 +76,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     parent::setUp();
     $this->localIp = '127.0.0.1';
     $this->localPort = '80';
-    $this->assertEquals($this->baseUrl, 'http://et_legis.loc','Base url is set.');
+    $this->assertEquals($this->baseUrl, 'http://et_legis.loc', 'Base url is set.');
     $this->blockchainAnnounceUrl = $this->baseUrl . BlockchainApiServiceInterface::API_ANNOUNCE;
     $this->blockchainSubscribeUrl = $this->baseUrl . BlockchainApiServiceInterface::API_SUBSCRIBE;
     $this->assertNotEmpty($this->blockchainSubscribeUrl, 'Blockchain subscribe API url is set.');
@@ -163,7 +163,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(400, $response->getStatusCode());
     $this->assertEquals('Bad request', $response->getMessageParam());
     $this->assertEquals('No self param.', $response->getDetailsParam());
-    // Generate valid token
+    // Generate valid token.
     $authToken = $this->blockchainService->getConfigService()->tokenGenerate();
     // Enable auth.
     $this->blockchainService->getConfigService()->getCurrentConfig()->setAuth('shared_key')->save();
@@ -199,7 +199,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $blockchainFilterType = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterType();
     $this->assertEquals($blockchainFilterType, BlockchainConfigInterface::FILTER_TYPE_BLACKLIST, 'Blockchain filter type is blacklist');
     $blacklist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
-    $this->assertEmpty($blacklist,'Blockchain blacklist is empty');
+    $this->assertEmpty($blacklist, 'Blockchain blacklist is empty');
     $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray($this->getBlacklist())->save();
     // Ensure we included our ip in black list.
     $blacklist = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainFilterListAsArray();
@@ -309,7 +309,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEmpty($blockCount, 'None blocks in storage yet.');
     // Create generic block and add it to blockchain.
     $genericBlock = $this->blockchainService->getStorageService()->getGenericBlock();
-    $this->assertInstanceOf(BlockchainBlockInterface::class, $genericBlock,'Generic block created.');
+    $this->assertInstanceOf(BlockchainBlockInterface::class, $genericBlock, 'Generic block created.');
     $this->blockchainService->getStorageService()->save($genericBlock);
     $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
     $this->assertTrue($this->blockchainService->getStorageService()->anyBlock(), 'Any block returns true');
@@ -325,7 +325,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $nodesCount = $this->blockchainService->getNodeService()->getCount();
     $this->assertEmpty($nodesCount, 'None blockchain nodes in list yet.');
     $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
-      BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount()
+      BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),
     ]);
     $this->assertEmpty($announceCount, 'Announce was related to none nodes.');
     // Set announce handling to CRON (no immediate) processing.
@@ -350,7 +350,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertCount(1, $nodeCount, 'Blockchain node list not empty');
     // Repeat announce and ensure it was passed to self as node.
     $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
-      BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount()
+      BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),
     ]);
     $this->assertCount(1, $announceCount, 'Announce was related to one node.');
     $this->assertEquals(406, current($announceCount)->getStatusCode(), 'Status code for announce response is 406.');
@@ -359,14 +359,15 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(0, $processedAnnounces, 'No announces were processed.');
     // Try to emulate announce queue inclusion by fake count of blocks 2.
     $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
-      BlockchainRequestInterface::PARAM_COUNT => 2
+      BlockchainRequestInterface::PARAM_COUNT => 2,
     ]);
     $this->assertCount(1, $announceCount, 'Announce was related to one node.');
     $this->assertEquals(200, current($announceCount)->getStatusCode(), 'Status code for announce response is 200.');
     // Ensure 1 announce was processed as it was 200 (Due to fake count '2').
     $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
     $this->assertEquals(1, $processedAnnounces, 'One announce was processed.');
-    // In this case item was processed but taken no action as Fetch should have found that count of blocks equals.
+    // In this case item was processed but taken no action as
+    // Fetch should have found that count of blocks equals.
   }
 
   /**

@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\blockchain_emulation\Functional;
 
-
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Service\BlockchainApiServiceInterface;
@@ -22,14 +21,14 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
   /**
    * Http client.
    *
-   * @var Client
+   * @var \GuzzleHttp\Client
    */
   protected $httpClient;
 
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -78,7 +77,7 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
   /**
    * Blockchain test service.
    *
-   * @var BlockchainTestServiceInterface
+   * @var \Drupal\blockchain_test\Service\BlockchainTestServiceInterface
    */
   protected $blockchainTestService;
 
@@ -109,7 +108,7 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->blockchainService = $this->container->get('blockchain.service');
     $this->assertInstanceOf(BlockchainServiceInterface::class, $this->blockchainService,
       'Blockchain service instantiated.');
-    // Set test service, generate configs, set test config and set block count to 5.
+    // Set test service, generate configs, set block count to 5.
     $this->blockchainTestService = $this->container->get('blockchain.test.service');
     $this->assertInstanceOf(BlockchainTestServiceInterface::class, $this->blockchainTestService,
       'Blockchain test service instantiated.');
@@ -195,8 +194,8 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertCount(4, $blocks, 'Returned 4 blocks');
     $instantiatedBlocks = [$firstBlock];
     foreach ($blocks as $key => $block) {
-      $instantiatedBlocks[$key+1]= $this->blockchainService->getStorageService()->createFromArray($block);
-      $this->assertInstanceOf(BlockchainBlockInterface::class, $instantiatedBlocks[$key+1], 'BLock import ok');
+      $instantiatedBlocks[$key + 1] = $this->blockchainService->getStorageService()->createFromArray($block);
+      $this->assertInstanceOf(BlockchainBlockInterface::class, $instantiatedBlocks[$key + 1], 'BLock import ok');
     }
     $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
     $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
@@ -216,7 +215,7 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $this->assertCount(5, $blocks, 'Returned 5 blocks');
     $instantiatedBlocks = [];
     foreach ($blocks as $block) {
-      $instantiatedBlocks[]= $this->blockchainService->getStorageService()->createFromArray($block);
+      $instantiatedBlocks[] = $this->blockchainService->getStorageService()->createFromArray($block);
     }
     $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
     $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
@@ -235,7 +234,7 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
     $blocks = $result->getBlocksParam();
     $this->assertCount(1, $blocks, 'Returned 1 block');
     $currentBlock = $this->blockchainService->getStorageService()->createFromArray(current($blocks));
-    $syncBocks[]= $currentBlock;
+    $syncBocks[] = $currentBlock;
     for ($i = 0; $i < 4; $i++) {
       $params = [
         BlockchainRequestInterface::PARAM_COUNT => 1,
@@ -252,7 +251,7 @@ class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
       $blocks = $result->getBlocksParam();
       $this->assertCount(1, $blocks, 'Returned 1 block');
       $currentBlock = $this->blockchainService->getStorageService()->createFromArray(current($blocks));
-      $syncBocks[]= $currentBlock;
+      $syncBocks[] = $currentBlock;
     }
     $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
     $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);

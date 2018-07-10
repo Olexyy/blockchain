@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Entity;
 
-
 use Drupal\blockchain\Service\BlockchainService;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;

@@ -3,16 +3,13 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
-use Drupal\Core\Config\Config;
-use Drupal\workflows\StateInterface;
 
 /**
  * Interface BlockchainConfigServiceInterface.
  *
  * @package Drupal\blockchain\Service
  */
-interface BlockchainConfigServiceInterface
-{
+interface BlockchainConfigServiceInterface {
 
   const LAST_CRON_RUN = 'last_cron_run_';
   const CONTEXT_ANNOUNCE = 'announce_';
@@ -24,7 +21,7 @@ interface BlockchainConfigServiceInterface
    * @return string
    *   Unique identifier.
    */
-  function generateId();
+  public function generateId();
 
   /**
    * Getter for config.
@@ -32,14 +29,15 @@ interface BlockchainConfigServiceInterface
    * @param bool $editable
    *   Defines result.
    *
-   * @return \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig|Config
+   * @return \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
+   *   Global config storage.
    */
-  function getGlobalConfig($editable = FALSE);
+  public function getGlobalConfig($editable = FALSE);
 
   /**
    * State storage.
    *
-   * @return StateInterface
+   * @return \Drupal\Core\State\StateInterface
    *   State storage.
    */
   public function getState();
@@ -58,7 +56,7 @@ interface BlockchainConfigServiceInterface
    * After this action service is aware of blockchain type and
    * settings to use.
    *
-   * @param BlockchainConfigInterface|string $blockchainConfig
+   * @param \Drupal\blockchain\Entity\BlockchainConfigInterface|string $blockchainConfig
    *   Blockchain config of id.
    *
    * @return bool
@@ -69,7 +67,7 @@ interface BlockchainConfigServiceInterface
   /**
    * Getter for blockchain config.
    *
-   * @return BlockchainConfigInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainConfigInterface|null
    *   Returns config entity if any.
    */
   public function getCurrentConfig();
@@ -78,16 +76,17 @@ interface BlockchainConfigServiceInterface
    * Creates config with default settings for entity id.
    *
    * @param string $entityTypeId
-   *    Entity type id.
+   *   Entity type id.
    *
-   * @return BlockchainConfigInterface|\Drupal\Core\Entity\EntityInterface
+   * @return \Drupal\blockchain\Entity\BlockchainConfigInterface|\Drupal\Core\Entity\EntityInterface
+   *   Default config.
    */
   public function getDefaultBlockchainConfig($entityTypeId);
 
   /**
    * Save handler.
    *
-   * @param BlockchainConfigInterface $blockchainConfig
+   * @param \Drupal\blockchain\Entity\BlockchainConfigInterface $blockchainConfig
    *   Given entity.
    *
    * @return bool
@@ -125,7 +124,7 @@ interface BlockchainConfigServiceInterface
   /**
    * Handler to get list of blockchain configs.
    *
-   * @return BlockchainConfigInterface[]|array
+   * @return \Drupal\blockchain\Entity\BlockchainConfigInterface[]|array
    *   Array of entities if any.
    */
   public function getAll();
@@ -152,7 +151,7 @@ interface BlockchainConfigServiceInterface
    * @param string $id
    *   Given id.
    *
-   * @return BlockchainConfigInterface $blockchainConfig
+   * @return \Drupal\blockchain\Entity\BlockchainConfigInterface
    *   Loaded entity.
    */
   public function load($id);

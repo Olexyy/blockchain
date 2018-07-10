@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Controller;
 
-
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
@@ -13,7 +12,6 @@ use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -24,7 +22,7 @@ class BlockchainApiController extends ControllerBase {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -38,14 +36,14 @@ class BlockchainApiController extends ControllerBase {
   /**
    * Request stack.
    *
-   * @var RequestStack
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $request;
 
   /**
    * Validation result.
    *
-   * @var BlockchainRequestInterface|BlockchainResponseInterface
+   * @var \Drupal\blockchain\Utils\BlockchainRequestInterface|BlockchainResponseInterface
    */
   protected $validationResult;
 
@@ -109,7 +107,7 @@ class BlockchainApiController extends ControllerBase {
   /**
    * Announce action.
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   Response by convention.
    */
   public function announce() {
@@ -185,7 +183,7 @@ class BlockchainApiController extends ControllerBase {
   /**
    * Subscribe action.
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   Response by convention.
    */
   public function subscribe() {
@@ -260,7 +258,7 @@ class BlockchainApiController extends ControllerBase {
   /**
    * Count action.
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   Response by convention.
    */
   public function count() {
@@ -305,7 +303,7 @@ class BlockchainApiController extends ControllerBase {
    * Else returns general block count.
    * Same behavior if search params not set.
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   Response by convention.
    */
   public function fetch() {
@@ -375,7 +373,7 @@ class BlockchainApiController extends ControllerBase {
   /**
    * Pull action.
    *
-   * @return JsonResponse
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   Response by convention.
    */
   public function pull() {
@@ -397,7 +395,8 @@ class BlockchainApiController extends ControllerBase {
             $details = 'Block exists';
             $blocks = $this->blockchainBlockStorage
               ->getBlocksFrom($block, $result->getCountParam());
-          } else {
+          }
+          else {
             $exists = FALSE;
             $details = 'Block not exists';
             $blocks = [];

@@ -1,7 +1,6 @@
 <?php
 
 namespace Drupal\blockchain\Service;
-use Drupal\Core\Queue\QueueWorkerInterface;
 
 /**
  * Interface BlockchainQueueServiceInterface.
@@ -44,14 +43,16 @@ interface BlockchainQueueServiceInterface {
   /**
    * Getter for miner plugin (worker).
    *
-   * @return null|QueueWorkerInterface
+   * @return null|\Drupal\Core\Queue\QueueWorkerInterface
+   *   Queue storage.
    */
   public function getMiner();
 
   /**
    * Getter for announce handler plugin (worker).
    *
-   * @return null|QueueWorkerInterface
+   * @return null|\Drupal\Core\Queue\QueueWorkerInterface
+   *   Queue storage.
    */
   public function getAnnounceHandler();
 

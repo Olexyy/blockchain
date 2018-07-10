@@ -27,4 +27,3 @@ entity.blockchain_block.canonical:
   base_route: blockchain.dashboard
   weight: 100
   title: 'Block view'
-

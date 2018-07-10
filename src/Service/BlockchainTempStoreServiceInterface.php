@@ -1,16 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: oos
- * Date: 06.07.18
- * Time: 1:26
- */
 
 namespace Drupal\blockchain\Service;
 
-
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 
+/**
+ * Interface BlockchainTempStoreServiceInterface.
+ *
+ * @package Drupal\blockchain\Service
+ */
 interface BlockchainTempStoreServiceInterface {
 
   const LOGGER_CHANNEL = 'blockchain.tempstore';
@@ -21,6 +19,7 @@ interface BlockchainTempStoreServiceInterface {
    * Getter for logger.
    *
    * @return \Drupal\Core\Logger\LoggerChannelInterface
+   *   Logger.
    */
   public function getLogger();
 
@@ -59,7 +58,7 @@ interface BlockchainTempStoreServiceInterface {
   /**
    * Getter for last block if any.
    *
-   * @return BlockchainBlockInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface|null
    *   Blockchain block if any.
    */
   public function getLastBlock();
@@ -67,7 +66,7 @@ interface BlockchainTempStoreServiceInterface {
   /**
    * Save handler.
    *
-   * @param BlockchainBlockInterface $block
+   * @param \Drupal\blockchain\Entity\BlockchainBlockInterface $block
    *   Given block.
    *
    * @return mixed
@@ -90,7 +89,7 @@ interface BlockchainTempStoreServiceInterface {
   /**
    * Getter for first block.
    *
-   * @return BlockchainBlockInterface|\Drupal\Core\Entity\EntityInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface|\Drupal\Core\Entity\EntityInterface|null
    *   Block if any.
    */
   public function getFirstBlock();
@@ -103,7 +102,7 @@ interface BlockchainTempStoreServiceInterface {
   /**
    * Deletes last block.
    *
-   * @return BlockchainBlockInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface|null
    *   Block if any.
    */
   public function pop();
@@ -111,7 +110,7 @@ interface BlockchainTempStoreServiceInterface {
   /**
    * Deletes first block.
    *
-   * @return BlockchainBlockInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainBlockInterface|null
    *   Block if any.
    */
   public function shift();

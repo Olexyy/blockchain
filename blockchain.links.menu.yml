@@ -1,10 +1,8 @@
-
 blockchain.dashboard:
   title: 'Blockchain'
   description: 'Blockchain dashboard'
   route_name: blockchain.dashboard
   parent: system.admin_structure
-
 # Blockchain Block menu items definition
 entity.blockchain_block.collection:
   title: 'Blockchain blocks'
@@ -12,7 +10,6 @@ entity.blockchain_block.collection:
   description: 'Blockchain Blocks entities collection'
   parent: blockchain.dashboard
   weight: 99
-
 # Blockchain Node menu items definition
 entity.blockchain_node.collection:
   title: 'Blockchain nodes'
@@ -20,7 +17,6 @@ entity.blockchain_node.collection:
   description: 'List Blockchain Nodes'
   parent: blockchain.dashboard
   weight: 100
-
 # Blockchain config menu items definition
 entity.blockchain_config.collection:
   title: 'Blockchain config'

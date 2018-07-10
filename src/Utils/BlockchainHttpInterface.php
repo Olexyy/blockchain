@@ -2,7 +2,11 @@
 
 namespace Drupal\blockchain\Utils;
 
-
+/**
+ * Interface BlockchainHttpInterface.
+ *
+ * @package Drupal\blockchain\Utils
+ */
 interface BlockchainHttpInterface {
 
   const PARAM_EXISTS = 'exists';
@@ -16,6 +20,7 @@ interface BlockchainHttpInterface {
    *
    * @param string $key
    *   Name of param.
+   *
    * @return string|array|null
    *   Value if any.
    */

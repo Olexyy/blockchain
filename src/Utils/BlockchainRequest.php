@@ -93,7 +93,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
   /**
    * Extracts params array fom request.
    *
-   * @param Request $request
+   * @param \Symfony\Component\HttpFoundation\Request $request
    *   Request object.
    *
    * @return array
@@ -144,7 +144,6 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
 
     return $this->getParam(static::PARAM_AUTH);
   }
-
 
   /**
    * {@inheritdoc}
@@ -222,6 +221,7 @@ class BlockchainRequest extends BlockchainHttpBase implements BlockchainRequestI
    * Serializer.
    *
    * @return string
+   *   Serialized object.
    */
   public function sleep() {
 

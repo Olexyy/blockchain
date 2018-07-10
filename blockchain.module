@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains hooks implementations for blockchain module.
+ */
+
 use Drupal\blockchain\Utils\BlockchainCronHandler;
 
 /**

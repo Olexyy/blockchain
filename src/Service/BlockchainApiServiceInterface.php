@@ -1,9 +1,8 @@
 <?php
 
 namespace Drupal\blockchain\Service;
+
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
-use Drupal\blockchain\Utils\BlockchainResponseInterface;
-use GuzzleHttp\Psr7\Response;
 
 /**
  * Interface BlockchainApiServiceInterface.
@@ -28,6 +27,7 @@ interface BlockchainApiServiceInterface {
    * Getter for current request.
    *
    * @return null|\Symfony\Component\HttpFoundation\Request
+   *   Current request.
    */
   public function getCurrentRequest();
 
@@ -35,6 +35,7 @@ interface BlockchainApiServiceInterface {
    * Getter for logger.
    *
    * @return \Drupal\Core\Logger\LoggerChannelInterface
+   *   Logger.
    */
   public function getLogger();
 
@@ -46,7 +47,7 @@ interface BlockchainApiServiceInterface {
    * @param array $params
    *   Given params.
    *
-   * @return BlockchainResponseInterface|null
+   * @return \Drupal\blockchain\Utils\BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
   public function executeSubscribe($baseUrl, array $params = []);
@@ -59,7 +60,7 @@ interface BlockchainApiServiceInterface {
    * @param array $params
    *   Params to be passed.
    *
-   * @return BlockchainResponseInterface|null
+   * @return \Drupal\blockchain\Utils\BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
   public function execute($url, array $params);
@@ -70,7 +71,7 @@ interface BlockchainApiServiceInterface {
    * @param array $params
    *   Required params.
    *
-   * @return Response[]
+   * @return \GuzzleHttp\Psr7\Response[]
    *   Array of responses if any.
    */
   public function executeAnnounce(array $params);
@@ -81,7 +82,7 @@ interface BlockchainApiServiceInterface {
    * @param string $url
    *   Full Url.
    *
-   * @return BlockchainResponseInterface|null
+   * @return \Drupal\blockchain\Utils\BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
   public function executeCount($url);
@@ -91,10 +92,10 @@ interface BlockchainApiServiceInterface {
    *
    * @param string $url
    *   Full Url.
-   * @param BlockchainBlockInterface $blockchainBlock
+   * @param \Drupal\blockchain\Entity\BlockchainBlockInterface $blockchainBlock
    *   Blockchain block.
    *
-   * @return BlockchainResponseInterface|null
+   * @return \Drupal\blockchain\Utils\BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
   public function executeFetch($url, BlockchainBlockInterface $blockchainBlock = NULL);
@@ -104,12 +105,12 @@ interface BlockchainApiServiceInterface {
    *
    * @param string $url
    *   Full Url.
-   * @param BlockchainBlockInterface|null $blockchainBlock
-   *   Blockchain block.
-   * @param $count
+   * @param int|string $count
    *   String count of blocks to be fetched.
+   * @param \Drupal\blockchain\Entity\BlockchainBlockInterface|null $blockchainBlock
+   *   Blockchain block.
    *
-   * @return BlockchainResponseInterface|null
+   * @return \Drupal\blockchain\Utils\BlockchainResponseInterface|null
    *   Parsed json params as response or null.
    */
   public function executePull($url, $count, BlockchainBlockInterface $blockchainBlock = NULL);

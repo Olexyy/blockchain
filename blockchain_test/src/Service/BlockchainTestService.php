@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain_test\Service;
 
-
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
@@ -11,19 +10,19 @@ use PHPUnit\Framework\TestCase;
 /**
  * Class BlockchainTestService.
  */
-class BlockchainTestService implements BlockchainTestServiceInterface{
+class BlockchainTestService implements BlockchainTestServiceInterface {
 
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
   /**
    * Test context.
    *
-   * @var TestCase
+   * @var \PHPUnit\Framework\TestCase
    */
   protected $testContext;
 
@@ -37,7 +36,7 @@ class BlockchainTestService implements BlockchainTestServiceInterface{
   /**
    * BlockchainTestService constructor.
    *
-   * @param BlockchainServiceInterface $blockchainService
+   * @param \Drupal\blockchain\Service\BlockchainServiceInterface $blockchainService
    *   Given service.
    */
   public function __construct(BlockchainServiceInterface $blockchainService) {
@@ -118,7 +117,7 @@ class BlockchainTestService implements BlockchainTestServiceInterface{
               ->save();
             $blockCount++;
           }
-          $add --;
+          $add--;
         }
         if ($remove) {
           $this->blockchainService
@@ -127,7 +126,7 @@ class BlockchainTestService implements BlockchainTestServiceInterface{
             ->delete();
           $remove--;
         }
-        $affected ++;
+        $affected++;
       }
       $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
       $this->testContext->assertEquals($blockCount, $count, 'Target count equals');

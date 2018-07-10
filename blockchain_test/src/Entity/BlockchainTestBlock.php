@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain_test\Entity;
 
-
 use Drupal\blockchain\Entity\BlockchainBlock;
 
 /**

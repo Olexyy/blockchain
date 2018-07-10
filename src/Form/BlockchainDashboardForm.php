@@ -21,21 +21,24 @@ class BlockchainDashboardForm extends FormBase {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
   /**
-   * @var EntityTypeManagerInterface
+   * Entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
    * BlockchainDashboardForm constructor.
    *
-   * @param BlockchainServiceInterface $blockchainService
+   * @param \Drupal\blockchain\Service\BlockchainServiceInterface $blockchainService
    *   Blockchain service.
-   * @param EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   Entity type manager.
    */
   public function __construct(BlockchainServiceInterface $blockchainService,
                               EntityTypeManagerInterface $entityTypeManager) {
@@ -87,7 +90,7 @@ class BlockchainDashboardForm extends FormBase {
         '#markup' => $this->t('Go to related @tab and discover blockchain configurations.', [
           '@tab' => Link::fromTextAndUrl(
             $this->t('tab'),
-            Url::fromRoute('entity.blockchain_config.collection'))->toString()
+            Url::fromRoute('entity.blockchain_config.collection'))->toString(),
         ]),
       ];
     }
@@ -196,4 +199,5 @@ class BlockchainDashboardForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
   }
+
 }

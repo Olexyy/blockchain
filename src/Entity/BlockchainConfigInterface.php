@@ -31,6 +31,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
    * Generator for UUID.
    *
    * @return string
+   *   Value.
    */
   public function getBlockchainId();
 
@@ -46,7 +47,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setBlockchainId($blockchainId);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -65,7 +66,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setNodeId($nodeId);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -84,7 +85,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setType($type);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -103,7 +104,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setAuth($authId);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -122,7 +123,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setFilterType($filterType);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -133,6 +134,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
    * Property setter.
    *
    * @param string $filterList
+   *   Value.
    *
    * @return $this
    *   Chaining.
@@ -140,7 +142,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setFilterList($filterList);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -159,7 +161,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setPoolManagement($poolManagement);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -178,7 +180,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setAnnounceManagement($announceManagement);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string|int
    *   Value.
@@ -197,7 +199,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setIntervalPool($intervalPool);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string|int
    *   Value.
@@ -216,7 +218,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setTimeoutPool($timeoutPool);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string|int
    *   Value.
@@ -235,7 +237,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setIntervalAnnounce($intervalAnnounce);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -254,7 +256,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setPowPosition($powPosition);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -273,7 +275,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setPowExpression($powExpression);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -292,7 +294,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setDataHandler($dataHandler);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -311,7 +313,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setAllowNotSecure($allowNotSecure);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -330,7 +332,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setId($id);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string
    *   Value.
@@ -349,7 +351,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setLabel($label);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string|int
    *   Value.
@@ -368,7 +370,7 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   public function setPullSizeAnnounce($pullSizeAnnounce);
 
   /**
-   * Property getter
+   * Property getter.
    *
    * @return string|int
    *   Value.

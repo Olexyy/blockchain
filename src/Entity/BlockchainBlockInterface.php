@@ -47,46 +47,53 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    * @return \Drupal\blockchain\Entity\BlockchainBlockInterface
    *   Chaining.
    */
-  function setAuthor($author);
+  public function setAuthor($author);
 
   /**
    * Getter for data.
    *
    * @return string|null
+   *   Value.
    */
-  function getData();
+  public function getData();
 
   /**
    * Setter for data.
    *
-   * @param $data
+   * @param mixed $data
    *   String serialised data.
    *
    * @return \Drupal\blockchain\Entity\BlockchainBlockInterface
    *   Chaining.
    */
-  function setData($data);
+  public function setData($data);
 
   /**
    * Getter for nonce.
    *
    * @return string|null
+   *   Value.
    */
-  function getNonce();
+  public function getNonce();
 
   /**
-   * @param $nonce
+   * Setter for nonce.
+   *
+   * @param string $nonce
+   *   Value.
+   *
    * @return \Drupal\blockchain\Entity\BlockchainBlockInterface
    *   Chaining.
    */
-  function setNonce($nonce);
+  public function setNonce($nonce);
 
   /**
    * Getter for hash.
    *
    * @return string|null
+   *   String value.
    */
-  function getPreviousHash();
+  public function getPreviousHash();
 
   /**
    * Setter for hash.
@@ -97,7 +104,7 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    * @return \Drupal\blockchain\Entity\BlockchainBlockInterface
    *   Chaining.
    */
-  function setPreviousHash($hash);
+  public function setPreviousHash($hash);
 
   /**
    * Getter for timestamp.
@@ -105,7 +112,7 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    * @return int|null
    *   Timestamp.
    */
-  function getTimestamp();
+  public function getTimestamp();
 
   /**
    * Setter for timestamp.
@@ -116,7 +123,7 @@ interface BlockchainBlockInterface extends ContentEntityInterface {
    * @return \Drupal\blockchain\Entity\BlockchainBlockInterface
    *   Chaining.
    */
-  function setTimestamp($timestamp);
+  public function setTimestamp($timestamp);
 
   /**
    * Getter for block hash from object.

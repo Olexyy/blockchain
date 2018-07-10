@@ -2,13 +2,11 @@
 
 namespace Drupal\blockchain\Service;
 
-
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Plugin\BlockchainAuthManager;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
-use Drupal\blockchain\Utils\Util;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -35,7 +33,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
   /**
    * Auth manager.
    *
-   * @var BlockchainAuthManager
+   * @var \Drupal\blockchain\Plugin\BlockchainAuthManager
    */
   protected $blockchainAuthManager;
 
@@ -98,10 +96,6 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
 
     return $previousBlock->toHash() == $blockchainBlock->getPreviousHash() &&
       $this->hashIsValid($hashString);
-  }
-
-  public function validateRequestContext($type) {
-
   }
 
   /**
@@ -171,7 +165,7 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
         ->setDetailsParam('No self param.');
     }
     if ($authHandler = $this->blockchainAuthManager->getHandler($blockchainConfig)) {
-      if(!$authHandler->authorize($blockchainRequest, $blockchainConfig)) {
+      if (!$authHandler->authorize($blockchainRequest, $blockchainConfig)) {
 
         return BlockchainResponse::create()
           ->setIp($blockchainRequest->getIp())

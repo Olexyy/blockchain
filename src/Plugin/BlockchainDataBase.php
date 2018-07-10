@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Plugin;
 
-use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManager;
@@ -18,12 +17,13 @@ use GuzzleHttp\Client;
  * Base class for Importer plugins.
  */
 abstract class BlockchainDataBase extends PluginBase implements
-  BlockchainDataInterface, ContainerFactoryPluginInterface {
+    BlockchainDataInterface,
+    ContainerFactoryPluginInterface {
 
   /**
    * Blockchain block data.
    *
-   * @var BlockchainBlock
+   * @var \Drupal\blockchain\Entity\BlockchainBlock
    */
   protected $data;
 
@@ -44,30 +44,33 @@ abstract class BlockchainDataBase extends PluginBase implements
   /**
    * Request stack.
    *
-   * @var RequestStack
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
 
   /**
    * Logger service.
    *
-   * @var LoggerChannelFactory
+   * @var \Drupal\Core\Logger\LoggerChannelFactory
    */
   protected $loggerFactory;
 
   /**
    * Entity form builder service.
    *
-   * @var EntityFormBuilderInterface
+   * @var \Drupal\Core\Entity\EntityFormBuilderInterface
    */
   protected $entityFormBuilder;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id,
-                              $plugin_definition, EntityTypeManager $entityTypeManager,
-                              Client $httpClient, RequestStack $requestStack,
+  public function __construct(array $configuration,
+  $plugin_id,
+                              $plugin_definition,
+  EntityTypeManager $entityTypeManager,
+                              Client $httpClient,
+  RequestStack $requestStack,
                               LoggerChannelFactory $loggerFactory,
                               EntityFormBuilderInterface $entityFormBuilder) {
 
@@ -78,7 +81,7 @@ abstract class BlockchainDataBase extends PluginBase implements
     $this->loggerFactory = $loggerFactory;
     $this->entityFormBuilder = $entityFormBuilder;
     if (isset($configuration[static::DATA_KEY])) {
-      $this->data =  $configuration[static::DATA_KEY];
+      $this->data = $configuration[static::DATA_KEY];
     }
 
   }
@@ -86,8 +89,10 @@ abstract class BlockchainDataBase extends PluginBase implements
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array
-  $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container,
+                                array $configuration,
+                                $plugin_id,
+                                $plugin_definition) {
 
     return new static(
       $configuration,
@@ -116,7 +121,7 @@ abstract class BlockchainDataBase extends PluginBase implements
    * Prepares data before persistence.
    *
    * @param string $data
-   *    Raw data.
+   *   Raw data.
    *
    * @return string
    *   Prepared data string.
@@ -130,7 +135,7 @@ abstract class BlockchainDataBase extends PluginBase implements
    * Prepares data after reading.
    *
    * @param string $data
-   *    Raw data.
+   *   Raw data.
    *
    * @return string
    *   Prepared data string.

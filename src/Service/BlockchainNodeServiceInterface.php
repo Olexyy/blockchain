@@ -16,6 +16,7 @@ interface BlockchainNodeServiceInterface {
    * Getter for storage.
    *
    * @return \Drupal\Core\Entity\EntityStorageInterface|null
+   *   Storage.
    */
   public function getStorage();
 
@@ -27,7 +28,7 @@ interface BlockchainNodeServiceInterface {
    * @param int $limit
    *   Limit.
    *
-   * @return BlockchainNodeInterface[]
+   * @return \Drupal\blockchain\Entity\BlockchainNodeInterface[]
    *   Array of entities.
    */
   public function getList($offset = NULL, $limit = NULL);
@@ -70,7 +71,7 @@ interface BlockchainNodeServiceInterface {
    * @param string $id
    *   Given id.
    *
-   * @return BlockchainNodeInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainNodeInterface|null
    *   Entity if any.
    */
   public function load($id);
@@ -83,7 +84,7 @@ interface BlockchainNodeServiceInterface {
    * @param string $blockchainTypeId
    *   Blockchain type id.
    *
-   * @return BlockchainNodeInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainNodeInterface|null
    *   Entity if any.
    */
   public function loadBySelfAndType($self, $blockchainTypeId);
@@ -93,35 +94,35 @@ interface BlockchainNodeServiceInterface {
    *
    * @param string $blockchainType
    *   Type of blockchain.
-   * @param $self
+   * @param string $self
    *   Id of blockchain node.
-   * @param $addressSource
+   * @param string $addressSource
    *   Address source.
    * @param string $address
    *   Client ip/host.
    * @param string $port
    *   Client port.
-   * @param null $secure
+   * @param null|bool $secure
    *   Secure flag.
    * @param string $label
    *   Can be same as label.
    * @param bool $save
    *   Flag defines saving action.
    *
-   * @return BlockchainNodeInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainNodeInterface|null
    *   New entity if created.
    */
-  public function create($blockchainType, $self, $addressSource,  $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE);
+  public function create($blockchainType, $self, $addressSource, $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE);
 
   /**
    * Factory method.
    *
-   * @param BlockchainRequestInterface $request
+   * @param \Drupal\blockchain\Utils\BlockchainRequestInterface $request
    *   Request.
    * @param bool $save
    *   Flag defines saving action.
    *
-   * @return BlockchainNodeInterface|null
+   * @return \Drupal\blockchain\Entity\BlockchainNodeInterface|null
    *   New entity if created.
    */
   public function createFromRequest(BlockchainRequestInterface $request, $save = TRUE);
@@ -129,7 +130,7 @@ interface BlockchainNodeServiceInterface {
   /**
    * Delete handler.
    *
-   * @param BlockchainNodeInterface $blockchainNode
+   * @param \Drupal\blockchain\Entity\BlockchainNodeInterface $blockchainNode
    *   Given entity.
    *
    * @return bool
@@ -140,7 +141,7 @@ interface BlockchainNodeServiceInterface {
   /**
    * Save handler.
    *
-   * @param BlockchainNodeInterface $blockchainNode
+   * @param \Drupal\blockchain\Entity\BlockchainNodeInterface $blockchainNode
    *   Given entity.
    *
    * @return bool

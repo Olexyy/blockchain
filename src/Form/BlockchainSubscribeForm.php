@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Form;
 
-use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
@@ -21,7 +20,7 @@ class BlockchainSubscribeForm extends FormBase {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -35,7 +34,7 @@ class BlockchainSubscribeForm extends FormBase {
   /**
    * BlockchainDashboardForm constructor.
    *
-   * @param BlockchainServiceInterface $blockchainService
+   * @param \Drupal\blockchain\Service\BlockchainServiceInterface $blockchainService
    *   Blockchain service.
    */
   public function __construct(BlockchainServiceInterface $blockchainService) {
@@ -116,7 +115,7 @@ class BlockchainSubscribeForm extends FormBase {
       $params = [];
     }
     $result = $this->blockchainService->getApiService()->executeSubscribe($url, $params);
-    $details = $result->getStatusCode().'|'. $result->getMessageParam() .'|'.$result->getDetailsParam();
+    $details = $result->getStatusCode() . '|' . $result->getMessageParam() . '|' . $result->getDetailsParam();
     if ($result->isStatusOk()) {
       $this->blockchainService->getNodeService()->create(
         $this->blockchainConfigId,

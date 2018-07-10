@@ -2,11 +2,9 @@
 
 namespace Drupal\blockchain\Plugin\QueueWorker;
 
-
 use Drupal\blockchain\Service\BlockchainQueueServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequest;
-use Drupal\blockchain\Utils\BlockchainResponseInterface;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
@@ -28,14 +26,14 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
   /**
    * Logger service.
    *
-   * @var LoggerChannelFactory
+   * @var \Drupal\Core\Logger\LoggerChannelFactory
    */
   protected $loggerFactory;
 
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -48,9 +46,9 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
    *   Plugin id.
    * @param mixed $plugin_definition
    *   Plugin definition.
-   * @param LoggerChannelFactory $loggerFactory
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
    *   Logger factory.
-   * @param BlockchainServiceInterface $blockchainService
+   * @param \Drupal\blockchain\Service\BlockchainServiceInterface $blockchainService
    *   Blockchain service.
    */
   public function __construct(array $configuration,
@@ -67,8 +65,10 @@ class AnnounceHandler extends QueueWorkerBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array
-  $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container,
+                                array $configuration,
+                                $plugin_id,
+                                $plugin_definition) {
 
     return new static(
       $configuration,

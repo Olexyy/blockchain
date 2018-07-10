@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Form;
 
-
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainBatchHandler;
 use Drupal\Component\Datetime\TimeInterface;
@@ -22,7 +21,7 @@ class BlockchainBlockForm extends ContentEntityForm {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -76,7 +75,7 @@ class BlockchainBlockForm extends ContentEntityForm {
         '#executes_submit_callback' => TRUE,
         '#value' => $this->t('Put generic block'),
         '#context' => 'put_generic_block',
-        '#submit' =>  [ [$this, 'callbackHandler'] ],
+        '#submit' => [[$this, 'callbackHandler']],
       ];
     }
     else {
@@ -91,14 +90,14 @@ class BlockchainBlockForm extends ContentEntityForm {
    */
   public function actionsElement(array $form, FormStateInterface $form_state) {
 
-    $element =  parent::actionsElement($form, $form_state);
+    $element = parent::actionsElement($form, $form_state);
     $element['add_to_queue'] = [
       '#type' => 'button',
       '#executes_submit_callback' => TRUE,
       '#value' => $this->t('Add to pool'),
       '#context' => 'add_to_queue',
-      '#submit' =>  [ [$this, 'callbackHandler'] ],
-      '#weight' => 100
+      '#submit' => [[$this, 'callbackHandler']],
+      '#weight' => 100,
     ];
     $element['submit']['#value'] = $this->t('Mine pool');
 

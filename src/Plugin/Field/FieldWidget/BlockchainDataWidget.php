@@ -26,7 +26,7 @@ class BlockchainDataWidget extends WidgetBase implements ContainerFactoryPluginI
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -60,17 +60,17 @@ class BlockchainDataWidget extends WidgetBase implements ContainerFactoryPluginI
   /**
    * BlockchainDataWidget constructor.
    *
-   * @param $plugin_id
+   * @param string $plugin_id
    *   String plugin id.
-   * @param $plugin_definition
+   * @param string $plugin_definition
    *   Array of plugin definition.
-   * @param FieldDefinitionInterface $field_definition
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
    *   Field definition object.
    * @param array $settings
    *   Array of setting for given widget.
    * @param array $third_party_settings
    *   Array of third party settings.
-   * @param BlockchainServiceInterface $blockchainService
+   * @param \Drupal\blockchain\Service\BlockchainServiceInterface $blockchainService
    *   Blockchain service.
    */
   public function __construct($plugin_id,

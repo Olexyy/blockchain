@@ -2,12 +2,10 @@
 
 namespace Drupal\blockchain\Controller;
 
-
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -18,14 +16,14 @@ class BlockchainController extends ControllerBase {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
   /**
    * Request stack.
    *
-   * @var RequestStack
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $request;
 
@@ -53,10 +51,10 @@ class BlockchainController extends ControllerBase {
   /**
    * Blocks validation callback.
    *
-   * @param BlockchainConfigInterface $blockchain_config
+   * @param \Drupal\blockchain\Entity\BlockchainConfigInterface $blockchain_config
    *   Blockchain config object.
    *
-   * @return RedirectResponse
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Response.
    */
   public function storageValidate(BlockchainConfigInterface $blockchain_config) {
@@ -76,7 +74,7 @@ class BlockchainController extends ControllerBase {
   /**
    * Controller callback.
    *
-   * @return RedirectResponse
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Response.
    */
   public function discoverConfigs() {

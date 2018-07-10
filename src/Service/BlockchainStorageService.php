@@ -2,12 +2,10 @@
 
 namespace Drupal\blockchain\Service;
 
-
 use Drupal\blockchain\Entity\BlockchainBlock;
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
 use Drupal\blockchain\Plugin\BlockchainDataManager;
-use Drupal\blockchain\Utils\Util;
 use Drupal\Component\Utility\Random;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -23,14 +21,14 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   /**
    * Entity type manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
    * Logger factory.
    *
-   * @var LoggerChannelFactoryInterface
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
   protected $loggerFactory;
 
@@ -44,7 +42,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   /**
    * Blockchain data manager.
    *
-   * @var BlockchainDataManager
+   * @var \Drupal\blockchain\Plugin\BlockchainDataManager
    */
   protected $blockchainDataManager;
 
@@ -79,19 +77,19 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
   /**
    * BlockchainStorageService constructor.
    *
-   * @param EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Given service.
-   * @param LoggerChannelFactoryInterface $loggerFactory
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerFactory
    *   Logger factory.
    * @param BlockchainConfigServiceInterface $blockchainSettingsService
    *   Blockchain config service.
-   * @param BlockchainDataManager $blockchainDataManager
+   * @param \Drupal\blockchain\Plugin\BlockchainDataManager $blockchainDataManager
    *   Blockchain data manager.
    * @param BlockchainValidatorServiceInterface $blockchainValidatorService
    *   Blockchain validator.
    * @param BlockchainMinerServiceInterface $blockchainMinerService
    *   Blockchain miner service.
-   * @param Connection $database
+   * @param \Drupal\Core\Database\Connection $database
    *   Database.
    * @param BlockchainHashServiceInterface $blockchainHashService
    *   Hash service.
@@ -132,7 +130,8 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       $type = $this->configService->getCurrentConfig()->id();
 
       return $this->entityTypeManager->getStorage($type);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->getLogger()
         ->error($e->getMessage() . $e->getTraceAsString());
 
@@ -162,7 +161,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->accessCheck(FALSE)
       ->sort('timestamp', 'DESC')
       ->sort('id', 'DESC')
-      ->range(0,1)
+      ->range(0, 1)
       ->execute();
     if ($blockId) {
 
@@ -229,7 +228,8 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       return $this->blockchainDataManager->createInstance($pluginId, [
         BlockchainDataInterface::DATA_KEY => $data,
       ]);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->getLogger()
         ->error($e->getMessage() . $e->getTraceAsString());
 
@@ -244,7 +244,8 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
 
     try {
       return $this->getBlockStorage()->save($block);
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->getLogger()
         ->error($e->getMessage() . $e->getTraceAsString());
 
@@ -288,7 +289,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->accessCheck(FALSE)
       ->condition('timestamp', $block->getTimestamp(), '>=')
       ->condition('id', $block->id(), '>')
-      ->sort('id',  $block->id(), '>')
+      ->sort('id', $block->id(), '>')
       ->count()
       ->execute();
   }
@@ -345,7 +346,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->accessCheck(FALSE)
       ->range($offset, $limit)
       ->execute();
-    /** @var BlockchainBlockInterface[] $blocks*/
+    /* @var \Drupal\blockchain\Entity\BlockchainBlockInterface[] $blocks*/
     $blocks = $this->getBlockStorage()->loadMultiple($blockIds);
     if ($asArray) {
       foreach ($blocks as &$block) {
@@ -376,7 +377,7 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
       ->accessCheck(FALSE)
       ->sort('timestamp')
       ->sort('id')
-      ->range(0,1)
+      ->range(0, 1)
       ->execute();
     if ($blockId) {
       return $this->getBlockStorage()->load(current($blockId));
@@ -407,4 +408,5 @@ class BlockchainStorageService implements BlockchainStorageServiceInterface {
 
     return NULL;
   }
+
 }

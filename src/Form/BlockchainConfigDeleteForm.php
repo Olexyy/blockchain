@@ -16,7 +16,7 @@ class BlockchainConfigDeleteForm extends EntityConfirmFormBase {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -45,7 +45,7 @@ class BlockchainConfigDeleteForm extends EntityConfirmFormBase {
       ->getNodeService()
       ->getStorage()
       ->loadByProperties([
-        'blockchainTypeId' => $this->entity->id()
+        'blockchainTypeId' => $this->entity->id(),
       ]);
     if ($exist) {
       $form = parent::buildForm($form, $form_state);

@@ -33,4 +33,5 @@ class BlockchainData extends Plugin {
    * @var string
    */
   public $targetClass;
+
 }
