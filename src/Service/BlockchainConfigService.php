@@ -2,16 +2,12 @@
 
 namespace Drupal\blockchain\Service;
 
-
-use Drupal\blockchain\Entity\BlockchainConfig;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Plugin\BlockchainAuthManager;
-use Drupal\blockchain\Utils\Util;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\State\StateInterface;
-
 
 /**
  * Class BlockchainConfigServiceInterface.
@@ -23,35 +19,35 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * Uuid service.
    *
-   * @var UuidInterface
+   * @var \Drupal\Component\Uuid\UuidInterface
    */
   protected $uuid;
 
   /**
    * State service.
    *
-   * @var StateInterface
+   * @var \Drupal\Core\State\StateInterface
    */
   protected $state;
 
   /**
    * ConfigFactory service.
    *
-   * @var ConfigFactoryInterface
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
   /**
    * Entity type manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
    * Blockchain config context.
    *
-   * @var BlockchainConfigInterface $blockchainConfig
+   * @var \Drupal\blockchain\Entity\BlockchainConfigInterface
    */
   protected static $blockchainConfig;
 
@@ -114,7 +110,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   public function tokenGenerate() {
 
     return $this->blockchainHashService
-      ->hash($this->getCurrentConfig()->getBlockchainId().$this->getCurrentConfig()->getNodeId());
+      ->hash($this->getCurrentConfig()->getBlockchainId() . $this->getCurrentConfig()->getNodeId());
   }
 
   /**
@@ -169,7 +165,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
    */
   public function getDefaultBlockchainConfig($entityTypeId) {
 
-    /** @var BlockchainConfigInterface $blockchainConfig */
+    /** @var \Drupal\blockchain\Entity\BlockchainConfigInterface $blockchainConfig */
     $blockchainConfig = $this->getStorage()->create([]);
     $blockchainConfig->setId($entityTypeId);
     $blockchainConfig->setLabel($entityTypeId);
@@ -220,7 +216,7 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
     foreach ($this->entityTypeManager->getDefinitions() as $definition) {
       if ($additional = $definition->get('additional')) {
         if (isset($additional['blockchain_entity']) && $additional['blockchain_entity']) {
-          $blockchainEntityTypes[]= $definition->id();
+          $blockchainEntityTypes[] = $definition->id();
         }
       }
     }
@@ -237,7 +233,8 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
 
       return $this->entityTypeManager
         ->getStorage(BlockchainConfigInterface::ENTITY_TYPE);
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
 
       return NULL;
     }
@@ -260,7 +257,8 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
       $this->getStorage()->save($blockchainConfig);
 
       return TRUE;
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
 
       return FALSE;
     }

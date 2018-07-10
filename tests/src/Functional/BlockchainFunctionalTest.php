@@ -87,7 +87,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertInstanceOf(BlockchainServiceInterface::class, $this->blockchainService,
       'Blockchain service instantiated.');
     $count = $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
-    $this->assertEquals(1, $count, 'Discovered one config.');
+    $this->assertEquals(1, $count, 'Discovered none configs.');
     $blockchainConfigs = $this->blockchainService->getConfigService()->getAll();
     $this->assertCount(1, $blockchainConfigs, 'Exists one config.');
     $isSet = $this->blockchainService->getConfigService()->setCurrentConfig(current($blockchainConfigs)->id());

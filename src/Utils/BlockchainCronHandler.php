@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\blockchain\Utils;
 
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
@@ -22,7 +21,7 @@ class BlockchainCronHandler implements ContainerInjectionInterface {
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -47,9 +46,9 @@ class BlockchainCronHandler implements ContainerInjectionInterface {
   /**
    * BlockchainCronHandler constructor.
    *
-   * @param BlockchainServiceInterface $blockchainService
+   * @param \Drupal\blockchain\Service\BlockchainServiceInterface $blockchainService
    *   Blockchain service.
-   * @param LoggerChannelFactoryInterface $loggerChannelFactory
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerChannelFactory
    *   Logger factory.
    */
   public function __construct(BlockchainServiceInterface $blockchainService,
@@ -98,4 +97,5 @@ class BlockchainCronHandler implements ContainerInjectionInterface {
       }
     }
   }
+
 }
