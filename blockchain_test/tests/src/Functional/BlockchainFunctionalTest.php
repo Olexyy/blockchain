@@ -17,7 +17,7 @@ use GuzzleHttp\Client;
  * @group blockchain
  * @group legacy
  */
-class BlockchainEmulationFunctionalTestFunctionalTest extends BrowserTestBase {
+class BlockchainFunctionalTest extends BrowserTestBase {
 
   /**
    * Http client.
