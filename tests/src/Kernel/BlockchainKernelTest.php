@@ -13,6 +13,7 @@ use Drupal\KernelTests\KernelTestBase;
  * Tests blockchain.
  *
  * @group blockchain
+ * @group legacy
  */
 class BlockchainKernelTest extends KernelTestBase {
 

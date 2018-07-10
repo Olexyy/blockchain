@@ -16,6 +16,7 @@ use GuzzleHttp\Client;
  * Tests blockchain.
  *
  * @group blockchain
+ * @group legacy
  */
 class BlockchainFunctionalTest extends BrowserTestBase {
 
