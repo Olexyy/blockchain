@@ -136,8 +136,8 @@ abstract class BlockchainHttpBase implements BlockchainHttpInterface {
    */
   public function getEndPoint() {
 
-    $protocol = $this->isSecure()? 'https://' : 'http://';
-    $port = $this->getPort()? ':'. $this->getPort() : '';
+    $protocol = $this->isSecure() ? 'https://' : 'http://';
+    $port = $this->getPort() ? ':' . $this->getPort() : '';
     return $protocol . $this->getIp() . $port;
   }
 
@@ -174,7 +174,6 @@ abstract class BlockchainHttpBase implements BlockchainHttpInterface {
 
     return $this->hasCountParam() && $this->getCountParam() > 0;
   }
-
 
   /**
    * {@inheritdoc}

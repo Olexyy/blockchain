@@ -41,7 +41,7 @@ class BlockchainAuthManager extends DefaultPluginManager {
   public function getList() {
 
     $list = [];
-    foreach($this->getDefinitions() as $plugin) {
+    foreach ($this->getDefinitions() as $plugin) {
       $list[$plugin['id']] = $plugin['label'];
     }
 
@@ -51,7 +51,7 @@ class BlockchainAuthManager extends DefaultPluginManager {
   /**
    * Returns auth plugin from config.
    *
-   * @param BlockchainConfigInterface $blockchainConfig
+   * @param \Drupal\blockchain\Entity\BlockchainConfigInterface $blockchainConfig
    *   Given config.
    *
    * @return BlockchainAuthInterface|null|object

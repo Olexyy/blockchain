@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain;
 
-
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 
@@ -53,8 +52,8 @@ class BlockchainBlockListBuilder extends EntityListBuilder {
    * @return string
    *   The unique string identifying the form.
    */
-  public function getFormId()
-  {
+  public function getFormId() {
     return '!!!';
   }
+
 }

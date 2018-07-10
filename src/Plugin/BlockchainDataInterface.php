@@ -77,15 +77,14 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
   /**
    * Manages logic for moving values from form state to items.
    *
-   * @param FieldItemListInterface $items
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   Field items.
    * @param array $form
    *   Form render array.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state object.
    */
   public function extractFormValues(FieldItemListInterface $items, array $form, FormStateInterface $form_state);
-
 
   /**
    * Predicate defies if property has settings.
@@ -94,4 +93,5 @@ interface BlockchainDataInterface extends PluginInspectionInterface {
    *   Test result.
    */
   public function hasSettings();
+
 }

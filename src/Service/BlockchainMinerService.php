@@ -1,11 +1,8 @@
 <?php
 
-
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
-use Drupal\blockchain\Utils\MiningTimeoutException;
-use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Queue\SuspendQueueException;
 
 /**
@@ -72,4 +69,3 @@ class BlockchainMinerService implements BlockchainMinerServiceInterface {
   }
 
 }
-

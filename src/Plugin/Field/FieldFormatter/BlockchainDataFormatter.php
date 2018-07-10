@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Plugin\Field\FieldFormatter;
 
-use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -31,14 +30,14 @@ class BlockchainDataFormatter extends FormatterBase implements ContainerFactoryP
   /**
    * Entity Manager.
    *
-   * @var EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
 
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -61,10 +60,11 @@ class BlockchainDataFormatter extends FormatterBase implements ContainerFactoryP
    *   Any third party settings settings.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
-   * @param BlockchainServiceInterface $blockchainService
+   * @param \Drupal\blockchain\Service\BlockchainServiceInterface $blockchainService
    *   Blockchain service.
    */
-  public function __construct($plugin_id, $plugin_definition,
+  public function __construct($plugin_id,
+  $plugin_definition,
                               FieldDefinitionInterface $field_definition,
                               array $settings,
                               $label,
@@ -101,7 +101,7 @@ class BlockchainDataFormatter extends FormatterBase implements ContainerFactoryP
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
 
-    /** @var BlockchainBlockInterface $blockchainBlock */
+    /** @var \Drupal\blockchain\Entity\BlockchainBlockInterface $blockchainBlock */
     $blockchainBlock = $items->getEntity();
     $this->blockchainService->getConfigService()->setCurrentConfig($blockchainBlock->getEntityTypeId());
     $blockchainDataHandler = $this->blockchainService->getStorageService()->getBlockDataHandler($blockchainBlock->getData());

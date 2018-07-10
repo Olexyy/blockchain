@@ -36,8 +36,8 @@ class BlockchainInstallHandler implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
 
     return new static(
-      $container->get('@blockchain.service'),
-      $container->get('@logger.factory')
+      $container->get('blockchain.service'),
+      $container->get('logger.factory')
     );
   }
 
@@ -65,4 +65,5 @@ class BlockchainInstallHandler implements ContainerInjectionInterface {
       ->getConfigService()
       ->discoverBlockchainConfigs();
   }
+
 }

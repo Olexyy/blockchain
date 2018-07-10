@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain_test\Service;
 
-
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -14,7 +13,7 @@ interface BlockchainTestServiceInterface {
   /**
    * Setter for test context.
    *
-   * @param TestCase $testContext
+   * @param \PHPUnit\Framework\TestCase $testContext
    *   Test context.
    * @param null|string $baseUrl
    *   Base url.
@@ -65,7 +64,7 @@ interface BlockchainTestServiceInterface {
    *
    * @param null|string $baseUrl
    *   Base url.
-   * @param BlockchainConfigInterface|NULL $blockchainConfig
+   * @param \Drupal\blockchain\Entity\BlockchainConfigInterface|null $blockchainConfig
    *   Blockchain config if any.
    */
   public function createNode($baseUrl = NULL, BlockchainConfigInterface $blockchainConfig = NULL);

@@ -8,7 +8,6 @@ use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use function GuzzleHttp\Promise\settle;
 use GuzzleHttp\Psr7\Response;
@@ -24,21 +23,21 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   /**
    * Request stack.
    *
-   * @var RequestStack
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
 
   /**
    * Http client.
    *
-   * @var Client
+   * @var \GuzzleHttp\Client
    */
   protected $httpClient;
 
   /**
    * Logger interface.
    *
-   * @var LoggerChannelFactoryInterface
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
   protected $loggerFactory;
 
@@ -59,7 +58,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   /**
    * Auth manager.
    *
-   * @var BlockchainAuthManager
+   * @var \Drupal\blockchain\Plugin\BlockchainAuthManager
    */
   protected $blockchainAuthManager;
 
@@ -104,7 +103,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
 
     $this->addRequiredParams($params);
 
-    return $this->execute($baseUrl.static::API_SUBSCRIBE, $params);
+    return $this->execute($baseUrl . static::API_SUBSCRIBE, $params);
   }
 
   /**
@@ -119,14 +118,16 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
       return BlockchainResponse::create()
         ->setStatusCode($response->getStatusCode())
         ->setParams($body);
-    } catch (GuzzleException $e) {
+    }
+    catch (GuzzleException $e) {
       $this->getLogger()
         ->error($e->getCode() . $e->getMessage() . $e->getTraceAsString());
 
       return BlockchainResponse::create()
         ->setStatusCode($e->getCode())
         ->setParams($this->exceptionMessageToArray($e));
-    } catch (\Exception $e) {
+    }
+    catch (\Exception $e) {
       $this->getLogger()
         ->error($e->getCode() . $e->getMessage() . $e->getTraceAsString());
 
@@ -137,7 +138,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
   /**
    * Internal helper to parse Exception.
    *
-   * @param GuzzleException $exception
+   * @param \GuzzleHttp\Exception\GuzzleException $exception
    *   Given exception.
    *
    * @return array
@@ -148,7 +149,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
     $message = $exception->getMessage();
     $parsed = explode('response:', $message);
     // Try to parse json.
-    if (count($parsed) === 2 && ($jsonData = (array)json_decode(trim($parsed[1])))) {
+    if (count($parsed) === 2 && ($jsonData = (array) json_decode(trim($parsed[1])))) {
       return $jsonData;
     }
     else {
@@ -167,16 +168,16 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
     $this->addRequiredParams($params);
     $endPoints = [];
     foreach ($this->blockchainNodeService->getList(0, $this->blockchainNodeService->getCount()) as $node) {
-      $endPoints[$node->getEndPoint().static::API_ANNOUNCE] = $this->httpClient->postAsync($node->getEndPoint().static::API_ANNOUNCE, ['json' => $params]);
+      $endPoints[$node->getEndPoint() . static::API_ANNOUNCE] = $this->httpClient->postAsync($node->getEndPoint() . static::API_ANNOUNCE, ['json' => $params]);
     }
     $results = settle($endPoints)->wait();
     $responses = [];
     foreach ($results as $url => $result) {
       if (isset($result['value']) && $result['value'] instanceof Response) {
-        $responses[]= $result['value'];
+        $responses[] = $result['value'];
       }
-      else if (isset($result['reason']) && method_exists($result['reason'],'getResponse')) {
-        $responses[]= $result['reason']->getResponse();
+      elseif (isset($result['reason']) && method_exists($result['reason'], 'getResponse')) {
+        $responses[] = $result['reason']->getResponse();
       }
     }
 
@@ -191,7 +192,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
     $params = [];
     $this->addRequiredParams($params);
 
-    return $this->execute($url.static::API_COUNT, $params);
+    return $this->execute($url . static::API_COUNT, $params);
   }
 
   /**
@@ -206,7 +207,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
       $params[BlockchainRequestInterface::PARAM_TIMESTAMP] = $blockchainBlock->getTimestamp();
     }
 
-    return $this->execute($url.static::API_FETCH, $params);
+    return $this->execute($url . static::API_FETCH, $params);
   }
 
   /**
@@ -222,7 +223,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
       $params[BlockchainRequestInterface::PARAM_TIMESTAMP] = $blockchainBlock->getTimestamp();
     }
 
-    return $this->execute($url.static::API_PULL, $params);
+    return $this->execute($url . static::API_PULL, $params);
   }
 
   /**
@@ -236,4 +237,5 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
       $authHandler->addAuthParams($params, $this->configService->getCurrentConfig());
     }
   }
+
 }

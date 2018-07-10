@@ -3,7 +3,6 @@
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Plugin\BlockchainDataInterface;
-use Drupal\blockchain\Utils\MiningTimeoutException;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
@@ -19,32 +18,32 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
   /**
    * Queue factory service.
    *
-   * @var QueueFactory
+   * @var \Drupal\Core\Queue\QueueFactory
    */
   protected $queueFactory;
 
   /**
    * Queue worker manager.
    *
-   * @var QueueWorkerManagerInterface
+   * @var \Drupal\Core\Queue\QueueWorkerManagerInterface
    */
   protected $queueWorkerManager;
 
   /**
    * Logger interface.
    *
-   * @var LoggerChannelFactoryInterface
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
    */
   protected $loggerFactory;
 
   /**
    * BlockchainQueueService constructor.
    *
-   * @param QueueFactory $queueFactory
+   * @param \Drupal\Core\Queue\QueueFactory $queueFactory
    *   Queue factory.
-   * @param QueueWorkerManagerInterface $queueWorkerManager
+   * @param \Drupal\Core\Queue\QueueWorkerManagerInterface $queueWorkerManager
    *   Queue worker manager.
-   * @param LoggerChannelFactoryInterface $loggerChannelFactory
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $loggerChannelFactory
    *   Logger factory.
    */
   public function __construct(
@@ -80,7 +79,8 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
 
     try {
       return $this->queueWorkerManager->createInstance(static::BLOCK_POOL_NAME);
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
       return NULL;
     }
   }
@@ -111,10 +111,12 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
           $this->getMiner()->processItem($item->data);
           $this->getBlockPool()->deleteItem($item);
           $count++;
-        } catch (SuspendQueueException $e) {
+        }
+        catch (SuspendQueueException $e) {
           $this->getBlockPool()->releaseItem($item);
           break;
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
           $this->getLogger()
             ->error($e->getMessage() . $e->getTraceAsString());
         }
@@ -143,7 +145,8 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
     try {
 
       return $this->queueWorkerManager->createInstance(static::ANNOUNCE_QUEUE_NAME);
-    } catch (\Exception $exception) {
+    }
+    catch (\Exception $exception) {
 
       return NULL;
     }
@@ -173,10 +176,12 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
           $this->getAnnounceHandler()->processItem($item->data);
           $this->getAnnounceQueue()->deleteItem($item);
           $i++;
-        } catch (SuspendQueueException $e) {
+        }
+        catch (SuspendQueueException $e) {
           $this->getAnnounceQueue()->releaseItem($item);
           break;
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
           $this->getAnnounceQueue()->deleteItem($item);
           $this->getLogger()
             ->error($e->getMessage() . $e->getTraceAsString());
@@ -189,4 +194,5 @@ class BlockchainQueueService implements BlockchainQueueServiceInterface {
 
     return $i;
   }
+
 }

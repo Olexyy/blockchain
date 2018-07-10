@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain;
 
-use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 
@@ -35,7 +34,7 @@ class BlockchainNodeListBuilder extends ConfigEntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
 
-    /** @var BlockchainNodeInterface $entity */
+    /** @var \Drupal\blockchain\Entity\BlockchainNodeInterface $entity */
     $row['id'] = $entity->id();
     $row['label'] = $entity->label();
     $row['blockchain_type'] = $entity->getBlockchainTypeId();

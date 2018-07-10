@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Drupal\blockchain\Service;
-
 
 use Drupal\Core\Lock\LockBackendInterface;
 
@@ -16,7 +14,7 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
   /**
    * Locker.
    *
-   * @var LockBackendInterface
+   * @var \Drupal\Core\Lock\LockBackendInterface
    */
   protected $lockBackend;
 
@@ -30,7 +28,7 @@ class BlockchainLockerService implements BlockchainLockerServiceInterface {
   /**
    * BlockchainLockerService constructor.
    *
-   * @param LockBackendInterface $lockBackend
+   * @param \Drupal\Core\Lock\LockBackendInterface $lockBackend
    *   Locker.
    * @param BlockchainConfigServiceInterface $blockchainConfigService
    *   Blockchain config.

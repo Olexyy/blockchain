@@ -19,7 +19,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class BlockchainAuthNone extends PluginBase implements
-  BlockchainAuthInterface, ContainerFactoryPluginInterface {
+    BlockchainAuthInterface,
+    ContainerFactoryPluginInterface {
 
   use StringTranslationTrait;
 
@@ -34,7 +35,7 @@ class BlockchainAuthNone extends PluginBase implements
   /**
    * {@inheritdoc}
    */
-  public function addAuthParams(array &$params, BlockchainConfigInterface $blockchainConfig) { }
+  public function addAuthParams(array &$params, BlockchainConfigInterface $blockchainConfig) {}
 
   /**
    * {@inheritdoc}
@@ -43,4 +44,5 @@ class BlockchainAuthNone extends PluginBase implements
 
     return new static($configuration, $plugin_id, $plugin_definition);
   }
+
 }

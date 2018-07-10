@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Drupal\blockchain\Service;
-
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 
@@ -30,7 +28,7 @@ class BlockchainHashService implements BlockchainHashServiceInterface {
   /**
    * Hashes blockchain block.
    *
-   * @param BlockchainBlockInterface $blockchainBlock
+   * @param \Drupal\blockchain\Entity\BlockchainBlockInterface $blockchainBlock
    *   Given block.
    *
    * @return string
@@ -40,10 +38,11 @@ class BlockchainHashService implements BlockchainHashServiceInterface {
 
     return $this->hash(
       $blockchainBlock->getAuthor() .
-      $blockchainBlock->getPreviousHash().
-      $blockchainBlock->getData().
-      $blockchainBlock->getTimestamp().
+      $blockchainBlock->getPreviousHash() .
+      $blockchainBlock->getData() .
+      $blockchainBlock->getTimestamp() .
       $blockchainBlock->getNonce()
     );
   }
+
 }

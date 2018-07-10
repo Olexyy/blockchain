@@ -38,8 +38,8 @@ class BlockchainCronHandler implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
 
     return new static(
-      $container->get('@blockchain.service'),
-      $container->get('@logger.factory')
+      $container->get('blockchain.service'),
+      $container->get('logger.factory')
     );
   }
 

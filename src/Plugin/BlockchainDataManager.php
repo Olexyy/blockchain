@@ -38,7 +38,7 @@ class BlockchainDataManager extends DefaultPluginManager {
   public function getList() {
 
     $list = [];
-    foreach($this->getDefinitions() as $plugin) {
+    foreach ($this->getDefinitions() as $plugin) {
       $list[$plugin['id']] = $plugin['label'];
     }
 

@@ -18,4 +18,4 @@ use Drupal\Core\Field\Plugin\Field\FieldType\StringLongItem;
  *
  * @package Drupal\blockchain\Plugin\FieldType
  */
-class BlockchainDataItem extends StringLongItem { }
+class BlockchainDataItem extends StringLongItem {}

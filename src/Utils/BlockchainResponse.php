@@ -5,7 +5,7 @@ namespace Drupal\blockchain\Utils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Class BlockchainResponse
+ * Class BlockchainResponse.
  *
  * @package Drupal\blockchain\Utils
  */
@@ -108,12 +108,12 @@ class BlockchainResponse extends BlockchainHttpBase implements BlockchainRespons
    */
   public function log($logger) {
 
-    $logger->info('Ip: @ip, code: @code, message: @message, details: @details.',[
-    '@code' => $this->getStatusCode(),
-    '@ip' => $this->getEndPoint(),
-    '@message' => $this->getMessageParam(),
-    '@details' => $this->getDetailsParam(),
-  ]);
+    $logger->info('Ip: @ip, code: @code, message: @message, details: @details.', [
+      '@code' => $this->getStatusCode(),
+      '@ip' => $this->getEndPoint(),
+      '@message' => $this->getMessageParam(),
+      '@details' => $this->getDetailsParam(),
+    ]);
 
     return $this;
   }

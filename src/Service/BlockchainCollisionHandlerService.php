@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\blockchain\Service;
 
 use Drupal\blockchain\Utils\BlockchainResponseInterface;
@@ -123,7 +122,8 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
           if ($this->blockchainValidatorService
             ->blockIsValid($block, $lastBlock)) {
             $block->save();
-          } else {
+          }
+          else {
             throw new \Exception('Not valid block detected while pull.');
           }
         }
@@ -150,7 +150,7 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
         $i = 0;
         $blockSearchInterval = $this->blockchainSettingsService->getCurrentConfig()->getSearchIntervalAnnounce();
         // Ensure step is not more than count itself.
-        $blockSearchInterval = ($blockCount < $blockSearchInterval)? $blockCount : $blockSearchInterval;
+        $blockSearchInterval = ($blockCount < $blockSearchInterval) ? $blockCount : $blockSearchInterval;
         do {
           $i += $blockSearchInterval;
           $offset = ($blockCount - $i) < 0 ? 0 : $blockCount - $i;
@@ -191,7 +191,8 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
               if ($this->blockchainValidatorService
                 ->blockIsValid($block, $lastBlock)) {
                 $this->blockchainTempStoreService->save($block);
-              } else {
+              }
+              else {
                 // Delete any blocks.
                 $this->blockchainTempStoreService->deleteAll();
                 throw new \Exception('Not valid block detected while pull.');

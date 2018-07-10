@@ -2,7 +2,6 @@
 
 namespace Drupal\blockchain\Service;
 
-
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 
 /**
@@ -26,7 +25,7 @@ interface BlockchainHashServiceInterface {
   /**
    * Hashes blockchain block.
    *
-   * @param BlockchainBlockInterface $blockchainBlock
+   * @param \Drupal\blockchain\Entity\BlockchainBlockInterface $blockchainBlock
    *   Given block.
    *
    * @return string

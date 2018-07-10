@@ -6,7 +6,6 @@ use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Plugin\BlockchainAuthInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
-use Drupal\blockchain\Utils\Util;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -21,14 +20,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class BlockchainAuthSharedKey extends PluginBase implements
-  BlockchainAuthInterface, ContainerFactoryPluginInterface {
+    BlockchainAuthInterface,
+    ContainerFactoryPluginInterface {
 
   use StringTranslationTrait;
 
   /**
    * Blockchain service.
    *
-   * @var BlockchainServiceInterface
+   * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
 
@@ -100,7 +100,7 @@ class BlockchainAuthSharedKey extends PluginBase implements
    */
   public function authIsValid($self, $auth, $blockchainId) {
 
-    return $this->blockchainService->getHashService()->hash($blockchainId.$self) === $auth;
+    return $this->blockchainService->getHashService()->hash($blockchainId . $self) === $auth;
   }
 
 }

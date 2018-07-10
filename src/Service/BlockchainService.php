@@ -22,7 +22,7 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * Blockchain data manager.
    *
-   * @var BlockchainDataManager
+   * @var \Drupal\blockchain\Plugin\BlockchainDataManager
    */
   protected $blockchainDataManager;
 
@@ -78,7 +78,7 @@ class BlockchainService implements BlockchainServiceInterface {
   /**
    * Auth manager.
    *
-   * @var BlockchainAuthManager
+   * @var \Drupal\blockchain\Plugin\BlockchainAuthManager
    */
   protected $blockchainAuthManager;
 
@@ -110,7 +110,7 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Given service.
    * @param BlockchainStorageServiceInterface $blockchainStorageService
    *   Given service.
-   * @param BlockchainDataManager $blockchainDataManager
+   * @param \Drupal\blockchain\Plugin\BlockchainDataManager $blockchainDataManager
    *   Given blockchain data manager.
    * @param BlockchainQueueServiceInterface $blockchainQueueService
    *   Given queue service.
@@ -124,7 +124,7 @@ class BlockchainService implements BlockchainServiceInterface {
    *   Given Blockchain miner service.
    * @param BlockchainLockerServiceInterface $blockchainLockerService
    *   Blockchain locker service.
-   * @param BlockchainAuthManager $blockchainAuthManager
+   * @param \Drupal\blockchain\Plugin\BlockchainAuthManager $blockchainAuthManager
    *   Blockchain auth manager.
    * @param BlockchainTempStoreServiceInterface $blockchainTempStoreService
    *   Blockchain temporary storage.
