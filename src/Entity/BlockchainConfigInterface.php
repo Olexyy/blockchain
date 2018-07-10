@@ -16,14 +16,14 @@ interface BlockchainConfigInterface extends ConfigEntityInterface {
   const POOL_MANAGEMENT_CRON = 'cron';
   const ANNOUNCE_MANAGEMENT_CRON = 'cron';
   const ANNOUNCE_MANAGEMENT_IMMEDIATE = 'immediate';
-  const INTERVAL_DEFAULT = 60 * 10;
+  const INTERVAL_DEFAULT = 600;
   const POW_POSITION_START = 'start';
   const POW_POSITION_END = 'end';
   const POW_EXPRESSION = '00';
   const DATA_HANDLER = 'simple';
   const FILTER_TYPE_BLACKLIST = 'blacklist';
   const FILTER_TYPE_WHITELIST = 'whitelist';
-  const TIMEOUT_POOL = 60 * 10;
+  const TIMEOUT_POOL = 600;
   const PULL_SIZE_ANNOUNCE = 5;
   const SEARCH_INTERVAL_ANNOUNCE = 2;
 
