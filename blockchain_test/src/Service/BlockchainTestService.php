@@ -2,10 +2,17 @@
 
 namespace Drupal\blockchain_test\Service;
 
+use Behat\Mink\Driver\BrowserKitDriver;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
+use Drupal\blockchain\Service\BlockchainApiServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
+use Drupal\blockchain\Utils\BlockchainResponse;
+use Drupal\blockchain\Utils\BlockchainResponseInterface;
+use Drupal\Component\Serialization\Json;
+use Drupal\Tests\BrowserTestBase;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\BrowserKit\Client;
 
 /**
  * Class BlockchainTestService.
@@ -25,6 +32,20 @@ class BlockchainTestService implements BlockchainTestServiceInterface {
    * @var \PHPUnit\Framework\TestCase
    */
   protected $testContext;
+
+  /**
+   * Web test context.
+   *
+   * @var \Drupal\Tests\BrowserTestBase
+   */
+  protected $webTestContext;
+
+  /**
+   * Web client.
+   *
+   * @var \Symfony\Component\BrowserKit\Client
+   */
+  protected $webClient;
 
   /**
    * Sase url.
@@ -51,16 +72,24 @@ class BlockchainTestService implements BlockchainTestServiceInterface {
 
     $this->testContext = $testContext;
     $this->baseUrl = $baseUrl;
+    if ($testContext instanceof BrowserTestBase) {
+      $this->webTestContext = $testContext;
+      /* @var $driver BrowserKitDriver */
+      $driver = $this->webTestContext->getSession()->getDriver();
+      $this->webTestContext->assertInstanceOf(BrowserKitDriver::class, $driver, 'Driver obtained');
+      $this->webClient = $driver->getClient();
+      $this->webTestContext->assertInstanceOf(Client::class, $this->webClient, 'Client obtained');
+    }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function initConfigs($linked = TRUE) {
+  public function initConfigs($linked = TRUE, $expected = 2) {
 
     $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
     $configs = $this->blockchainService->getConfigService()->getAll();
-    $this->testContext->assertCount(2, $configs, '2 config created');
+    $this->testContext->assertCount($expected, $configs, $expected . ' config created');
     $blockchainNodeId = $this->blockchainService->getConfigService()->generateId();
     if ($linked) {
       foreach ($this->blockchainService->getConfigService()->getAll() as $blockchainConfig) {
@@ -143,8 +172,8 @@ class BlockchainTestService implements BlockchainTestServiceInterface {
   public function setBlockchainType($type) {
 
     $this->blockchainService->getConfigService()->getCurrentConfig()->setType($type)->save();
-    $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
-    $this->testContext->assertEquals($type, $type, 'Blockchain type is set.');
+    $typeSet = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
+    $this->testContext->assertEquals($type, $typeSet, 'Blockchain type is set.');
   }
 
   /**
@@ -162,6 +191,159 @@ class BlockchainTestService implements BlockchainTestServiceInterface {
       $baseUrl
     );
     $this->testContext->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
+
+    return $blockchainNode;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getClient() {
+
+    return $this->webClient;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executePost($url, $content = NULL) {
+
+    $this->getClient()->request('POST', $url, [], [], [], $content);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeRequest($url, array $params = []) {
+
+    $this->executePost($url, Json::encode($params));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeSubscribe(array $params = [], $addRequiredParams = FALSE) {
+
+    if ($addRequiredParams) {
+      $this->blockchainService->getApiService()->addRequiredParams($params);
+    }
+    $this->executeRequest(BlockchainApiServiceInterface::API_SUBSCRIBE, $params);
+    $response = $this->getBlockchainResponse();
+    $this->webTestContext
+      ->assertInstanceOf(BlockchainResponseInterface::class, $response, 'Response exists.');
+
+    return $response;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeCount(array $params = [], $addRequiredParams = FALSE) {
+
+    if ($addRequiredParams) {
+      $this->blockchainService->getApiService()->addRequiredParams($params);
+    }
+    $this->executeRequest(BlockchainApiServiceInterface::API_COUNT, $params);
+    $response = $this->getBlockchainResponse();
+    $this->webTestContext
+      ->assertInstanceOf(BlockchainResponseInterface::class, $response, 'Response exists.');
+
+    return $response;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeAnnounce(array $params = [], $addRequiredParams = FALSE) {
+
+    if ($addRequiredParams) {
+      $this->blockchainService->getApiService()->addRequiredParams($params);
+    }
+    $this->executeRequest(BlockchainApiServiceInterface::API_ANNOUNCE, $params);
+    $response = $this->getBlockchainResponse();
+    $this->webTestContext
+      ->assertInstanceOf(BlockchainResponseInterface::class, $response, 'Response exists.');
+
+    return [$response];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeFetch(array $params = [], $addRequiredParams = FALSE) {
+
+    if ($addRequiredParams) {
+      $this->blockchainService->getApiService()->addRequiredParams($params);
+    }
+    $this->executeRequest(BlockchainApiServiceInterface::API_FETCH, $params);
+    $response = $this->getBlockchainResponse();
+    $this->webTestContext
+      ->assertInstanceOf(BlockchainResponseInterface::class, $response, 'Response exists.');
+
+    return $response;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executePull(array $params = [], $addRequiredParams = FALSE) {
+
+    if ($addRequiredParams) {
+      $this->blockchainService->getApiService()->addRequiredParams($params);
+    }
+    $this->executeRequest(BlockchainApiServiceInterface::API_PULL, $params);
+    $response = $this->getBlockchainResponse();
+    $this->webTestContext
+      ->assertInstanceOf(BlockchainResponseInterface::class, $response, 'Response exists.');
+
+    return $response;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockchainResponse() {
+
+    if ($content = $this->webTestContext->getSession()->getPage()->getContent()) {
+      if ($parsed = Json::decode($content)) {
+        if (is_array($parsed)) {
+
+          return BlockchainResponse::create()
+            ->setParams($parsed)
+            ->setStatusCode($this->webTestContext
+              ->getSession()
+              ->getStatusCode());
+        }
+      }
+    }
+
+    return NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setApiOpened($state) {
+    if ($state) {
+      // Ensure Blockchain type is 'multiple'.
+      $this->blockchainService
+        ->getConfigService()
+        ->getCurrentConfig()
+        ->setType(BlockchainConfigInterface::TYPE_MULTIPLE)->save();
+      $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
+      $this->testContext
+        ->assertEquals($type, BlockchainConfigInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
+    }
+    else {
+      // Ensure Blockchain type is 'single'.
+      $this->blockchainService
+        ->getConfigService()
+        ->getCurrentConfig()
+        ->setType(BlockchainConfigInterface::TYPE_SINGLE)->save();
+      $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
+      $this->testContext
+        ->assertEquals($type, BlockchainConfigInterface::TYPE_SINGLE, 'Blockchain type is single');
+    }
   }
 
 }

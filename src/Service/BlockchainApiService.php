@@ -6,6 +6,7 @@ use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Plugin\BlockchainAuthManager;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain\Utils\BlockchainResponse;
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -112,11 +113,12 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
 
     try {
       $response = $this->httpClient->request('POST', $url, ['json' => $params]);
-      $body = json_decode($response->getBody()->getContents(), TRUE);
+      if ($body = Json::decode($response->getBody()->getContents())) {
 
-      return BlockchainResponse::create()
-        ->setStatusCode($response->getStatusCode())
-        ->setParams($body);
+        return BlockchainResponse::create()
+          ->setStatusCode($response->getStatusCode())
+          ->setParams($body);
+      }
     }
     catch (GuzzleException $e) {
       $this->getLogger()
@@ -130,8 +132,13 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
       $this->getLogger()
         ->error($e->getCode() . $e->getMessage() . $e->getTraceAsString());
 
-      return BlockchainResponse::create();
+      return BlockchainResponse::create()
+        ->setStatusCode(0)
+        ->setMessageParam($e->getMessage())
+        ->setDetailsParam($e->getTraceAsString());
     }
+
+    return NULL;
   }
 
   /**
@@ -148,7 +155,7 @@ class BlockchainApiService implements BlockchainApiServiceInterface {
     $message = $exception->getMessage();
     $parsed = explode('response:', $message);
     // Try to parse json.
-    if (count($parsed) === 2 && ($jsonData = (array) json_decode(trim($parsed[1])))) {
+    if (count($parsed) === 2 && ($jsonData = (array) Json::decode(trim($parsed[1])))) {
       return $jsonData;
     }
     else {

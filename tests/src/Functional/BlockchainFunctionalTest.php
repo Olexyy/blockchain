@@ -9,8 +9,8 @@ use Drupal\blockchain\Plugin\BlockchainAuthManager;
 use Drupal\blockchain\Service\BlockchainApiServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
+use Drupal\blockchain_test\Service\BlockchainTestServiceInterface;
 use Drupal\Tests\BrowserTestBase;
-use GuzzleHttp\Client;
 
 /**
  * Tests blockchain.
@@ -21,13 +21,6 @@ use GuzzleHttp\Client;
 class BlockchainFunctionalTest extends BrowserTestBase {
 
   /**
-   * Http client.
-   *
-   * @var \GuzzleHttp\Client
-   */
-  protected $httpClient;
-
-  /**
    * Blockchain service.
    *
    * @var \Drupal\blockchain\Service\BlockchainServiceInterface
@@ -35,39 +28,18 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   protected $blockchainService;
 
   /**
-   * Blockchain API subscribe Url.
+   * Test service helper.
    *
-   * @var string
+   * @var BlockchainTestServiceInterface
    */
-  protected $blockchainSubscribeUrl;
-
-  /**
-   * Blockchain API announce Url.
-   *
-   * @var string
-   */
-  protected $blockchainAnnounceUrl;
-
-  /**
-   * Local ip.
-   *
-   * @var string
-   */
-  protected $localIp;
-
-  /**
-   * Local port.
-   *
-   * @var string
-   */
-  protected $localPort;
+  protected $blockchainTestService;
 
   /**
    * Modules to install.
    *
    * @var array
    */
-  public static $modules = ['blockchain'];
+  public static $modules = ['blockchain', 'blockchain_test'];
 
   /**
    * {@inheritdoc}
@@ -75,24 +47,16 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   protected function setUp() {
 
     parent::setUp();
-    $this->localIp = '127.0.0.1';
-    $this->localPort = '80';
-    $this->assertNotEmpty($this->baseUrl,'Base url is set.');
-    $this->blockchainAnnounceUrl = $this->baseUrl . BlockchainApiServiceInterface::API_ANNOUNCE;
-    $this->blockchainSubscribeUrl = $this->baseUrl . BlockchainApiServiceInterface::API_SUBSCRIBE;
-    $this->assertNotEmpty($this->blockchainSubscribeUrl, 'Blockchain subscribe API url is set.');
-    $this->httpClient = $this->container->get('http_client');
-    $this->assertInstanceOf(Client::class, $this->httpClient,
-      'HTTP client instantiated.');
+    $this->assertNotEmpty($this->baseUrl,'Base url exists.');
     $this->blockchainService = $this->container->get('blockchain.service');
-    $this->assertInstanceOf(BlockchainServiceInterface::class, $this->blockchainService,
-      'Blockchain service instantiated.');
-    $count = $this->blockchainService->getConfigService()->discoverBlockchainConfigs();
-    $this->assertEquals(0, $count, 'Discovered none configs.');
-    $blockchainConfigs = $this->blockchainService->getConfigService()->getAll();
-    $this->assertCount(1, $blockchainConfigs, 'Exists one config.');
-    $isSet = $this->blockchainService->getConfigService()->setCurrentConfig(current($blockchainConfigs)->id());
-    $this->assertTrue($isSet, 'Current config is set.');
+    $this->assertInstanceOf(BlockchainServiceInterface::class,
+      $this->blockchainService, 'Blockchain service instantiated.');
+    $this->blockchainTestService = $this->container->get('blockchain.test.service');
+    $this->assertInstanceOf(BlockchainTestServiceInterface::class, $this->blockchainTestService,
+      'Blockchain test service instantiated.');
+    $this->blockchainTestService->setTestContext($this);
+    $this->blockchainTestService->initConfigs(TRUE);
+    $this->blockchainTestService->setConfig('blockchain_block');
   }
 
   /**
@@ -101,29 +65,28 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   public function testBlockchainApiValidation() {
 
     // Cover method checking.
-    $this->drupalGet($this->blockchainSubscribeUrl);
+    $this->drupalGet(BlockchainApiServiceInterface::API_SUBSCRIBE);
     $this->assertEquals(400, $this->getSession()->getStatusCode());
     $this->assertContains('{"message":"Bad request","details":"Incorrect method."}', $this->getSession()->getPage()->getContent());
-    // Cover protocol schema.
-    $allowNotSecure = $this->blockchainService->getConfigService()->getCurrentConfig()->getAllowNotSecure();
-    $this->assertTrue($allowNotSecure, 'Secure protocol not required by default');
-    // Try to access with no type param.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, []);
+    // Try to POST. With no params.
+    $response = $this->blockchainTestService->executeSubscribe([]);
     $this->assertEquals(400, $response->getStatusCode());
     $this->assertEquals('Bad request', $response->getMessageParam());
     $this->assertEquals('Missing type param.', $response->getDetailsParam());
-    $this->blockchainService->getConfigService()->getCurrentConfig()->setAllowNotSecure(FALSE)->save();
     $allowNotSecure = $this->blockchainService->getConfigService()->getCurrentConfig()->getAllowNotSecure();
-    $this->assertFalse($allowNotSecure, 'Secure protocol is required now');
+    $this->assertTrue($allowNotSecure, 'Secure protocol not required by default');
     // Try to access with invalid type.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
-      BlockchainRequestInterface::PARAM_TYPE => 'blockchain_non_existent',
+    $response = $this->blockchainTestService->executeSubscribe([
+      BlockchainRequestInterface::PARAM_TYPE => 'non_existent_type',
     ]);
     $this->assertEquals(400, $response->getStatusCode());
     $this->assertEquals('Bad request', $response->getMessageParam());
     $this->assertEquals('Invalid type param.', $response->getDetailsParam());
-    // Try to access with no incorrect protocol.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+    // Try to access with incorrect protocol, test server should use [http://].
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setAllowNotSecure(FALSE)->save();
+    $allowNotSecure = $this->blockchainService->getConfigService()->getCurrentConfig()->getAllowNotSecure();
+    $this->assertFalse($allowNotSecure, 'Secure protocol is required now');
+    $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
     ]);
     $this->assertEquals(400, $response->getStatusCode());
@@ -132,46 +95,39 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->blockchainService->getConfigService()->getCurrentConfig()->setAllowNotSecure(TRUE)->save();
     $allowNotSecure = $this->blockchainService->getConfigService()->getCurrentConfig()->getAllowNotSecure();
     $this->assertTrue($allowNotSecure, 'Secure protocol not required again');
-    // Blockchain id is generated on first request, lets check it.
-    $blockchainId = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainId();
-    $this->assertNotEmpty($blockchainId, 'Blockchain id is generated.');
-    $this->assertEquals($blockchainId, $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainId(),
-      'Blockchain id is not regenerated on second call');
-    // Blockchain node id is generated on first request, lets check it.
+    // Ensure Blockchain type is 'single' (closed).
+    $this->blockchainTestService->setApiOpened(FALSE);
     $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();
-    $this->assertNotEmpty($blockchainNodeId, 'Blockchain node id is generated.');
-    $this->assertEquals($blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId(),
-      'Blockchain id is not regenerated on second call');
-    // Ensure Blockchain type is 'single'.
-    $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
-    $this->assertEquals($type, BlockchainConfigInterface::TYPE_SINGLE, 'Blockchain type is single');
-    // Ensure Blockchain 'auth' is false by default.
+    // Ensure Blockchain 'auth' is 'none' by default.
     $auth = $this->blockchainService->getConfigService()->getCurrentConfig()->getAuth();
     $this->assertEquals(BlockchainAuthManager::DEFAULT_PLUGIN, $auth, 'Blockchain set to none');
-    // Cover API is restricted for 'single' type. Request is normal.
-    $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
-    $this->assertEquals('Access to this resource is restricted.', $response->getDetailsParam());
-    $this->assertEquals('Forbidden', $response->getMessageParam());
+    // Cover API is restricted for 'single' type. Request adds required params.
+    $response = $this->blockchainTestService->executeSubscribe([], TRUE);
     $this->assertEquals(403, $response->getStatusCode());
-    // Set and ensure blockchain type is 'multiple'.
-    $this->blockchainService->getConfigService()->getCurrentConfig()->setType(BlockchainConfigInterface::TYPE_MULTIPLE)->save();
-    $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
-    $this->assertEquals($type, BlockchainConfigInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
+    $this->assertEquals('Forbidden', $response->getMessageParam());
+    $this->assertEquals('Access to this resource is restricted.', $response->getDetailsParam());
+    // Ensure Blockchain type is 'multiple' (open).
+    $this->blockchainTestService->setApiOpened(TRUE);
     // Try to access with no 'self' param.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+    $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
     ]);
     $this->assertEquals(400, $response->getStatusCode());
     $this->assertEquals('Bad request', $response->getMessageParam());
     $this->assertEquals('No self param.', $response->getDetailsParam());
-    // Generate valid token.
-    $authToken = $this->blockchainService->getConfigService()->tokenGenerate();
     // Enable auth.
     $this->blockchainService->getConfigService()->getCurrentConfig()->setAuth('shared_key')->save();
     $auth = $this->blockchainService->getConfigService()->getCurrentConfig()->getAuth();
     $this->assertEquals('shared_key', $auth, 'Blockchain auth is enabled');
+    // Blockchain id is generated on first request, lets check it. (this is shared key)
+    $blockchainId = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainId();
+    $this->assertNotEmpty($blockchainId, 'Blockchain id is generated.');
+    // Generate valid token.
+    // TODO what the hell token does in config service???? => to auth with plugin usage.
+    $authToken = $this->blockchainService->getConfigService()->tokenGenerate();
+    $this->assertNotEmpty($authToken, 'Token is generated.');
     // Cover API is restricted for non 'auth' request.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+    $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
     ]);
@@ -179,16 +135,16 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Auth token invalid.', $response->getDetailsParam());
     // Cover API is restricted for invalid 'auth' request.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+    $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
-      BlockchainRequestInterface::PARAM_AUTH => 'INVALIDAUTHPARAM',
+      BlockchainRequestInterface::PARAM_AUTH => 'invalid_token',
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
     ]);
     $this->assertEquals(401, $response->getStatusCode());
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Auth token invalid.', $response->getDetailsParam());
-    // Test not subscribed yet test case.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainAnnounceUrl, [
+    // Test not subscribed yet test case. (Use ANNOUNCE)
+    $response = $this->blockchainTestService->executeCount([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
       BlockchainRequestInterface::PARAM_AUTH => $authToken,
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
@@ -206,7 +162,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $blacklist = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainFilterListAsArray();
     $this->assertEquals($this->getBlacklist(), $blacklist, 'Blacklist is equal to expected.');
     // Cover check for blacklist.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+    $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
       BlockchainRequestInterface::PARAM_AUTH => $authToken,
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
@@ -220,10 +176,10 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals($blockchainFilterType, BlockchainConfigInterface::FILTER_TYPE_WHITELIST, 'Blockchain filter type is whitelist');
     // Ensure put ip is not in whitelist.
     $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray($this->getWhitelist())->save();
-    $whitelist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
-    $this->assertNotContains($this->localIp, $whitelist, 'Whitelist does not have local ip address.');
+    $whitelist = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainFilterListAsArray();
+    $this->assertEquals($this->getWhitelist(), $whitelist, 'Whitelist set.');
     // Cover check for whitelist.
-    $response = $this->blockchainService->getApiService()->execute($this->blockchainSubscribeUrl, [
+    $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
       BlockchainRequestInterface::PARAM_AUTH => $authToken,
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
@@ -239,23 +195,18 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
       $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
     $this->assertFalse($blockchainNodeExists, 'Blockchain node not exists in list');
-    $nodeCount = count($this->blockchainService->getNodeService()->getList());
+    $nodeCount = $this->blockchainService->getNodeService()->getList();
     $this->assertEmpty($nodeCount, 'Blockchain node list empty');
-    // Try to create one. Ensure list is not empty.
-    $blockchainNode = $this->blockchainService->getNodeService()->create(
-      $this->blockchainService->getConfigService()->getCurrentConfig()->id(),
-      $blockchainNodeId,
-      BlockchainNodeInterface::ADDRESS_SOURCE_CLIENT,
-      $this->baseUrl
-    );
-    $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
+    // Try to create one.
+    $blockchainNode = $this->blockchainTestService->createNode();
+    //Ensure list is not empty.
     $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
       $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
     $nodeCount = $this->blockchainService->getNodeService()->getList();
     $this->assertCount(1, $nodeCount, 'Blockchain node list not empty');
-    // Cover 'already exists' use case. Use native request method here.
-    $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
+    // Cover 'already exists' use case. Use required params attached.
+    $response = $this->blockchainTestService->executeSubscribe([], TRUE);
     $this->assertEquals(406, $response->getStatusCode());
     $this->assertEquals('Not acceptable', $response->getMessageParam());
     $this->assertEquals('Already in list.', $response->getDetailsParam());
@@ -273,12 +224,9 @@ class BlockchainFunctionalTest extends BrowserTestBase {
    */
   public function testBlockchainServiceSubscribe() {
 
-    // Enable API.
-    $this->blockchainService->getConfigService()->getCurrentConfig()->setType(BlockchainConfigInterface::TYPE_MULTIPLE)->save();
-    $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
-    $this->assertEquals($type, BlockchainConfigInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
+    $this->blockchainTestService->setApiOpened(TRUE);
     // Test subscribe method.
-    $response = $this->blockchainService->getApiService()->executeSubscribe($this->baseUrl);
+    $response = $this->blockchainTestService->executeSubscribe([],TRUE);
     $this->assertEquals(200, $response->getStatusCode());
     $this->assertEquals('Success', $response->getMessageParam());
     $this->assertEquals('Added to list.', $response->getDetailsParam());
@@ -300,10 +248,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
    */
   public function testBlockchainServiceAnnounce() {
 
-    // Enable API.
-    $this->blockchainService->getConfigService()->getCurrentConfig()->setType(BlockchainConfigInterface::TYPE_MULTIPLE)->save();
-    $type = $this->blockchainService->getConfigService()->getCurrentConfig()->getType();
-    $this->assertEquals($type, BlockchainConfigInterface::TYPE_MULTIPLE, 'Blockchain type is multiple');
+    $this->blockchainTestService->setApiOpened(TRUE);
     // Ensure none blocks in blockchain.
     $this->assertFalse($this->blockchainService->getStorageService()->anyBlock(), 'Any block returns false');
     $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
@@ -322,13 +267,6 @@ class BlockchainFunctionalTest extends BrowserTestBase {
       $lastBlock->getTimestamp(), $lastBlock->getPreviousHash()
     );
     $this->assertInstanceOf(BlockchainBlockInterface::class, $blockByTimestampAndHash, 'Block by Timestamp and previous hash block obtained');
-    // Ensure no nodes in list yet.
-    $nodesCount = $this->blockchainService->getNodeService()->getCount();
-    $this->assertEmpty($nodesCount, 'None blockchain nodes in list yet.');
-    $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
-      BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),
-    ]);
-    $this->assertEmpty($announceCount, 'Announce was related to none nodes.');
     // Set announce handling to CRON (no immediate) processing.
     $announceManagement = $this->blockchainService->getConfigService()->getCurrentConfig()->getAnnounceManagement();
     $this->assertEquals(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_IMMEDIATE, $announceManagement, 'Announce management is immediate.');
@@ -337,38 +275,32 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(BlockchainConfigInterface::ANNOUNCE_MANAGEMENT_CRON, $announceManagement, 'Announce management set to CRON handled.');
     // Attach self to node list.
     $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();
-    $blockchainNode = $this->blockchainService->getNodeService()->create(
-      $this->blockchainService->getConfigService()->getCurrentConfig()->id(),
-      $blockchainNodeId,
-      BlockchainNodeInterface::ADDRESS_SOURCE_CLIENT,
-      $this->baseUrl
-    );
-    $this->assertInstanceOf(BlockchainNodeInterface::class, $blockchainNode, 'Blockchain node created');
+    $this->blockchainTestService->createNode();
     $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
       $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
     $this->assertTrue($blockchainNodeExists, 'Blockchain node exists in list');
     $nodeCount = $this->blockchainService->getNodeService()->getList();
     $this->assertCount(1, $nodeCount, 'Blockchain node list not empty');
     // Repeat announce and ensure it was passed to self as node.
-    $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
+    $announceCount = $this->blockchainTestService->executeAnnounce([
       BlockchainRequestInterface::PARAM_COUNT => $this->blockchainService->getStorageService()->getBlockCount(),
-    ]);
+    ], TRUE);
     $this->assertCount(1, $announceCount, 'Announce was related to one node.');
     $this->assertEquals(406, current($announceCount)->getStatusCode(), 'Status code for announce response is 406.');
     $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
     // Ensure no announces processed as it was 406 (Count of blocks equals).
     $this->assertEquals(0, $processedAnnounces, 'No announces were processed.');
     // Try to emulate announce queue inclusion by fake count of blocks 2.
-    $announceCount = $this->blockchainService->getApiService()->executeAnnounce([
+    $announceCount = $this->blockchainTestService->executeAnnounce([
       BlockchainRequestInterface::PARAM_COUNT => 2,
-    ]);
+    ], TRUE);
     $this->assertCount(1, $announceCount, 'Announce was related to one node.');
     $this->assertEquals(200, current($announceCount)->getStatusCode(), 'Status code for announce response is 200.');
     // Ensure 1 announce was processed as it was 200 (Due to fake count '2').
     $processedAnnounces = $this->blockchainService->getQueueService()->doAnnounceHandling();
     $this->assertEquals(1, $processedAnnounces, 'One announce was processed.');
     // In this case item was processed but taken no action as
-    // Fetch should have found that count of blocks equals.
+    // FETCH should have found that count of blocks equals.
   }
 
   /**
