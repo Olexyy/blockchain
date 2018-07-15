@@ -19,11 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *  label = @Translation("Shared key"),
  * )
  */
-class BlockchainAuthSharedKey extends PluginBase implements
-    BlockchainAuthInterface,
-    ContainerFactoryPluginInterface {
+class BlockchainAuthSharedKey extends PluginBase implements BlockchainAuthInterface,
+  ContainerFactoryPluginInterface {
 
-  use StringTranslationTrait;
 
   /**
    * Blockchain service.

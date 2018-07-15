@@ -18,11 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *  label = @Translation("No auth"),
  * )
  */
-class BlockchainAuthNone extends PluginBase implements
-    BlockchainAuthInterface,
-    ContainerFactoryPluginInterface {
-
-  use StringTranslationTrait;
+class BlockchainAuthNone extends PluginBase implements BlockchainAuthInterface,
+  ContainerFactoryPluginInterface {
 
   /**
    * {@inheritdoc}
