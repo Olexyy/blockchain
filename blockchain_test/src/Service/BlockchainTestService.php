@@ -158,7 +158,7 @@ class BlockchainTestService implements BlockchainTestServiceInterface {
         $affected++;
       }
       $blockCount = $this->blockchainService->getStorageService()->getBlockCount();
-      $this->testContext->assertEquals($blockCount, $count, 'Target count equals');
+      $this->testContext->assertEquals($blockCount, $count, 'Target count equals ' . $count);
       $validationResult = $this->blockchainService->getStorageService()->checkBlocks();
       $this->testContext->assertTrue($validationResult, 'Blocks in chain are valid');
     }

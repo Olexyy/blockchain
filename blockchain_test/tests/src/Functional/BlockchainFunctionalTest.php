@@ -4,12 +4,10 @@ namespace Drupal\Tests\blockchain_test\Functional;
 
 use Drupal\blockchain\Entity\BlockchainBlockInterface;
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
-use Drupal\blockchain\Service\BlockchainApiServiceInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\blockchain_test\Service\BlockchainTestServiceInterface;
 use Drupal\Tests\BrowserTestBase;
-use GuzzleHttp\Client;
 
 /**
  * Tests blockchain.
@@ -19,12 +17,7 @@ use GuzzleHttp\Client;
  */
 class BlockchainFunctionalTest extends BrowserTestBase {
 
-  /**
-   * Http client.
-   *
-   * @var \GuzzleHttp\Client
-   */
-  protected $httpClient;
+  const BLOCKS_COUNT = 5;
 
   /**
    * Blockchain service.
@@ -32,48 +25,6 @@ class BlockchainFunctionalTest extends BrowserTestBase {
    * @var \Drupal\blockchain\Service\BlockchainServiceInterface
    */
   protected $blockchainService;
-
-  /**
-   * Blockchain API subscribe Url.
-   *
-   * @var string
-   */
-  protected $blockchainSubscribeUrl;
-
-  /**
-   * Blockchain API announce Url.
-   *
-   * @var string
-   */
-  protected $blockchainAnnounceUrl;
-
-  /**
-   * Blockchain API fetch Url.
-   *
-   * @var string
-   */
-  protected $blockchainFetchUrl;
-
-  /**
-   * Blockchain API fetch Url.
-   *
-   * @var string
-   */
-  protected $blockchainPullUrl;
-
-  /**
-   * Local ip.
-   *
-   * @var string
-   */
-  protected $localIp;
-
-  /**
-   * Local port.
-   *
-   * @var string
-   */
-  protected $localPort;
 
   /**
    * Blockchain test service.
@@ -95,17 +46,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   protected function setUp() {
 
     parent::setUp();
-    $this->localIp = '127.0.0.1';
-    $this->localPort = '80';
     $this->assertNotEmpty($this->baseUrl, 'Base url is set.');
-    $this->blockchainAnnounceUrl = $this->baseUrl . BlockchainApiServiceInterface::API_ANNOUNCE;
-    $this->blockchainSubscribeUrl = $this->baseUrl . BlockchainApiServiceInterface::API_SUBSCRIBE;
-    $this->blockchainFetchUrl = $this->baseUrl . BlockchainApiServiceInterface::API_FETCH;
-    $this->blockchainPullUrl = $this->baseUrl . BlockchainApiServiceInterface::API_PULL;
-    $this->assertNotEmpty($this->blockchainSubscribeUrl, 'Blockchain subscribe API url is set.');
-    $this->httpClient = $this->container->get('http_client');
-    $this->assertInstanceOf(Client::class, $this->httpClient,
-      'HTTP client instantiated.');
     $this->blockchainService = $this->container->get('blockchain.service');
     $this->assertInstanceOf(BlockchainServiceInterface::class, $this->blockchainService,
       'Blockchain service instantiated.');
@@ -116,7 +57,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->blockchainTestService->setTestContext($this, $this->baseUrl);
     $this->blockchainTestService->initConfigs();
     $this->blockchainTestService->setConfig('blockchain_test_block');
-    $this->blockchainTestService->setBlockCount(5);
+    $this->blockchainTestService->setBlockCount(static::BLOCKS_COUNT);
     // Enable API.
     $this->blockchainTestService->setBlockchainType(BlockchainConfigInterface::TYPE_MULTIPLE);
     // Attach self to test node list.
@@ -128,11 +69,9 @@ class BlockchainFunctionalTest extends BrowserTestBase {
    */
   public function testEmulationStorageApiCount() {
 
-    $result = $this->blockchainService->getApiService()->executeCount($this->baseUrl);
-    $code = $result->getStatusCode();
-    $this->assertEquals(200, $code, 'Response ok');
-    $count = $result->getCountParam();
-    $this->assertEquals(5, $count, 'Returned 5 blocks');
+    $result = $this->blockchainTestService->executeCount([], TRUE);
+    $this->assertEquals(200, $result->getStatusCode(), 'Response ok');
+    $this->assertEquals(static::BLOCKS_COUNT, $result->getCountParam(), 'Returned expected count of blocks');
   }
 
   /**
@@ -150,7 +89,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     ];
     $this->blockchainService->getApiService()->addRequiredParams($params);
     $params[BlockchainRequestInterface::PARAM_TYPE] = 'blockchain_test_block';
-    $result = $this->blockchainService->getApiService()->execute($this->blockchainFetchUrl, $params);
+    $result = $this->blockchainTestService->executeFetch($params);
     $code = $result->getStatusCode();
     $this->assertEquals(200, $code, 'Response ok');
     $this->assertEquals('Success', $result->getMessageParam(), 'Response message ok');
@@ -161,13 +100,13 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $params = [];
     $this->blockchainService->getApiService()->addRequiredParams($params);
     $params[BlockchainRequestInterface::PARAM_TYPE] = 'blockchain_test_block';
-    $result = $this->blockchainService->getApiService()->execute($this->blockchainFetchUrl, $params);
+    $result = $this->blockchainTestService->executeFetch($params);
     $code = $result->getStatusCode();
     $this->assertEquals(200, $code, 'Response ok');
     $exists = $result->getExistsParam();
     $this->assertFalse($exists, 'Block not exists');
     $count = $result->getCountParam();
-    $this->assertEquals(5, $count, 'Returned total count');
+    $this->assertEquals(static::BLOCKS_COUNT, $count, 'Returned total count');
   }
 
   /**
@@ -186,39 +125,39 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     ];
     $this->blockchainService->getApiService()->addRequiredParams($params);
     $params[BlockchainRequestInterface::PARAM_TYPE] = 'blockchain_test_block';
-    $result = $this->blockchainService->getApiService()->execute($this->blockchainPullUrl, $params);
+    $result = $this->blockchainTestService->executePull($params);
     $code = $result->getStatusCode();
     $this->assertEquals(200, $code, 'Response ok');
     $exists = $result->getExistsParam();
     $this->assertTrue($exists, 'Block exists');
     $blocks = $result->getBlocksParam();
-    $this->assertCount(4, $blocks, 'Returned 4 blocks');
+    $this->assertCount(static::BLOCKS_COUNT - 1, $blocks, 'Returned 4 blocks');
     $instantiatedBlocks = [$firstBlock];
     foreach ($blocks as $key => $block) {
       $instantiatedBlocks[$key + 1] = $this->blockchainService->getStorageService()->createFromArray($block);
-      $this->assertInstanceOf(BlockchainBlockInterface::class, $instantiatedBlocks[$key + 1], 'BLock import ok');
+      $this->assertInstanceOf(BlockchainBlockInterface::class, $instantiatedBlocks[$key + 1], 'Block import ok');
     }
-    $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
+    $this->assertCount(static::BLOCKS_COUNT, $instantiatedBlocks, 'Blocks collected');
     $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
     $this->assertTrue($valid, 'Collected blocks are valid');
     // Execute PULL from scratch with count param only.
     $params = [
-      BlockchainRequestInterface::PARAM_COUNT => 5,
+      BlockchainRequestInterface::PARAM_COUNT => static::BLOCKS_COUNT,
     ];
     $this->blockchainService->getApiService()->addRequiredParams($params);
     $params[BlockchainRequestInterface::PARAM_TYPE] = 'blockchain_test_block';
-    $result = $this->blockchainService->getApiService()->execute($this->blockchainPullUrl, $params);
+    $result = $this->blockchainTestService->executePull($params);
     $code = $result->getStatusCode();
     $this->assertEquals(200, $code, 'Response ok');
     $exists = $result->getExistsParam();
     $this->assertFalse($exists, 'Block not exists');
     $blocks = $result->getBlocksParam();
-    $this->assertCount(5, $blocks, 'Returned 5 blocks');
+    $this->assertCount(static::BLOCKS_COUNT, $blocks, 'Returned 5 blocks');
     $instantiatedBlocks = [];
     foreach ($blocks as $block) {
       $instantiatedBlocks[] = $this->blockchainService->getStorageService()->createFromArray($block);
     }
-    $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
+    $this->assertCount(static::BLOCKS_COUNT, $instantiatedBlocks, 'Blocks collected');
     $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
     $this->assertTrue($valid, 'Collected blocks are valid');
     // Simulate batch PULL from scratch.
@@ -227,7 +166,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     ];
     $this->blockchainService->getApiService()->addRequiredParams($params);
     $params[BlockchainRequestInterface::PARAM_TYPE] = 'blockchain_test_block';
-    $result = $this->blockchainService->getApiService()->execute($this->blockchainPullUrl, $params);
+    $result = $this->blockchainTestService->executePull($params);
     $code = $result->getStatusCode();
     $this->assertEquals(200, $code, 'Response ok');
     $exists = $result->getExistsParam();
@@ -244,7 +183,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
       ];
       $this->blockchainService->getApiService()->addRequiredParams($params);
       $params[BlockchainRequestInterface::PARAM_TYPE] = 'blockchain_test_block';
-      $result = $this->blockchainService->getApiService()->execute($this->blockchainPullUrl, $params);
+      $result = $this->blockchainTestService->executePull($params);
       $code = $result->getStatusCode();
       $this->assertEquals(200, $code, 'Response ok');
       $exists = $result->getExistsParam();
@@ -254,7 +193,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
       $currentBlock = $this->blockchainService->getStorageService()->createFromArray(current($blocks));
       $syncBocks[] = $currentBlock;
     }
-    $this->assertCount(5, $instantiatedBlocks, 'Blocks collected');
+    $this->assertCount(static::BLOCKS_COUNT, $instantiatedBlocks, 'Blocks collected');
     $valid = $this->blockchainService->getValidatorService()->validateBlocks($instantiatedBlocks);
     $this->assertTrue($valid, 'Collected blocks are valid');
   }
