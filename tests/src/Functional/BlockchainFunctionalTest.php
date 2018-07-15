@@ -152,15 +152,27 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals(401, $response->getStatusCode());
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Not subscribed yet.', $response->getDetailsParam());
+    /////////
+    // For ip filtering we should success in subscribe to find out ip of our client.
+    $response = $this->blockchainTestService->executeSubscribe([],TRUE);
+    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals('Success', $response->getMessageParam());
+    $this->assertEquals('Added to list.', $response->getDetailsParam());
+    $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();
+    $blockchainNode = $this->blockchainService->getNodeService()->loadBySelfAndType(
+      $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
+    $this->assertNotEmpty($blockchainNode, 'Node exists');
+    $ip = $blockchainNode->getAddress();
+    $this->assertNotEmpty($ip, 'Ip exists');
     // Ensure we have blacklist filter mode.
     $blockchainFilterType = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterType();
     $this->assertEquals($blockchainFilterType, BlockchainConfigInterface::FILTER_TYPE_BLACKLIST, 'Blockchain filter type is blacklist');
     $blacklist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
     $this->assertEmpty($blacklist, 'Blockchain blacklist is empty');
-    $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray($this->getBlacklist())->save();
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray($this->getBlacklist($ip))->save();
     // Ensure we included our ip in black list.
     $blacklist = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainFilterListAsArray();
-    $this->assertEquals($this->getBlacklist(), $blacklist, 'Blacklist is equal to expected.');
+    $this->assertEquals($this->getBlacklist($ip), $blacklist, 'Blacklist is equal to expected.');
     // Cover check for blacklist.
     $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
@@ -191,14 +203,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray([])->save();
     $whitelist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
     $this->assertEmpty($whitelist, 'Whitelist is empty.');
-    // Lets focus on Blockchain nodes. Ensure we have any.
-    $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
-      $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
-    $this->assertFalse($blockchainNodeExists, 'Blockchain node not exists in list');
-    $nodeCount = $this->blockchainService->getNodeService()->getList();
-    $this->assertEmpty($nodeCount, 'Blockchain node list empty');
-    // Try to create one.
-    $blockchainNode = $this->blockchainTestService->createNode();
+    //Blockchain node was previously created.
     //Ensure list is not empty.
     $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
       $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
@@ -306,12 +311,14 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   /**
    * Getter for ips.
    *
+   * @param string $ip
+   *   Ip to be included in list.
    * @return string[]
    *   Array of ips including self.
    */
-  protected function getBlacklist() {
+  protected function getBlacklist($ip) {
 
-    return ['127.0.0.1', '127.0.0.3', '127.0.0.5'];
+    return [ '127.0.0.3', '127.0.0.5', $ip];
   }
 
   /**
@@ -322,7 +329,7 @@ class BlockchainFunctionalTest extends BrowserTestBase {
    */
   protected function getWhitelist() {
 
-    return ['127.0.0.2', '127.0.0.4', '127.0.0.6'];
+    return [ '127.0.0.4', '127.0.0.6'];
   }
 
 }
