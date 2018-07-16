@@ -43,14 +43,6 @@ interface BlockchainConfigServiceInterface {
   public function getState();
 
   /**
-   * Generates auth token.
-   *
-   * @return string
-   *   Hash.
-   */
-  public function tokenGenerate();
-
-  /**
    * Setter for blockchain config.
    *
    * After this action service is aware of blockchain type and
