@@ -32,6 +32,9 @@ interface BlockchainCollisionHandlerServiceInterface {
    * @param string $endPoint
    *   Given endpoint.
    *
+   * @return int|string
+   *   Count of items added.
+   *
    * @throws \Exception
    */
   public function processNoConflict(BlockchainResponseInterface $fetchResponse, $endPoint);
@@ -43,6 +46,9 @@ interface BlockchainCollisionHandlerServiceInterface {
    *   Fetch response.
    * @param string $endPoint
    *   Given endpoint.
+   *
+   * @return int|string
+   *   Count of items added.
    *
    * @throws \Exception
    */

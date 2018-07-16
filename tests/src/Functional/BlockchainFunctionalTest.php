@@ -349,6 +349,8 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   }
 
   /**
+   * Ip generator.
+   *
    * @return string
    *   Array of random ips.
    */

@@ -130,6 +130,8 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
       }
       $addedBlocks += $fetchLimit;
     }
+
+    return $neededBlocks;
   }
 
   /**
@@ -226,8 +228,12 @@ class BlockchainCollisionHandlerService implements BlockchainCollisionHandlerSer
         }
         // Clear temp store for sure.
         $this->blockchainTempStoreService->deleteAll();
+
+        return $countToAdd;
       }
     }
+
+    return 0;
   }
 
 }

@@ -3,6 +3,7 @@
 namespace Drupal\blockchain\Controller;
 
 use Drupal\blockchain\Entity\BlockchainConfigInterface;
+use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -85,6 +86,52 @@ class BlockchainController extends ControllerBase {
     ]));
 
     return $this->redirect('entity.blockchain_config.collection');
+  }
+
+  /**
+   * Controller callback.
+   *
+   * @param BlockchainConfigInterface $blockchain_config
+   *   Blockchain config.
+   * @param BlockchainNodeInterface $blockchain_node
+   *   Blockchain node.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Response.
+   */
+  public function pull(BlockchainConfigInterface $blockchain_config, BlockchainNodeInterface $blockchain_node) {
+
+    $this->blockchainService->getConfigService()->setCurrentConfig($blockchain_config->id());
+    $endPoint = $blockchain_node->getEndPoint();
+    if ($this->blockchainService->getLockerService()->lockAnnounce()) {
+      try {
+        $count = 0;
+        $result = $this->blockchainService->getApiService()
+          ->executeFetch($endPoint, $this->blockchainService->getStorageService()->getLastBlock());
+        $collisionHandler = $this->blockchainService->getCollisionHandler();
+        if ($collisionHandler->isPullGranted($result)) {
+          $count = $collisionHandler->processNoConflict($result, $endPoint);
+        }
+        elseif ($result->isCountParamValid()) {
+          $count = $collisionHandler->processConflict($result, $endPoint);
+        }
+      }
+      catch (\Exception $exception) {
+        $this->messenger()->addError($exception->getMessage());
+      }
+      finally {
+        $this->blockchainService->getLockerService()->releaseAnnounce();
+        $this->messenger()->addStatus($this->t('Added @count items.',[
+          '@count' => $count,
+        ]));
+      }
+    }
+    else {
+      $this->messenger()
+        ->addError($this->t('Announce handling is locked.'));
+    }
+
+    return $this->redirect("entity.{$blockchain_node->getEntityTypeId()}.collection");
   }
 
 }
