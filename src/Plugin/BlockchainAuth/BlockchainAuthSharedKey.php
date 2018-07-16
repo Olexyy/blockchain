@@ -8,7 +8,6 @@ use Drupal\blockchain\Service\BlockchainServiceInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -21,7 +20,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class BlockchainAuthSharedKey extends PluginBase implements BlockchainAuthInterface,
   ContainerFactoryPluginInterface {
-
 
   /**
    * Blockchain service.
@@ -78,9 +76,7 @@ class BlockchainAuthSharedKey extends PluginBase implements BlockchainAuthInterf
    */
   public function addAuthParams(array &$params, BlockchainConfigInterface $blockchainConfig) {
 
-    $params[BlockchainRequestInterface::PARAM_AUTH] = $this->blockchainService
-      ->getConfigService()
-      ->tokenGenerate();
+    $params[BlockchainRequestInterface::PARAM_AUTH] = $this->tokenGenerate($blockchainConfig);
   }
 
   /**
@@ -99,6 +95,15 @@ class BlockchainAuthSharedKey extends PluginBase implements BlockchainAuthInterf
   public function authIsValid($self, $auth, $blockchainId) {
 
     return $this->blockchainService->getHashService()->hash($blockchainId . $self) === $auth;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function tokenGenerate(BlockchainConfigInterface $blockchainConfig) {
+
+    return $this->blockchainService->getHashService()
+      ->hash($blockchainConfig->getBlockchainId() . $blockchainConfig->getNodeId());
   }
 
 }

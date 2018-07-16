@@ -122,10 +122,6 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     // Blockchain id is generated on first request, lets check it. (this is shared key)
     $blockchainId = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainId();
     $this->assertNotEmpty($blockchainId, 'Blockchain id is generated.');
-    // Generate valid token.
-    // TODO what the hell token does in config service???? => to auth with plugin usage.
-    $authToken = $this->blockchainService->getConfigService()->tokenGenerate();
-    $this->assertNotEmpty($authToken, 'Token is generated.');
     // Cover API is restricted for non 'auth' request.
     $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
@@ -144,15 +140,15 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Auth token invalid.', $response->getDetailsParam());
     // Test not subscribed yet test case. (Use ANNOUNCE)
-    $response = $this->blockchainTestService->executeCount([
-      BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
-      BlockchainRequestInterface::PARAM_AUTH => $authToken,
-      BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
-    ]);
+    // This is basically auth success test case as this is supposed to be passed.
+    $response = $this->blockchainTestService->executeCount([], TRUE);
     $this->assertEquals(401, $response->getStatusCode());
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Not subscribed yet.', $response->getDetailsParam());
-    /////////
+    // Disable auth.
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setAuth(BlockchainAuthManager::DEFAULT_PLUGIN)->save();
+    $auth = $this->blockchainService->getConfigService()->getCurrentConfig()->getAuth();
+    $this->assertEquals(BlockchainAuthManager::DEFAULT_PLUGIN, $auth, 'Blockchain auth is disabled');
     // For ip filtering we should success in subscribe to find out ip of our client.
     $response = $this->blockchainTestService->executeSubscribe([],TRUE);
     $this->assertEquals(200, $response->getStatusCode());
@@ -178,7 +174,6 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     // Cover check for blacklist.
     $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
-      BlockchainRequestInterface::PARAM_AUTH => $authToken,
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
     ]);
     $this->assertEquals(403, $response->getStatusCode());
@@ -195,7 +190,6 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     // Cover check for whitelist.
     $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
-      BlockchainRequestInterface::PARAM_AUTH => $authToken,
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
     ]);
     $this->assertEquals(403, $response->getStatusCode());

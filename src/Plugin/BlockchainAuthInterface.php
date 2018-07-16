@@ -38,4 +38,15 @@ interface BlockchainAuthInterface extends PluginInspectionInterface {
    */
   public function addAuthParams(array &$params, BlockchainConfigInterface $blockchainConfig);
 
+  /**
+   * Generates token for given config.
+   *
+   * @param BlockchainConfigInterface $blockchainConfig
+   *   Blockchain config.
+   *
+   * @return string
+   *   Token.
+   */
+  public function tokenGenerate(BlockchainConfigInterface $blockchainConfig);
+
 }
