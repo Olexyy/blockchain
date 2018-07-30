@@ -62,6 +62,13 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   protected $address;
 
   /**
+   * Ip address of blockchain node.
+   *
+   * @var string
+   */
+  protected $ip;
+
+  /**
    * The Blockchain Node port.
    *
    * @var string
@@ -293,6 +300,34 @@ class BlockchainNode extends ConfigEntityBase implements BlockchainNodeInterface
   public function generateId() {
 
     return $this->getBlockchainTypeId() . '_' . $this->getSelf();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getIp() {
+
+    return $this->ip;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setIp($ip) {
+
+    $this->ip = $ip;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasClientData() {
+
+    return !is_null($this->getIp()) &&
+      !is_null($this->getPort()) &&
+      !is_null($this->isSecure());
   }
 
 }

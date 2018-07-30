@@ -187,6 +187,12 @@ class BlockchainValidatorService implements BlockchainValidatorServiceInterface 
           ->setMessageParam('Unauthorized')
           ->setDetailsParam('Not subscribed yet.');
       }
+      if (!$blockchainNode->hasClientData()) {
+        $blockchainNode->setIp($request->getClientIp())
+          ->setPort($request->getPort())
+          ->setSecure($request->isSecure())
+          ->save();
+      }
     }
     if ($filterList = $blockchainConfig->getBlockchainFilterListAsArray()) {
       if ($blockchainConfig->getFilterType() === BlockchainConfigInterface::FILTER_TYPE_BLACKLIST) {

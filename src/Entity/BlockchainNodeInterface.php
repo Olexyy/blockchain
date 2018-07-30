@@ -208,4 +208,42 @@ interface BlockchainNodeInterface extends ConfigEntityInterface {
    */
   public function generateId();
 
+  /**
+   * Getter for ip address.
+   *
+   * @return string
+   *   Value.
+   */
+  public function getIp();
+
+  /**
+   * Setter for ip.
+   *
+   * @param string $ip
+   *   Value.
+   *
+   * @return $this
+   *   Chaining.
+   */
+  public function setIp($ip);
+
+  /**
+   * Predicate defines if blockchain Node has any data.
+   *
+   * @return bool
+   *   Test result.
+   */
+  public function hasClientData();
+
+  /**
+   * Saves an entity permanently.
+   *
+   * When saving existing entities, the entity is assumed to be complete,
+   * partial updates of entities are not supported.
+   *
+   * @return int
+   *   Either SAVED_NEW or SAVED_UPDATED, depending on the operation performed.
+   */
+  public function save();
+
 }

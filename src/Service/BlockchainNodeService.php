@@ -5,6 +5,7 @@ namespace Drupal\blockchain\Service;
 use Drupal\blockchain\Entity\BlockchainNode;
 use Drupal\blockchain\Entity\BlockchainNodeInterface;
 use Drupal\blockchain\Utils\BlockchainRequestInterface;
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -114,11 +115,12 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function create($blockchainTypeId, $self, $addressSource, $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE) {
+  public function create($blockchainTypeId, $self, $addressSource, $address, $ip = NULL, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE) {
 
     /** @var \Drupal\blockchain\Entity\BlockchainNodeInterface $blockchainNode */
     $blockchainNode = $this->getStorage()->create();
     $label = $label ? $label : $self;
+    $ip = $ip? $ip : $address;
     $blockchainNode
       ->setBlockchainTypeId($blockchainTypeId)
       ->setSelf($self)
@@ -126,6 +128,7 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
       ->setAddressSource($addressSource)
       ->setLabel($label ? $label : $self)
       ->setAddress($address)
+      ->setIp($ip)
       ->setSecure($secure)
       ->setPort($port);
     try {
@@ -146,14 +149,17 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
    */
   public function createFromRequest(BlockchainRequestInterface $request, $save = TRUE) {
 
-    if ($request->hasSelfUrl()) {
+    if ($request->hasSelfUrl() && UrlHelper::isValid($request->getSelfUrl())) {
 
       return $this->create(
         $request->getTypeParam(),
         $request->getSelfParam(),
         BlockchainNodeInterface::ADDRESS_SOURCE_CLIENT,
         $request->getSelfUrl(),
-        NULL, NULL, NULL, $save);
+        $request->getIp(),
+        $request->getPort(), $request->isSecure(),
+        NULL,
+        $save);
     }
 
     return $this->create(
@@ -161,8 +167,11 @@ class BlockchainNodeService implements BlockchainNodeServiceInterface {
       $request->getSelfParam(),
       BlockchainNodeInterface::ADDRESS_SOURCE_REQUEST,
       $request->getIp(),
+      $request->getIp(),
       $request->getPort(),
-      $request->isSecure(), NULL, $save);
+      $request->isSecure(),
+      NULL,
+      $save);
   }
 
   /**

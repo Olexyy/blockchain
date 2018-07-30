@@ -100,6 +100,8 @@ interface BlockchainNodeServiceInterface {
    *   Address source.
    * @param string $address
    *   Client ip/host.
+   * @param null|string $ip
+   *   Given ip if any.
    * @param string $port
    *   Client port.
    * @param null|bool $secure
@@ -112,7 +114,7 @@ interface BlockchainNodeServiceInterface {
    * @return \Drupal\blockchain\Entity\BlockchainNodeInterface|null
    *   New entity if created.
    */
-  public function create($blockchainType, $self, $addressSource, $address, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE);
+  public function create($blockchainType, $self, $addressSource, $address, $ip = NULL, $port = NULL, $secure = NULL, $label = NULL, $save = TRUE);
 
   /**
    * Factory method.

@@ -25,6 +25,7 @@ class BlockchainNodeListBuilder extends ConfigEntityListBuilder {
     $header['blockchain_type'] = $this->t('Blockchain type');
     $header['self_id'] = $this->t('Self id');
     $header['endpoint'] = $this->t('Endpoint');
+    $header['ip'] = $this->t('Real ip');
 
     return $header + parent::buildHeader();
   }
@@ -40,6 +41,7 @@ class BlockchainNodeListBuilder extends ConfigEntityListBuilder {
     $row['blockchain_type'] = $entity->getBlockchainTypeId();
     $row['self_id'] = $entity->getSelf();
     $row['endpoint'] = $entity->getEndPoint();
+    $row['ip'] = $entity->getIp()? $entity->getIp() : $this->t('none');
 
     return $row + parent::buildRow($entity);
   }
