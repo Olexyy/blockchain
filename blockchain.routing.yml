@@ -46,6 +46,13 @@ blockchain.api.subscribe:
     _form: 'Drupal\blockchain\Form\BlockchainSubscribeForm'
   requirements:
     _permission: 'administer blockchain block entities'
+blockchain.api.pull:
+  path: '/admin/structure/blockchain/{blockchain_config}/pull/{blockchain_node}'
+  defaults:
+    _title: 'Pull form given node'
+    _controller: \Drupal\blockchain\Controller\BlockchainController::pull
+  requirements:
+    _permission: 'administer blockchain block entities'
 blockchain.config.discover:
   path: '/admin/structure/blockchain/config/discover'
   defaults:

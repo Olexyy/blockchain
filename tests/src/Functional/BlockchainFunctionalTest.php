@@ -122,10 +122,6 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     // Blockchain id is generated on first request, lets check it. (this is shared key)
     $blockchainId = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainId();
     $this->assertNotEmpty($blockchainId, 'Blockchain id is generated.');
-    // Generate valid token.
-    // TODO what the hell token does in config service???? => to auth with plugin usage.
-    $authToken = $this->blockchainService->getConfigService()->tokenGenerate();
-    $this->assertNotEmpty($authToken, 'Token is generated.');
     // Cover API is restricted for non 'auth' request.
     $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
@@ -144,27 +140,40 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Auth token invalid.', $response->getDetailsParam());
     // Test not subscribed yet test case. (Use ANNOUNCE)
-    $response = $this->blockchainTestService->executeCount([
-      BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
-      BlockchainRequestInterface::PARAM_AUTH => $authToken,
-      BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
-    ]);
+    // This is basically auth success test case as this is supposed to be passed.
+    $response = $this->blockchainTestService->executeCount([], TRUE);
     $this->assertEquals(401, $response->getStatusCode());
     $this->assertEquals('Unauthorized', $response->getMessageParam());
     $this->assertEquals('Not subscribed yet.', $response->getDetailsParam());
+    // Disable auth.
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setAuth(BlockchainAuthManager::DEFAULT_PLUGIN)->save();
+    $auth = $this->blockchainService->getConfigService()->getCurrentConfig()->getAuth();
+    $this->assertEquals(BlockchainAuthManager::DEFAULT_PLUGIN, $auth, 'Blockchain auth is disabled');
+    // For ip filtering we should success in subscribe to find out ip of our client.
+    $response = $this->blockchainTestService->executeSubscribe([],TRUE);
+    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals('Success', $response->getMessageParam());
+    $this->assertEquals('Added to list.', $response->getDetailsParam());
+    $blockchainNodeId = $this->blockchainService->getConfigService()->getCurrentConfig()->getNodeId();
+    $blockchainNode = $this->blockchainService->getNodeService()->loadBySelfAndType(
+      $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
+    $this->assertNotEmpty($blockchainNode, 'Node exists');
+    $ip = $blockchainNode->getAddress();
+    $whitelist = $this->getIpWhitelist($ip);
+    $blacklist = $this->getIpBlackList($ip);
+    $this->assertNotEmpty($ip, 'Ip exists');
     // Ensure we have blacklist filter mode.
     $blockchainFilterType = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterType();
     $this->assertEquals($blockchainFilterType, BlockchainConfigInterface::FILTER_TYPE_BLACKLIST, 'Blockchain filter type is blacklist');
-    $blacklist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
-    $this->assertEmpty($blacklist, 'Blockchain blacklist is empty');
-    $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray($this->getBlacklist())->save();
+    $configList = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
+    $this->assertEmpty($configList, 'Blockchain blacklist is empty');
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray($blacklist)->save();
     // Ensure we included our ip in black list.
-    $blacklist = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainFilterListAsArray();
-    $this->assertEquals($this->getBlacklist(), $blacklist, 'Blacklist is equal to expected.');
+    $configList = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainFilterListAsArray();
+    $this->assertEquals($blacklist, $configList, 'Blacklist is equal to expected.');
     // Cover check for blacklist.
     $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
-      BlockchainRequestInterface::PARAM_AUTH => $authToken,
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
     ]);
     $this->assertEquals(403, $response->getStatusCode());
@@ -175,13 +184,12 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $blockchainFilterType = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterType();
     $this->assertEquals($blockchainFilterType, BlockchainConfigInterface::FILTER_TYPE_WHITELIST, 'Blockchain filter type is whitelist');
     // Ensure put ip is not in whitelist.
-    $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray($this->getWhitelist())->save();
-    $whitelist = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainFilterListAsArray();
-    $this->assertEquals($this->getWhitelist(), $whitelist, 'Whitelist set.');
+    $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray($whitelist)->save();
+    $configList = $this->blockchainService->getConfigService()->getCurrentConfig()->getBlockchainFilterListAsArray();
+    $this->assertEquals($configList, $whitelist, 'Whitelist set.');
     // Cover check for whitelist.
     $response = $this->blockchainTestService->executeSubscribe([
       BlockchainRequestInterface::PARAM_SELF => $blockchainNodeId,
-      BlockchainRequestInterface::PARAM_AUTH => $authToken,
       BlockchainRequestInterface::PARAM_TYPE => 'blockchain_block',
     ]);
     $this->assertEquals(403, $response->getStatusCode());
@@ -189,16 +197,9 @@ class BlockchainFunctionalTest extends BrowserTestBase {
     $this->assertEquals('You are forbidden to access this resource.', $response->getDetailsParam());
     // Lets reset this for further testing.
     $this->blockchainService->getConfigService()->getCurrentConfig()->setBlockchainFilterListAsArray([])->save();
-    $whitelist = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
-    $this->assertEmpty($whitelist, 'Whitelist is empty.');
-    // Lets focus on Blockchain nodes. Ensure we have any.
-    $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
-      $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
-    $this->assertFalse($blockchainNodeExists, 'Blockchain node not exists in list');
-    $nodeCount = $this->blockchainService->getNodeService()->getList();
-    $this->assertEmpty($nodeCount, 'Blockchain node list empty');
-    // Try to create one.
-    $blockchainNode = $this->blockchainTestService->createNode();
+    $configList = $this->blockchainService->getConfigService()->getCurrentConfig()->getFilterList();
+    $this->assertEmpty($configList, 'Whitelist is empty.');
+    //Blockchain node was previously created.
     //Ensure list is not empty.
     $blockchainNodeExists = $this->blockchainService->getNodeService()->existsBySelfAndType(
       $blockchainNodeId, $this->blockchainService->getConfigService()->getCurrentConfig()->id());
@@ -304,25 +305,52 @@ class BlockchainFunctionalTest extends BrowserTestBase {
   }
 
   /**
-   * Getter for ips.
+   * Getter for ips, ensures given ip is included into list.
+   *
+   * @param string $ip
+   *   Ip to be included in list.
    *
    * @return string[]
-   *   Array of ips including self.
+   *   Array of ips.
    */
-  protected function getBlacklist() {
+  protected function getIpBlackList($ip) {
 
-    return ['127.0.0.1', '127.0.0.3', '127.0.0.5'];
+    $ipList = [$this->randomIp(), $this->randomIp(),  $this->randomIp()];
+    if (($key = array_search($ip, $ipList) === FALSE)) {
+      $ipList[] = $ip;
+    }
+
+    return $ipList;
   }
 
   /**
-   * Getter for ips.
+   * Getter for ips, ensures given ip is not included into list.
+   *
+   * @param string $ip
+   *   Ip to be not included in list.
    *
    * @return string[]
-   *   Array of ips excluding self.
+   *   Array of ips.
    */
-  protected function getWhitelist() {
+  protected function getIpWhitelist($ip) {
 
-    return ['127.0.0.2', '127.0.0.4', '127.0.0.6'];
+    $ipList = [$this->randomIp(), $this->randomIp(),  $this->randomIp()];
+    if (($key = array_search($ip, $ipList) !== FALSE)) {
+      unset($ipList[$key]);
+    }
+
+    return $ipList;
+  }
+
+  /**
+   * Ip generator.
+   *
+   * @return string
+   *   Array of random ips.
+   */
+  protected function randomIp() {
+
+    return mt_rand(0,255).".".mt_rand(0,255).".".mt_rand(0,255).".".mt_rand(0,255);
   }
 
 }

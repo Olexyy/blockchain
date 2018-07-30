@@ -4,6 +4,7 @@ namespace Drupal\blockchain;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
 
 /**
  * Provides a listing of Blockchain Node entities.
@@ -44,6 +45,25 @@ class BlockchainNodeListBuilder extends ConfigEntityListBuilder {
     $row['ip'] = $entity->getIp()? $entity->getIp() : $this->t('none');
 
     return $row + parent::buildRow($entity);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefaultOperations(EntityInterface $entity) {
+
+    /** @var \Drupal\blockchain\Entity\BlockchainNodeInterface $entity */
+    $operations = parent::getDefaultOperations($entity);
+    $operations['sync'] = [
+      'title' => $this->t('Sync'),
+      'weight' => 10,
+      'url' => Url::fromRoute('blockchain.api.pull',[
+        'blockchain_config' => $entity->getBlockchainTypeId(),
+        'blockchain_node' => $entity->id(),
+      ]),
+    ];
+
+    return $operations;
   }
 
 }

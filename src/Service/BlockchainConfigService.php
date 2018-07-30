@@ -107,15 +107,6 @@ class BlockchainConfigService implements BlockchainConfigServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function tokenGenerate() {
-
-    return $this->blockchainHashService
-      ->hash($this->getCurrentConfig()->getBlockchainId() . $this->getCurrentConfig()->getNodeId());
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function setCurrentConfig($blockchainConfig) {
 
     if ($blockchainConfig instanceof BlockchainConfigInterface) {
